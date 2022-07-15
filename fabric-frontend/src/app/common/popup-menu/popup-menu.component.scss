@@ -1,0 +1,22 @@
+@import '../variables';
+
+:host {
+  border-top: 1px solid rgb(13, 110, 253);
+  border-left: 1px solid rgb(13, 110, 253);
+  border-right: 1px solid rgb(13, 110, 253);
+  position: absolute;
+  z-index: 999;
+  cursor: pointer;
+  background: white;
+}
+
+.items p {
+  margin: 0px;
+  padding: 5px;
+  border-bottom: 1px solid rgb(13, 110, 253);
+}
+
+.items p:hover {
+  color: white;
+  background: $storybook-primary-300;
+}

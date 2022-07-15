@@ -1,0 +1,30 @@
+{
+  "systemComponents": [
+    {
+      "key": "MONGODB",
+      "label": "MongoDB Data",
+      "systemType": "MONGO"
+    }
+  ],
+  "environments" : [
+    {
+      "key": "DEV",
+      "label": "DEV environment"
+    },
+    {
+      "key": "INT",
+      "label": "INT environment"
+    }
+  ],
+  "settings": {
+    "DEV" : {
+      "MONGODB": [
+        {
+          "key" : "uri",
+          "value" : "http://..."
+        }
+      ]
+    }
+  }
+
+}

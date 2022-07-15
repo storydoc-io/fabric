@@ -1,0 +1,16 @@
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-11">
+        </div>
+
+        <div class="col-md-11">
+            <a class="btn  btn-sm btn-outline-primary" (click)="createSnapshot()">Take snapshot</a>
+        </div>
+
+    </div>
+</div>
+
+<jw-modal [id]="snapshotDialogId()">
+    <app-snapshot-dialog [spec]="spec" ></app-snapshot-dialog>
+</jw-modal>

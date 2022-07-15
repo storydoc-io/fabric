@@ -1,0 +1,379 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Api Documentation",
+    "description": "Api Documentation",
+    "termsOfService": "urn:tos",
+    "contact": {},
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Inferred Url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "snapshot-controller",
+      "description": "Snapshot Controller"
+    },
+    {
+      "name": "system-description-controller",
+      "description": "System Description Controller"
+    },
+    {
+      "name": "workspace-rest-controller",
+      "description": "Workspace Rest Controller"
+    }
+  ],
+  "paths": {
+    "/api/snaphot/snapshot": {
+      "get": {
+        "tags": [
+          "snapshot-controller"
+        ],
+        "summary": "getById",
+        "operationId": "getByIdUsingGET",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SnapshotDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "snapshot-controller"
+        ],
+        "summary": "create",
+        "operationId": "createUsingPOST",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SnapshotDTO"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/snaphot/snapshots": {
+      "get": {
+        "tags": [
+          "snapshot-controller"
+        ],
+        "summary": "list",
+        "operationId": "listUsingGET",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/systemdescription": {
+      "get": {
+        "tags": [
+          "system-description-controller"
+        ],
+        "summary": "getSystemDescription",
+        "operationId": "getSystemDescriptionUsingGET",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemDescriptionDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/settings/settings": {
+      "get": {
+        "tags": [
+          "workspace-rest-controller"
+        ],
+        "summary": "getSettings",
+        "operationId": "getSettingsUsingGET",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WorkspaceSettings"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DashboardDTO": {
+        "title": "DashboardDTO",
+        "type": "object",
+        "properties": {
+          "att": {
+            "type": "string"
+          }
+        }
+      },
+      "EnvironmentDTO": {
+        "title": "EnvironmentDTO",
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          }
+        }
+      },
+      "FileStore": {
+        "title": "FileStore",
+        "type": "object",
+        "properties": {
+          "blockSize": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "readOnly": {
+            "type": "boolean"
+          },
+          "totalSpace": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "unallocatedSpace": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "usableSpace": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "FileSystem": {
+        "title": "FileSystem",
+        "type": "object",
+        "properties": {
+          "fileStores": {
+            "$ref": "#/components/schemas/Iterable«FileStore»"
+          },
+          "open": {
+            "type": "boolean"
+          },
+          "readOnly": {
+            "type": "boolean"
+          },
+          "rootDirectories": {
+            "$ref": "#/components/schemas/Iterable«Path»"
+          },
+          "separator": {
+            "type": "string"
+          },
+          "userPrincipalLookupService": {
+            "$ref": "#/components/schemas/UserPrincipalLookupService"
+          }
+        }
+      },
+      "Iterable«FileStore»": {
+        "title": "Iterable«FileStore»",
+        "type": "object"
+      },
+      "Iterable«Path»": {
+        "title": "Iterable«Path»",
+        "type": "object"
+      },
+      "Path": {
+        "title": "Path",
+        "type": "object",
+        "properties": {
+          "absolute": {
+            "type": "boolean"
+          },
+          "fileName": {
+            "$ref": "#/components/schemas/Path"
+          },
+          "fileSystem": {
+            "$ref": "#/components/schemas/FileSystem"
+          },
+          "nameCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "parent": {
+            "$ref": "#/components/schemas/Path"
+          },
+          "root": {
+            "$ref": "#/components/schemas/Path"
+          }
+        }
+      },
+      "SnapshotDTO": {
+        "title": "SnapshotDTO",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "snapshotId": {
+            "$ref": "#/components/schemas/SnapshotId"
+          }
+        }
+      },
+      "SnapshotId": {
+        "title": "SnapshotId",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "SystemComponentDTO": {
+        "title": "SystemComponentDTO",
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "systemType": {
+            "type": "string"
+          }
+        }
+      },
+      "SystemConfigSettingDTO": {
+        "title": "SystemConfigSettingDTO",
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          }
+        }
+      },
+      "SystemDescriptionDTO": {
+        "title": "SystemDescriptionDTO",
+        "type": "object",
+        "properties": {
+          "environments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnvironmentDTO"
+            }
+          },
+          "settings": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object"
+            }
+          },
+          "systemComponents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SystemComponentDTO"
+            }
+          }
+        }
+      },
+      "UserPrincipalLookupService": {
+        "title": "UserPrincipalLookupService",
+        "type": "object"
+      },
+      "WorkspaceSettings": {
+        "title": "WorkspaceSettings",
+        "type": "object",
+        "properties": {
+          "workspaceFolder": {
+            "$ref": "#/components/schemas/Path"
+          }
+        }
+      }
+    }
+  }
+}
