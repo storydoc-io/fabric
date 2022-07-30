@@ -8,6 +8,8 @@ public class SnapshotId {
 
     private String id;
 
+    private SnapshotId() {}
+
     public SnapshotId(String id) {
         this.id = id;
     }

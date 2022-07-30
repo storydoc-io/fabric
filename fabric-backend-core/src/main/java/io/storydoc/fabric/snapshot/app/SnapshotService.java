@@ -1,38 +1,59 @@
 package io.storydoc.fabric.snapshot.app;
 
 import io.storydoc.fabric.infra.IDGenerator;
-import io.storydoc.fabric.snapshot.app.descriptor.SnapshotDescriptorDTO;
-import io.storydoc.fabric.snapshot.domain.SnapshotCommandFactory;
-import io.storydoc.fabric.snapshot.domain.SnapshotCommandRunner;
-import io.storydoc.fabric.snapshot.domain.SnapshotId;
-import io.storydoc.fabric.snapshot.domain.SnapshotStorage;
+import io.storydoc.fabric.snapshot.domain.*;
+import io.storydoc.fabric.snapshot.infra.jsonmodel.Snapshot;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SnapshotService {
 
     private final SnapshotStorage snapshotStorage;
 
-    private final SnapshotCommandFactory snapshotCommandFactory;
-
     private final SnapshotCommandRunner snapshotCommandRunner;
 
-    public SnapshotService(IDGenerator idGenerator, SnapshotStorage snapshotStorage, SnapshotCommandFactory snapshotCommandFactory, SnapshotCommandRunner snapshotCommandRunner) {
+    private final IDGenerator idGenerator;
+
+    public SnapshotService(IDGenerator idGenerator, SnapshotStorage snapshotStorage, SnapshotCommandRunner snapshotCommandRunner) {
         this.snapshotStorage = snapshotStorage;
-        this.snapshotCommandFactory = snapshotCommandFactory;
         this.snapshotCommandRunner = snapshotCommandRunner;
+        this.idGenerator = idGenerator;
     }
 
-    public SnapshotId createSnapshot(String environmentKey, SnapshotDescriptorDTO snapshotDescriptorDTO) {
-        return null;
+    public SnapshotId createSnapshot(String environmentKey, String name) {
+        SnapshotId snapshotId = SnapshotId.fromString(idGenerator.generateID(SnapshotId.CATEGORY));
+        snapshotCommandRunner.runSnapshotCommand(environmentKey, snapshotId, name);
+        return snapshotId;
     }
 
     public SnapshotDTO getSnapshot(SnapshotId snapshotId) {
+        Snapshot snapshot = snapshotStorage.loadSnapshot(snapshotId);
+
         return SnapshotDTO.builder()
                 .snapshotId(snapshotId)
+                .name(snapshot.getName())
+                .environmentKey(snapshot.getEnvKey())
+                .componentSnapshots(snapshot.getSnapshotComponentSummaries().stream()
+                        .map(snapshotComponentSummary -> SnapshotComponentDTO.builder()
+                                .componentKey(snapshotComponentSummary.getComponentKey())
+                                .systemType(snapshotComponentSummary.getSystemType())
+                                .build())
+                        .collect(Collectors.toList())
+                )
                 .build();
     }
 
 
-
+    public List<SnapshotSummaryDTO> list() {
+        return snapshotStorage.getSummaries().getSummaries().stream()
+            .map(summary -> SnapshotSummaryDTO.builder()
+                .snapshotId(summary.getSnapshotId())
+                .name(summary.getName())
+                .environmentKey(summary.getEnvKey())
+                .build())
+            .collect(Collectors.toList());
+    }
 }

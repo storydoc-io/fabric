@@ -9,7 +9,7 @@ const routes: Routes = [
   {path: '', redirectTo: '/fe/dashboard', pathMatch: 'full'},
   {path: 'fe/dashboard', component: DashboardPageComponent},
   {path: 'fe/systemdescription', component: SystemDescriptionPageComponent},
-  {path: 'fe/snapshot', component: SnapshotPageComponent},
+  {path: 'fe/snapshot/:snapshotId', component: SnapshotPageComponent},
 ];
 
 

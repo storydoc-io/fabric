@@ -1,6 +1,8 @@
 package io.storydoc.fabric.core.infra;
 
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
+import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
+import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemComponent;
 import io.storydoc.fabric.workspace.domain.FolderURN;
 import io.storydoc.fabric.workspace.domain.ResourceUrn;
 import org.springframework.stereotype.Component;
@@ -17,4 +19,25 @@ public class WorkspaceStructure {
     public ResourceUrn getSystemDescriptionUrn() {
         return ResourceUrn.of("systemdescription.json");
     }
+
+    public ResourceUrn getSummariesUrn() {
+        return ResourceUrn.of("summaries.json");
+    }
+
+    public ResourceUrn getComponentSnapshotUrn(SnapshotId snapshotId, SystemComponentDTO systemComponent) {
+        String componentKey = systemComponent.getKey();
+        String systemType = systemComponent.getSystemType();
+        return getComponentSnapshotUrn(snapshotId, componentKey, systemType);
+    }
+
+    public ResourceUrn getComponentSnapshotUrn(SnapshotId snapshotId, String componentKey, String systemType) {
+        String fileName = String.format("%s-%s.json", componentKey, systemType);
+        return getSnapshotFolder(snapshotId).resolve(ResourceUrn.of(fileName));
+    }
+
+    public ResourceUrn getSnapshotUrn(SnapshotId snapshotId) {
+        String filename = snapshotId.getId() + ".json";
+        return getSnapshotFolder(snapshotId).resolve(ResourceUrn.of(filename));
+    }
+
 }

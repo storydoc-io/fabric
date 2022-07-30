@@ -19,6 +19,10 @@
   ],
   "tags": [
     {
+      "name": "mongo-snapshot-controller",
+      "description": "Mongo Snapshot Controller"
+    },
+    {
       "name": "snapshot-controller",
       "description": "Snapshot Controller"
     },
@@ -32,6 +36,57 @@
     }
   ],
   "paths": {
+    "/api/mongo/snapshot": {
+      "get": {
+        "tags": [
+          "mongo-snapshot-controller"
+        ],
+        "summary": "getMongoSnapshot",
+        "operationId": "getMongoSnapshotUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "componentKey",
+            "in": "query",
+            "description": "componentKey",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MongoSnapshot"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/api/snaphot/snapshot": {
       "get": {
         "tags": [
@@ -39,6 +94,17 @@
         ],
         "summary": "getById",
         "operationId": "getByIdUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -67,13 +133,35 @@
         ],
         "summary": "create",
         "operationId": "createUsingPOST",
+        "parameters": [
+          {
+            "name": "environment",
+            "in": "query",
+            "description": "environment",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "description": "name",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/SnapshotDTO"
+                  "$ref": "#/components/schemas/SnapshotId"
                 }
               }
             }
@@ -106,7 +194,10 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DashboardDTO"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SnapshotSummaryDTO"
+                  }
                 }
               }
             }
@@ -186,12 +277,18 @@
   },
   "components": {
     "schemas": {
-      "DashboardDTO": {
-        "title": "DashboardDTO",
+      "CollectionSnapshot": {
+        "title": "CollectionSnapshot",
         "type": "object",
         "properties": {
-          "att": {
+          "collectionName": {
             "type": "string"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -264,6 +361,18 @@
         "title": "Iterable«Path»",
         "type": "object"
       },
+      "MongoSnapshot": {
+        "title": "MongoSnapshot",
+        "type": "object",
+        "properties": {
+          "collectionSnapshots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CollectionSnapshot"
+            }
+          }
+        }
+      },
       "Path": {
         "title": "Path",
         "type": "object",
@@ -289,11 +398,32 @@
           }
         }
       },
+      "SnapshotComponentDTO": {
+        "title": "SnapshotComponentDTO",
+        "type": "object",
+        "properties": {
+          "componentKey": {
+            "type": "string"
+          },
+          "systemType": {
+            "type": "string"
+          }
+        }
+      },
       "SnapshotDTO": {
         "title": "SnapshotDTO",
         "type": "object",
         "properties": {
-          "content": {
+          "componentSnapshots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SnapshotComponentDTO"
+            }
+          },
+          "environmentKey": {
+            "type": "string"
+          },
+          "name": {
             "type": "string"
           },
           "snapshotId": {
@@ -310,6 +440,21 @@
           }
         }
       },
+      "SnapshotSummaryDTO": {
+        "title": "SnapshotSummaryDTO",
+        "type": "object",
+        "properties": {
+          "environmentKey": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "snapshotId": {
+            "$ref": "#/components/schemas/SnapshotId"
+          }
+        }
+      },
       "SystemComponentDTO": {
         "title": "SystemComponentDTO",
         "type": "object",
@@ -321,18 +466,6 @@
             "type": "string"
           },
           "systemType": {
-            "type": "string"
-          }
-        }
-      },
-      "SystemConfigSettingDTO": {
-        "title": "SystemConfigSettingDTO",
-        "type": "object",
-        "properties": {
-          "key": {
-            "type": "string"
-          },
-          "value": {
             "type": "string"
           }
         }

@@ -1,3 +1,42 @@
-<div *ngIf="snapshot$ | async as snapshot" >
-    <pre>{{snapshot.content}}</pre>
-</div>
+<app-layout-1col
+        [title]="title"
+        [breadcrumb]="breadcrumb"
+        [middle]="middle"
+>
+</app-layout-1col>
+
+<ng-template #title>
+    <div class="container-fluid" *ngIf="snapshot$ | async as snapshot">
+        <div class="row">
+            <h3>Snapshot: {{snapshot.name}}</h3>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #breadcrumb>
+    <div *ngIf="snapshot$ | async as snapshot">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <app-back-button [routerLink]="'/'"></app-back-button>
+                <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{snapshot.name}}</li>
+            </ol>
+        </nav>
+    </div>
+</ng-template>
+
+<ng-template #middle>
+    <div *ngIf="snapshot$ | async as snapshot">
+        <app-panel>
+            <pre>{{snapshot | json}}</pre>
+        </app-panel>
+
+        <div *ngFor="let componentSnapshot of snapshot.componentSnapshots">
+            <div *ngIf="componentSnapshot.systemType=='MONGO'">
+                <app-mongo-snapshot [snapshotId]="snapshotId"
+                                    [componentKey]="componentSnapshot.componentKey"></app-mongo-snapshot>
+            </div>
+        </div>
+
+    </div>
+</ng-template>

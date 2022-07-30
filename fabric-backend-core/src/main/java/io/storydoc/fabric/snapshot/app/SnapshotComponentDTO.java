@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class DashboardDTO {
-
-    private String att;
-
+public class SnapshotComponentDTO {
+    private String componentKey;
+    private String systemType;
 }

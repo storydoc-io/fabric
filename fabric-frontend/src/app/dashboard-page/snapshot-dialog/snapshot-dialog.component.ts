@@ -1,7 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, SimpleChanges} from '@angular/core';
+import {DashboardService} from "../dashboard.service";
+import {SystemDescriptionService} from "../../system-description-page/system-description.service";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 export interface SnapshotDialogData {
-
+    environment: string,
+    name: string
 }
 
 export interface SnapshotDialogSpec {
@@ -18,8 +22,10 @@ export interface SnapshotDialogSpec {
 })
 export class SnapshotDialogComponent implements OnInit {
 
-    constructor() {
+    constructor(private systemDescriptService: SystemDescriptionService) {
     }
+
+    systemDescription$ = this.systemDescriptService.systemDescription$
 
     ngOnInit(): void {
     }
@@ -27,11 +33,22 @@ export class SnapshotDialogComponent implements OnInit {
     @Input()
     spec: SnapshotDialogSpec
 
+    ngOnChanges(changes: SimpleChanges): void {
+        if (this.spec != null) {
+            this.formGroup.setValue(this.spec.data)
+        }
+    }
+
+    formGroup: FormGroup = new FormGroup({
+        environment : new FormControl(null, [Validators.required]),
+        name : new FormControl(null, [Validators.required]),
+    })
+
     cancel() {
         this.spec.cancel()
     }
 
     confirm() {
-        this.spec.confirm(this.spec.data)
+        this.spec.confirm(this.formGroup.value)
     }
 }

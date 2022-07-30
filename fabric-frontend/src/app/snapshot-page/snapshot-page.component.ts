@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {SnapshotService} from "./snapshot.service";
-import {DashboardService} from "../dashboard-page/dashboard.service";
+import {ActivatedRoute} from "@angular/router";
+import {SnapshotId} from "@fabric/models";
 
 @Component({
   selector: 'app-snapshot-page',
@@ -10,12 +11,20 @@ import {DashboardService} from "../dashboard-page/dashboard.service";
 })
 export class SnapshotPageComponent implements OnInit {
 
-  constructor(private service: SnapshotService) { }
+  constructor(
+      private route: ActivatedRoute,
+      private service: SnapshotService) {
+  }
+
+  snapshotId: SnapshotId
 
   snapshot$ = this.service.snapshot$
 
   ngOnInit(): void {
-    this.service.loadSnapshot('');
+    this.route.paramMap.subscribe((params) => {
+      this.snapshotId = { id : params.get('snapshotId') }
+      this.service.loadSnapshot(this.snapshotId)
+    })
   }
 
 }

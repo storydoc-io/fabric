@@ -29,14 +29,14 @@ export class SystemDescriptionService implements OnDestroy {
 
     private init() {
         this.subscriptions.push(logChangesToObservable('systemDescriptionStore::systemDescription$ >>', this.systemDescription$))
-        this.loadSSystemDescription()
+        this.loadSystemDescription()
     }
 
     ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe())
     }
 
-    loadSSystemDescription() {
+    loadSystemDescription() {
         this.systemDescriptionControllerService.getSystemDescriptionUsingGet({}).subscribe(dto => {
             this.store.next({systemDescription: dto})
         })

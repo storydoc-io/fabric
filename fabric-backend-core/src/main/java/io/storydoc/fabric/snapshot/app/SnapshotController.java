@@ -1,7 +1,10 @@
 package io.storydoc.fabric.snapshot.app;
 
+import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/snaphot")
@@ -14,31 +17,18 @@ public class SnapshotController {
     }
 
     @GetMapping(value ="/snapshots", produces = MediaType.APPLICATION_JSON_VALUE)
-    public DashboardDTO list() {
-        return DashboardDTO.builder()
-                .att("hello")
-                .build();
+    public List<SnapshotSummaryDTO> list() {
+        return snapshotService.list();
     }
 
     @PostMapping(value="/snapshot", produces = MediaType.APPLICATION_JSON_VALUE)
-    public SnapshotDTO create() {
-        //snapshotService.createSnapshot();
-        return SnapshotDTO.builder()
-                .content("hello")
-                .build();
+    public SnapshotId create(String environment, String name) {
+        return snapshotService.createSnapshot(environment, name);
     }
 
     @GetMapping(value = "/snapshot", produces = MediaType.APPLICATION_JSON_VALUE)
-    public SnapshotDTO getById() {
-        return SnapshotDTO.builder()
-                .content(getDummyJson())
-                .build();
+    public SnapshotDTO getById(SnapshotId snapshotId) {
+        return snapshotService.getSnapshot(snapshotId);
     }
-
-    String getDummyJson() {
-        return "{\n" +
-                "}";
-    }
-
 
 }

@@ -9,8 +9,9 @@ import { RequestBuilder } from '../request-builder';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
-import { DashboardDto } from '../models/dashboard-dto';
 import { SnapshotDto } from '../models/snapshot-dto';
+import { SnapshotId } from '../models/snapshot-id';
+import { SnapshotSummaryDto } from '../models/snapshot-summary-dto';
 
 
 /**
@@ -43,10 +44,12 @@ export class SnapshotControllerService extends BaseService {
    * This method doesn't expect any request body.
    */
   getByIdUsingGet$Response(params?: {
+    id?: string;
   }): Observable<StrictHttpResponse<SnapshotDto>> {
 
     const rb = new RequestBuilder(this.rootUrl, SnapshotControllerService.GetByIdUsingGetPath, 'get');
     if (params) {
+      rb.query('id', params.id, {"style":"form"});
     }
 
     return this.http.request(rb.build({
@@ -71,6 +74,7 @@ export class SnapshotControllerService extends BaseService {
    * This method doesn't expect any request body.
    */
   getByIdUsingGet(params?: {
+    id?: string;
   }): Observable<SnapshotDto> {
 
     return this.getByIdUsingGet$Response(params).pipe(
@@ -94,10 +98,22 @@ export class SnapshotControllerService extends BaseService {
    * This method doesn't expect any request body.
    */
   createUsingPost$Response(params?: {
-  }): Observable<StrictHttpResponse<SnapshotDto>> {
+
+    /**
+     * environment
+     */
+    environment?: string;
+
+    /**
+     * name
+     */
+    name?: string;
+  }): Observable<StrictHttpResponse<SnapshotId>> {
 
     const rb = new RequestBuilder(this.rootUrl, SnapshotControllerService.CreateUsingPostPath, 'post');
     if (params) {
+      rb.query('environment', params.environment, {"style":"form"});
+      rb.query('name', params.name, {"style":"form"});
     }
 
     return this.http.request(rb.build({
@@ -106,7 +122,7 @@ export class SnapshotControllerService extends BaseService {
     })).pipe(
       filter((r: any) => r instanceof HttpResponse),
       map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<SnapshotDto>;
+        return r as StrictHttpResponse<SnapshotId>;
       })
     );
   }
@@ -122,10 +138,20 @@ export class SnapshotControllerService extends BaseService {
    * This method doesn't expect any request body.
    */
   createUsingPost(params?: {
-  }): Observable<SnapshotDto> {
+
+    /**
+     * environment
+     */
+    environment?: string;
+
+    /**
+     * name
+     */
+    name?: string;
+  }): Observable<SnapshotId> {
 
     return this.createUsingPost$Response(params).pipe(
-      map((r: StrictHttpResponse<SnapshotDto>) => r.body as SnapshotDto)
+      map((r: StrictHttpResponse<SnapshotId>) => r.body as SnapshotId)
     );
   }
 
@@ -145,7 +171,7 @@ export class SnapshotControllerService extends BaseService {
    * This method doesn't expect any request body.
    */
   listUsingGet$Response(params?: {
-  }): Observable<StrictHttpResponse<DashboardDto>> {
+  }): Observable<StrictHttpResponse<Array<SnapshotSummaryDto>>> {
 
     const rb = new RequestBuilder(this.rootUrl, SnapshotControllerService.ListUsingGetPath, 'get');
     if (params) {
@@ -157,7 +183,7 @@ export class SnapshotControllerService extends BaseService {
     })).pipe(
       filter((r: any) => r instanceof HttpResponse),
       map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<DashboardDto>;
+        return r as StrictHttpResponse<Array<SnapshotSummaryDto>>;
       })
     );
   }
@@ -173,10 +199,10 @@ export class SnapshotControllerService extends BaseService {
    * This method doesn't expect any request body.
    */
   listUsingGet(params?: {
-  }): Observable<DashboardDto> {
+  }): Observable<Array<SnapshotSummaryDto>> {
 
     return this.listUsingGet$Response(params).pipe(
-      map((r: StrictHttpResponse<DashboardDto>) => r.body as DashboardDto)
+      map((r: StrictHttpResponse<Array<SnapshotSummaryDto>>) => r.body as Array<SnapshotSummaryDto>)
     );
   }
 

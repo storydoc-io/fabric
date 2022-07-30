@@ -1,0 +1,5 @@
+<app-panel>
+    <pre *ngIf="mongoSnapshot$ | async as mongoSnapshot">
+        {{mongoSnapshot | json }}
+    </pre>
+</app-panel>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {SnapshotControllerService} from "@fabric/services";
-import {SnapshotDto} from "@fabric/models";
+import {SnapshotDto, SnapshotId} from "@fabric/models";
 import {BehaviorSubject} from "rxjs";
 import {map,distinctUntilChanged} from "rxjs/operators";
 
@@ -24,8 +24,8 @@ export class SnapshotService {
     this.snapshot$.subscribe((dto)=> console.log(">> snapshot$", dto))
   }
 
-  loadSnapshot(id: string) {
-    this.snapshotControllerService.getByIdUsingGet({}).subscribe(dto => {
+  loadSnapshot(snapshotId: SnapshotId) {
+    this.snapshotControllerService.getByIdUsingGet(snapshotId).subscribe(dto => {
       this.store.next({ snapshot: dto })
     })
   }

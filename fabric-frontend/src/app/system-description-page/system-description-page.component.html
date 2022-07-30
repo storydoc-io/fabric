@@ -1,3 +1,32 @@
-<div *ngIf="systemDescription$ | async as systemDescription">
-    <pre>{{systemDescription | json}}</pre>
-</div>
+<app-layout-1col
+        [title]="title"
+        [breadcrumb]="breadcrumb"
+        [middle]="middle"
+>
+</app-layout-1col>
+
+<ng-template #title>
+        <div class="row">
+            <h3>Settings</h3>
+        </div>
+</ng-template>
+
+
+<ng-template #breadcrumb>
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <app-back-button [routerLink]="'/'"></app-back-button>
+            <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Settings</li>
+        </ol>
+    </nav>
+</ng-template>
+
+
+<ng-template #middle>
+    <app-panel>
+        <div *ngIf="systemDescription$ | async as systemDescription">
+            <pre>{{systemDescription | json}}</pre>
+        </div>
+    </app-panel>
+</ng-template>
