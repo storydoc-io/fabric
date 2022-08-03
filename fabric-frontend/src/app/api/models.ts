@@ -1,9 +1,11 @@
+export { CollectionNavItem } from './models/collection-nav-item';
 export { CollectionSnapshot } from './models/collection-snapshot';
 export { EnvironmentDto } from './models/environment-dto';
 export { FileStore } from './models/file-store';
 export { FileSystem } from './models/file-system';
 export { IterableFileStore } from './models/iterable-file-store';
 export { IterablePath } from './models/iterable-path';
+export { MongoNavigationModel } from './models/mongo-navigation-model';
 export { MongoSnapshot } from './models/mongo-snapshot';
 export { Path } from './models/path';
 export { SnapshotComponentDto } from './models/snapshot-component-dto';

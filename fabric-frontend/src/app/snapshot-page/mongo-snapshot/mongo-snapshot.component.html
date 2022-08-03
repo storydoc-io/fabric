@@ -1,5 +1,16 @@
 <app-panel>
-    <pre *ngIf="mongoSnapshot$ | async as mongoSnapshot">
-        {{mongoSnapshot | json }}
-    </pre>
+    <ng-container *ngIf="mongoNavigationModels$ | async as mongoNavigationModels">
+        <ng-container *ngIf="mongoNavigationModels.get(componentKey) as mongoNavigationModel">
+            <ul class="list-group">
+                <li *ngFor="let root of  mongoNavigationModel.roots" class="list-group-item " [class.active]="root === selection" (click)="select(root)">
+                    {{root.collectionName}}
+                </li>
+            </ul>
+        <pre *ngIf="mongoSnapshot$ | async as mongoSnapshot">
+            <ng-container *ngIf="selection">
+                {{ selectedCollection(mongoSnapshot, selection) | json }}
+            </ng-container>
+        </pre>
+        </ng-container>
+    </ng-container>
 </app-panel>

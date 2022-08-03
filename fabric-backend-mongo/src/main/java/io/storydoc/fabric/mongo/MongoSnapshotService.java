@@ -1,8 +1,15 @@
 package io.storydoc.fabric.mongo;
 
+import com.mongodb.client.*;
 import io.storydoc.fabric.core.infra.StorageBase;
+import io.storydoc.fabric.mongo.navigation.MongoNavigationModel;
+import io.storydoc.fabric.mongo.snapshot.CollectionSnapshot;
+import io.storydoc.fabric.mongo.snapshot.MongoSnapshot;
+import io.storydoc.fabric.navigation.domain.NavigationModelStorage;
 import io.storydoc.fabric.snapshot.domain.*;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
+import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
+import org.bson.Document;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,8 +19,14 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
 
     private final SnapshotStorage snapshotStorage;
 
-    public MongoSnapshotService(SnapshotStorage snapshotStorage) {
+    private final NavigationModelStorage navigationModelStorage;
+
+    private final SystemDescriptionService systemDescriptionService;
+
+    public MongoSnapshotService(SnapshotStorage snapshotStorage, NavigationModelStorage navigationModelStorage, SystemDescriptionService systemDescriptionService) {
         this.snapshotStorage = snapshotStorage;
+        this.navigationModelStorage = navigationModelStorage;
+        this.systemDescriptionService = systemDescriptionService;
     }
 
     @Override
@@ -22,89 +35,50 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
     }
 
     @Override
-    public MongoSnapshot takeComponentSnapshot(SystemComponentDTO systemComponent, SnapshotId snapshotId) {
+    public MongoSnapshot takeComponentSnapshot(String environmentKey, SystemComponentDTO systemComponent, SnapshotId snapshotId) {
+
+        String systemComponentKey = systemComponent.getKey();
+        String connectionUrl = getConnectionUrl(environmentKey, systemComponentKey);
+        String dbName = getDBName(environmentKey, systemComponentKey);
+        MongoClient mongoClient = MongoClients.create(connectionUrl);
+        MongoDatabase database = mongoClient.getDatabase(dbName);
+
+
         MongoSnapshot mongoSnapshot = new MongoSnapshot();
         mongoSnapshot.setCollectionSnapshots(new ArrayList<>());
-        {
+
+        MongoIterable<String> collectionNames = database.listCollectionNames();
+        collectionNames.forEach(collectionName -> {
             CollectionSnapshot collectionSnapshot = new CollectionSnapshot();
-            collectionSnapshot.setCollectionName("Customers");
+            collectionSnapshot.setCollectionName(collectionName);
+
             collectionSnapshot.setDocuments(new ArrayList<>());
-            collectionSnapshot.getDocuments().add("{\n" +
-                    "     \"firstName\": \"John\",\n" +
-                    "     \"lastName\": \"Smith\",\n" +
-                    "     \"age\": 25,\n" +
-                    "     \"address\":\n" +
-                    "     {\n" +
-                    "         \"streetAddress\": \"21 2nd Street\",\n" +
-                    "         \"city\": \"New York\",\n" +
-                    "         \"state\": \"NY\",\n" +
-                    "         \"postalCode\": \"10021\"\n" +
-                    "     },\n" +
-                    "     \"phoneNumber\":\n" +
-                    "     [\n" +
-                    "         {\n" +
-                    "           \"type\": \"home\",\n" +
-                    "           \"number\": \"212 555-1234\"\n" +
-                    "         },\n" +
-                    "         {\n" +
-                    "           \"type\": \"fax\",\n" +
-                    "           \"number\": \"646 555-4567\"\n" +
-                    "         }\n" +
-                    "     ]\n" +
-                    " }" +
-                    "");
-            mongoSnapshot.getCollectionSnapshots().add(collectionSnapshot);
-        }
-        {
-            CollectionSnapshot collectionSnapshot = new CollectionSnapshot();
-            collectionSnapshot.setCollectionName("Orders");
-            collectionSnapshot.setDocuments(new ArrayList<>());
-            collectionSnapshot.getDocuments().add("[\n" +
-                    "{\n" +
-                    "“advance_paid”: 0.0,\n" +
-                    "“company”: “_Test Company”,\n" +
-                    "“conversion_rate”: 1.0,\n" +
-                    "“currency”: “INR”,\n" +
-                    "“customer”: “_Test Customer”,\n" +
-                    "“customer_group”: “_Test Customer Group”,\n" +
-                    "“customer_name”: “_Test Customer”,\n" +
-                    "“delivery_date”: “2013-02-23”,\n" +
-                    "“doctype”: “Sales Order”,\n" +
-                    "“base_grand_total”: 1000.0,\n" +
-                    "“grand_total”: 1000.0,\n" +
-                    "“naming_series”: “_T-Sales Order-”,\n" +
-                    "“order_type”: “Sales”,\n" +
-                    "“plc_conversion_rate”: 1.0,\n" +
-                    "“price_list_currency”: “INR”,\n" +
-                    "“items”: [\n" +
-                    "{\n" +
-                    "“base_amount”: 1000.0,\n" +
-                    "“base_rate”: 100.0,\n" +
-                    "“description”: “CPU”,\n" +
-                    "“doctype”: “Sales Order Item”,\n" +
-                    "“item_code”: “_Test Item Home Desktop 100”,\n" +
-                    "“item_name”: “CPU”,\n" +
-                    "“parentfield”: “items”,\n" +
-                    "“qty”: 10.0,\n" +
-                    "“rate”: 100.0,\n" +
-                    "“warehouse”: “_Test Warehouse - _TC”,\n" +
-                    "“stock_uom”: “_Test UOM”,\n" +
-                    "“conversion_factor”: 1.0,\n" +
-                    "“uom”: “_Test UOM”\n" +
-                    "}\n" +
-                    "],\n" +
-                    "“selling_price_list”: “_Test Price List”,\n" +
-                    "“territory”: “_Test Territory”,\n" +
-                    "“transaction_date”: “2013-02-21”\n" +
-                    "}\n" +
-                    "]");
+            MongoCollection<Document> collection = database.getCollection(collectionName);
+            FindIterable<Document> documents = collection.find();
+            documents.forEach(doc -> {
+                collectionSnapshot.getDocuments().add(doc.toJson());
+            });
+
             mongoSnapshot.getCollectionSnapshots().add(collectionSnapshot);
 
-        }
+        });
 
         return mongoSnapshot;
     }
 
+    private String getConnectionUrl(String environmentKey, String systemComponentKey) {
+        return systemDescriptionService.getSystemDescription().getSettings()
+                .get(environmentKey)
+                .get(systemComponentKey)
+                .get("connectionUrl");
+    }
+
+    private String getDBName(String environmentKey, String systemComponentKey) {
+        return systemDescriptionService.getSystemDescription().getSettings()
+                .get(environmentKey)
+                .get(systemComponentKey)
+                .get("dbName");
+    }
 
 
     @Override
@@ -118,4 +92,9 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
         return snapshotStorage.loadSnapshotComponent(snapshotId, componentKey, deserializer, systemType());
 
     }
+
+    public MongoNavigationModel getNavigationModel(String systemComponentKey) {
+            return navigationModelStorage.loadNavigationModel(systemComponentKey, inputStream-> objectMapper.readValue(inputStream, MongoNavigationModel.class));
+    }
+
 }

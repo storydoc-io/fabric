@@ -1,19 +1,16 @@
-package io.storydoc.fabric.mongo;
+package io.storydoc.fabric.mongo.navigation;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CollectionSnapshot {
+public class CollectionNavItem extends NavItem {
 
     private String collectionName;
-    private List<String> documents;
 
 }

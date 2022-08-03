@@ -36,6 +36,48 @@
     }
   ],
   "paths": {
+    "/api/mongo/navigationmodel": {
+      "get": {
+        "tags": [
+          "mongo-snapshot-controller"
+        ],
+        "summary": "getNavigationModel",
+        "operationId": "getNavigationModelUsingGET",
+        "parameters": [
+          {
+            "name": "systemComponentKey",
+            "in": "query",
+            "description": "systemComponentKey",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MongoNavigationModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/api/mongo/snapshot": {
       "get": {
         "tags": [
@@ -277,6 +319,15 @@
   },
   "components": {
     "schemas": {
+      "CollectionNavItem": {
+        "title": "CollectionNavItem",
+        "type": "object",
+        "properties": {
+          "collectionName": {
+            "type": "string"
+          }
+        }
+      },
       "CollectionSnapshot": {
         "title": "CollectionSnapshot",
         "type": "object",
@@ -360,6 +411,18 @@
       "Iterable«Path»": {
         "title": "Iterable«Path»",
         "type": "object"
+      },
+      "MongoNavigationModel": {
+        "title": "MongoNavigationModel",
+        "type": "object",
+        "properties": {
+          "roots": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CollectionNavItem"
+            }
+          }
+        }
       },
       "MongoSnapshot": {
         "title": "MongoSnapshot",

@@ -40,4 +40,9 @@ public class WorkspaceStructure {
         return getSnapshotFolder(snapshotId).resolve(ResourceUrn.of(filename));
     }
 
+    public ResourceUrn getNavigationModelUrn(String systemCompenentKey) {
+        String filename = "navigationmodel-" + systemCompenentKey + ".json";
+        return ResourceUrn.of(filename);
+    }
+
 }

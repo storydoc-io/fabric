@@ -7,7 +7,7 @@ public interface SnapshotHandler<SC extends SnapshotComponent> {
 
     String systemType();
 
-    SC takeComponentSnapshot(SystemComponentDTO systemComponent, SnapshotId snapshotId);
+    SC takeComponentSnapshot(String environmentKey, SystemComponentDTO systemComponent, SnapshotId snapshotId);
 
     SnapshotSerializer<SC> getSerializer();
 }

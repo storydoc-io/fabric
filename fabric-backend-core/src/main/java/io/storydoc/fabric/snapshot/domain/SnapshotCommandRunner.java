@@ -47,7 +47,7 @@ public class SnapshotCommandRunner {
         for (SystemComponentDTO systemComponent : systemDescriptionDTO.getSystemComponents()) {
             String systemType = systemComponent.getSystemType();
             SnapshotHandler snapshotHandler = getSnapshotHandler(systemType);
-            SnapshotComponent snapshotComponent = snapshotHandler.takeComponentSnapshot(systemComponent, snapshotId);
+            SnapshotComponent snapshotComponent = snapshotHandler.takeComponentSnapshot(envKey, systemComponent, snapshotId);
             snapshotStorage.saveSnapshotComponent(snapshotComponent, systemComponent, snapshotHandler.getSerializer(), snapshotId);
         }
 

@@ -4,7 +4,6 @@ import io.storydoc.fabric.config.FabricServerProperties;
 import io.storydoc.fabric.snapshot.domain.SnapshotHandler;
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.snapshot.domain.SnapshotSerializer;
-import io.storydoc.fabric.snapshot.infra.jsonmodel.SnapshotComponent;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -36,7 +35,7 @@ public class TestConfig {
             }
 
             @Override
-            public DummySnapshot takeComponentSnapshot(SystemComponentDTO systemComponent, SnapshotId snapshotId) {
+            public DummySnapshot takeComponentSnapshot(String environmentKey, SystemComponentDTO systemComponent, SnapshotId snapshotId) {
                 DummySnapshot snapshot = new DummySnapshot();
                 snapshot.setContent( "{ \"dummy\" = \"content\" } ");
                 return snapshot;
