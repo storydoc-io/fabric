@@ -28,4 +28,4 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: assembly
-        path: fabric-server-pe/target/storydoc-server-pe-*.zip
+        path: fabric-server-pe/target/fabric-server-pe-*.zip
