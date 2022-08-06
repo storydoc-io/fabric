@@ -1,18 +1,18 @@
 import {Component, Input, OnInit, SimpleChanges} from '@angular/core';
-import {DashboardService} from "../dashboard.service";
+import { DatePipe } from '@angular/common';
 import {SystemDescriptionService} from "../../system-description-page/system-description.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 export interface SnapshotDialogData {
     environment: string,
-    name: string
+    name: string,
 }
 
 export interface SnapshotDialogSpec {
     data: SnapshotDialogData
     cancel: () => void
     confirm: (data: SnapshotDialogData) => void
-
+    useNameGenerator: boolean
 }
 
 @Component({
@@ -44,6 +44,28 @@ export class SnapshotDialogComponent implements OnInit {
         name : new FormControl(null, [Validators.required]),
     })
 
+    private get environmentControl(): FormControl {
+        return <FormControl> this.formGroup.get('environment')
+    }
+
+    private get nameControl(): FormControl {
+        return <FormControl> this.formGroup.get('name')
+    }
+
+    datepipe: DatePipe = new DatePipe('en-US')
+
+    onEnvironmentChanged() {
+        if (this.spec.useNameGenerator) {
+            let env = this.environmentControl.value
+            let timeStamp = this.datepipe.transform(new Date(), 'YYYY-MM-dd HH:mm:ss')
+            this.nameControl.setValue(`${env} snapshot ${timeStamp}`)
+        }
+    }
+
+    onNameChangedManually() {
+        this.spec.useNameGenerator = false
+    }
+
     cancel() {
         this.spec.cancel()
     }
@@ -51,4 +73,5 @@ export class SnapshotDialogComponent implements OnInit {
     confirm() {
         this.spec.confirm(this.formGroup.value)
     }
+
 }

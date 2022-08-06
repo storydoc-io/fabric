@@ -8,7 +8,7 @@
             <form [formGroup]="formGroup">
                 <div class="mb-3">
                     <label for="environment" class="form-label">Environment</label>
-                    <select formControlName="environment" class="form-select" >
+                    <select formControlName="environment" class="form-select" (change)="onEnvironmentChanged()">
                         <ng-container *ngIf="systemDescription$ | async as systemDescription">
                             <option *ngFor="let environment of systemDescription.environments"
                                     [ngValue]="environment.key">{{environment.label}}</option>
@@ -18,7 +18,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
-                    <input formControlName="name" type="text" class="form-control">
+                    <input formControlName="name" type="text" class="form-control" (keyup)="onNameChangedManually()">
                     <div id="name" class="form-text">Enter a name for the snapshot.</div>
                 </div>
 

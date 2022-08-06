@@ -21,6 +21,7 @@ export class DashboardPageComponent implements OnInit {
 
   createSnapshot() {
     this.openSnapshotDialog({
+      useNameGenerator: true,
       data: {
         environment: null,
         name: null
