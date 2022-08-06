@@ -3,6 +3,23 @@ import {CollectionNavItem, CollectionSnapshot, MongoSnapshot, SnapshotId} from "
 import {MongoService} from "./mongo.service";
 import {MongoNavigationModelService} from "./mongo-navigation-model.service";
 
+interface Selector {
+ type: string
+}
+
+interface RootSelector extends Selector {
+  type: 'ROOT'
+}
+
+interface CollectionSelector extends Selector {
+  type: 'COLLECTION'
+}
+
+interface DocumentSelector extends Selector {
+  type: 'COLLECTION'
+}
+
+
 @Component({
   selector: 'app-mongo-snapshot',
   templateUrl: './mongo-snapshot.component.html',
@@ -16,7 +33,9 @@ export class MongoSnapshotComponent implements OnInit {
   @Input()
   componentKey: string
 
-  selection: CollectionNavItem
+  collectionSelection: CollectionNavItem
+
+  documentSelection: number | null = null
 
   mongoSnapshot$ = this.service.mongoSnapshot$
 
@@ -29,12 +48,29 @@ export class MongoSnapshotComponent implements OnInit {
       this.service.load(this.snapshotId, this.componentKey);
   }
 
-  select(selected: CollectionNavItem) {
-    this.selection = selected
+  selectCollection(selectedCollection: CollectionNavItem) {
+    this.collectionSelection = selectedCollection
+    this.documentSelection = null
   }
 
-  selectedCollection(mongoSnapshot: MongoSnapshot, selection: CollectionNavItem): CollectionSnapshot {
-    if (!selection) return null
-    return mongoSnapshot.collectionSnapshots.find(collectionSnapshot => collectionSnapshot.collectionName===selection.collectionName)
+  selectedCollection(mongoSnapshot: MongoSnapshot, selectedCollection: CollectionNavItem): CollectionSnapshot {
+    if (!selectedCollection) return null
+    return mongoSnapshot.collectionSnapshots.find(collectionSnapshot => collectionSnapshot.collectionName===selectedCollection.collectionName)
   }
+
+
+  selectDocument(docIdx: number) {
+    console.log('docIdx: ' , docIdx)
+      this.documentSelection = docIdx
+  }
+
+  selectedDocument(collection: CollectionSnapshot, documentSelection: number): object {
+    console.log('collection: ', collection)
+    console.log('docu sel: ', documentSelection)
+     if (collection==null || documentSelection==null) return null
+     let result: string = collection.documents[documentSelection]
+    console.log('result: ', result)
+    return JSON.parse(result)
+  }
+
 }

@@ -2,13 +2,22 @@
     <ng-container *ngIf="mongoNavigationModels$ | async as mongoNavigationModels">
         <ng-container *ngIf="mongoNavigationModels.get(componentKey) as mongoNavigationModel">
             <ul class="list-group">
-                <li *ngFor="let root of  mongoNavigationModel.roots" class="list-group-item " [class.active]="root === selection" (click)="select(root)">
+                <li *ngFor="let root of  mongoNavigationModel.roots" class="list-group-item " [class.active]="root === collectionSelection" (click)="selectCollection(root)">
                     {{root.collectionName}}
                 </li>
             </ul>
         <pre *ngIf="mongoSnapshot$ | async as mongoSnapshot">
-            <ng-container *ngIf="selection">
-                {{ selectedCollection(mongoSnapshot, selection) | json }}
+            <ng-container *ngIf="selectedCollection(mongoSnapshot, collectionSelection) as collection">
+                <ng-container *ngIf="documentSelection==null">
+                    <ul class="list-group">
+                        <li class="list-group-item " *ngFor="let document of collection.documents; let docIdx = index" (click)="selectDocument(docIdx)">
+                            {{document}}
+                        </li>
+                    </ul>
+                </ng-container>
+                <ng-container *ngIf="documentSelection!=null">
+                    <pre>{{selectedDocument(collection, documentSelection) | json}}</pre>
+                </ng-container>
             </ng-container>
         </pre>
         </ng-container>

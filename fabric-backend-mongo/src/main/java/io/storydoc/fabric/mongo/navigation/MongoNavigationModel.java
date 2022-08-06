@@ -16,4 +16,5 @@ public class MongoNavigationModel extends NavigationModel {
 
     private List<CollectionNavItem> roots;
 
+
 }
