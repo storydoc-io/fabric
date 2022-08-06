@@ -2,3 +2,4 @@
 /node
 /dist
 package-lock.json
+/target
