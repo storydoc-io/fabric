@@ -60,16 +60,12 @@ export class MongoSnapshotComponent implements OnInit {
 
 
   selectDocument(docIdx: number) {
-    console.log('docIdx: ' , docIdx)
       this.documentSelection = docIdx
   }
 
   selectedDocument(collection: CollectionSnapshot, documentSelection: number): object {
-    console.log('collection: ', collection)
-    console.log('docu sel: ', documentSelection)
      if (collection==null || documentSelection==null) return null
      let result: string = collection.documents[documentSelection]
-    console.log('result: ', result)
     return JSON.parse(result)
   }
 
