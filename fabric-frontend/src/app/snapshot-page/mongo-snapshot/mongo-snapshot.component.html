@@ -2,24 +2,36 @@
     <ng-container *ngIf="mongoNavigationModels$ | async as mongoNavigationModels">
         <ng-container *ngIf="mongoNavigationModels.get(componentKey) as mongoNavigationModel">
             <ul class="list-group">
-                <li *ngFor="let root of  mongoNavigationModel.roots" class="list-group-item " [class.active]="root === collectionSelection" (click)="selectCollection(root)">
+                <li *ngFor="let root of  mongoNavigationModel.roots" class="list-group-item "
+                    [class.active]="root === selectedCollection" (click)="selectCollection(root)">
                     {{root.collectionName}}
                 </li>
             </ul>
-        <pre *ngIf="mongoSnapshot$ | async as mongoSnapshot">
-            <ng-container *ngIf="selectedCollection(mongoSnapshot, collectionSelection) as collection">
-                <ng-container *ngIf="documentSelection==null">
-                    <ul class="list-group">
-                        <li class="list-group-item " *ngFor="let document of collection.documents; let docIdx = index" (click)="selectDocument(docIdx)">
-                            {{document}}
-                        </li>
-                    </ul>
-                </ng-container>
-                <ng-container *ngIf="documentSelection!=null">
-                    <pre>{{selectedDocument(collection, documentSelection) | json}}</pre>
+            <ng-container *ngIf="mongoSnapshot">
+                <ng-container *ngIf="selectedCollection">
+                    <ng-container *ngIf="documentSelection==null">
+                      <ul *ngIf="pagedSelectedCollection.needsPager()" class="pagination">
+                        <li class="page-item"><a class="page-link" (click)="pagedSelectedCollection.toFirstPage()">First</a></li>
+                        <li class="page-item"><a class="page-link" (click)="pagedSelectedCollection.toPreviousPage()">Previous</a></li>
+                        <li class="page-item"><a class="page-link">{{(pagedSelectedCollection.pageNr + 1)}}/{{(pagedSelectedCollection.lastPageNr + 1)}}</a></li>
+                        <li class="page-item"><a class="page-link"
+                                                 (click)="pagedSelectedCollection.toNextPage()">Next</a></li>
+                        <li class="page-item"><a class="page-link"
+                                                 (click)="pagedSelectedCollection.toLastPage()">Last</a></li>
+                      </ul>
+                        <ul class="list-group">
+                            <li class="list-group-item "
+                                *ngFor="let document of pagedSelectedCollection.currentPage; let docIdx = index"
+                                (click)="selectDocument(docIdx)">
+                                {{document}}
+                            </li>
+                        </ul>
+                    </ng-container>
+                    <ng-container *ngIf="documentSelection!=null">
+                        <pre>{{selectedDocument() | json}}</pre>
+                    </ng-container>
                 </ng-container>
             </ng-container>
-        </pre>
         </ng-container>
     </ng-container>
 </app-panel>

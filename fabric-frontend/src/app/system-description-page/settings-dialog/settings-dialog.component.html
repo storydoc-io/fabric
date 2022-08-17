@@ -1,0 +1,48 @@
+<div *ngIf="formGroup && spec"  class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Connection settings</h5>
+            <button type="button" class="btn-close" (click)="cancel()"></button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="formGroup">
+                <div class="mb-3" class="form-group">
+                    <label for="environmentKey" class="form-label">Environment</label>
+                    <select id="environmentKey" formControlName="environmentKey" class="form-select" [class.is-invalid]="environmentKeyControlInvalid()" (change)="onEnvironmentChange()" >
+                        <option *ngFor="let environment of spec.environments"
+                                [ngValue]="environment.key">{{environment.key}}</option>
+                    </select>
+                    <div class="form-text">Select an environment.</div>
+                    <app-validation-messages [control]="environmentKeyControl()"></app-validation-messages>
+                </div>
+
+                <div class="mb-3" class="form-group">
+                    <label for="systemComponentKey" class="form-label">Datasource</label>
+                    <select id="systemComponentKey" formControlName="systemComponentKey" class="form-select" [class.is-invalid]="systemComponentKeyControlInvalid()" (change)="onSystemComponentKeyChange()" >
+                        <option *ngFor="let systemComponent of spec.systemComponents"
+                                [ngValue]="systemComponent.key">{{systemComponent.key}}</option>
+                    </select>
+                    <div class="form-text">Select a datasource.</div>
+                    <app-validation-messages [control]="systemComponentKeyControl()"></app-validation-messages>
+                </div>
+
+                <ng-container formArrayName="settings">
+                    <ng-container *ngFor="let settingDescriptor of settingDescriptors; let i=index">
+                        <div class="mb-3" class="form-group">
+                            <label class="form-label">{{settingDescriptor.key}}</label>
+                            <input [formControl]="settingValueControl(i)" type="text" class="form-control" [class.is-invalid]="settingValueControlInvalid(i)">
+                            <div id="label" class="form-text">{{settingDescriptor.description}}</div>
+                        </div>
+                    </ng-container>
+                </ng-container>
+
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="confirm()" [disabled]="!formGroup.valid">Save changes
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,30 @@
+<div *ngIf="formGroup"  class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Add System Component</h5>
+            <button type="button" class="btn-close" (click)="cancel()"></button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="formGroup">
+                <div class="mb-3" class="form-group">
+                    <label for="key" class="form-label">Key</label>
+                    <input formControlName="key" type="text" class="form-control" [class.is-invalid]="keyControlInvalid()">
+                    <div id="key" class="form-text">Enter a key for the component.</div>
+                    <app-validation-messages [control]="keyControl"></app-validation-messages>
+                </div>
+                <div class="mb-3">
+                    <label for="label" class="form-label" >Label</label>
+                    <input formControlName="label" type="text" class="form-control" [class.is-invalid]="labelControlInvalid()">
+                    <div id="label" class="form-text">Enter a description.</div>
+                </div>
+
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="confirm()" [disabled]="!formGroup.valid">Save changes
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+        </div>
+
+    </div>
+</div>

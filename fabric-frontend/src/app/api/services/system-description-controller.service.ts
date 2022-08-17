@@ -77,4 +77,58 @@ export class SystemDescriptionControllerService extends BaseService {
     );
   }
 
+  /**
+   * Path part for operation setSystemDescriptionUsingPost
+   */
+  static readonly SetSystemDescriptionUsingPostPath = '/api/systemdescription';
+
+  /**
+   * setSystemDescription.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `setSystemDescriptionUsingPost()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  setSystemDescriptionUsingPost$Response(params?: {
+    body?: SystemDescriptionDto
+  }): Observable<StrictHttpResponse<void>> {
+
+    const rb = new RequestBuilder(this.rootUrl, SystemDescriptionControllerService.SetSystemDescriptionUsingPostPath, 'post');
+    if (params) {
+      rb.body(params.body, 'application/json');
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'text',
+      accept: '*/*'
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      })
+    );
+  }
+
+  /**
+   * setSystemDescription.
+   *
+   *
+   *
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `setSystemDescriptionUsingPost$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  setSystemDescriptionUsingPost(params?: {
+    body?: SystemDescriptionDto
+  }): Observable<void> {
+
+    return this.setSystemDescriptionUsingPost$Response(params).pipe(
+      map((r: StrictHttpResponse<void>) => r.body as void)
+    );
+  }
+
 }

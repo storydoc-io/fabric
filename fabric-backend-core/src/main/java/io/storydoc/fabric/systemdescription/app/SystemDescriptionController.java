@@ -1,9 +1,7 @@
 package io.storydoc.fabric.systemdescription.app;
 
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("api/systemdescription")
@@ -18,6 +16,11 @@ public class SystemDescriptionController {
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     SystemDescriptionDTO getSystemDescription() {
         return systemDescriptionService.getSystemDescription();
+    }
+
+    @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    void setSystemDescription(@RequestBody SystemDescriptionDTO systemDescription) {
+        systemDescriptionService.updateSystemDescription(systemDescription);
     }
 
 }

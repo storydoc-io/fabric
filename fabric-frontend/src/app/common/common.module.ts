@@ -7,6 +7,8 @@ import {ModalComponent} from './modal/modal.component'
 import {Layout1ColComponent} from "./layout-1col/layout-1col.component";
 import {BackButtonComponent} from "./back-button/back-button.component";
 import {PanelComponent} from "./panel/panel.component";
+import {ConfirmationDialogComponent} from "./confirmation-dialog/confirmation-dialog.component";
+import { ValidationMessagesComponent } from './validation-messages/validation-messages.component';
 
 @NgModule({
     declarations: [
@@ -14,7 +16,9 @@ import {PanelComponent} from "./panel/panel.component";
         PopupMenuComponent,
         Layout1ColComponent,
         BackButtonComponent,
-        PanelComponent
+        PanelComponent,
+        ConfirmationDialogComponent,
+        ValidationMessagesComponent
     ],
     imports: [
         CoreModule,
@@ -24,7 +28,9 @@ import {PanelComponent} from "./panel/panel.component";
         PopupMenuComponent,
         Layout1ColComponent,
         BackButtonComponent,
-        PanelComponent
+        PanelComponent,
+        ConfirmationDialogComponent,
+        ValidationMessagesComponent
     ]
 })
 export class FabricCommonModule {

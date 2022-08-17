@@ -11,6 +11,9 @@ import { SnapshotDialogComponent } from './dashboard-page/snapshot-dialog/snapsh
 import { SystemDescriptionPageComponent } from './system-description-page/system-description-page.component';
 import { MongoSnapshotComponent } from './snapshot-page/mongo-snapshot/mongo-snapshot.component';
 import { MongoNavmodelPanelComponent } from './system-description-page/mongo-navmodel-panel/mongo-navmodel-panel.component';
+import { EnvironmentDialogComponent } from './system-description-page/environment-dialog/environment-dialog.component';
+import { SystemComponentDialogComponent } from './system-description-page/system-component-dialog/system-component-dialog.component';
+import { SettingsDialogComponent } from './system-description-page/settings-dialog/settings-dialog.component';
 
 
 @NgModule({
@@ -22,6 +25,9 @@ import { MongoNavmodelPanelComponent } from './system-description-page/mongo-nav
     SystemDescriptionPageComponent,
     MongoSnapshotComponent,
     MongoNavmodelPanelComponent,
+    EnvironmentDialogComponent,
+    SystemComponentDialogComponent,
+    SettingsDialogComponent,
   ],
   imports: [
     CoreModule,

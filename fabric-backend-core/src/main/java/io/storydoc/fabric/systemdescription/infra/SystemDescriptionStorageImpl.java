@@ -67,7 +67,7 @@ public class SystemDescriptionStorageImpl extends StorageBase implements SystemD
     }
 
     private void serializeSystemDescription(SystemDescription systemDescription, java.io.OutputStream outputStream) throws IOException {
-        objectMapper.writeValue(outputStream, systemDescription);
+        objectMapper.writerWithDefaultPrettyPrinter().writeValue(outputStream, systemDescription);
     }
 
 }

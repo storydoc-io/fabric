@@ -1,6 +1,8 @@
 package io.storydoc.fabric.systemdescription.app;
 
 import io.storydoc.fabric.systemdescription.domain.SystemDescriptionStorage;
+import io.storydoc.fabric.systemdescription.infra.jsonmodel.Environment;
+import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemComponent;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemDescription;
 import org.springframework.stereotype.Service;
 
@@ -35,19 +37,29 @@ public class SystemDescriptionService {
                                 .build())
                         .collect(Collectors.toList())
                 )
-                .settings(toDto(systemDescription.getSettings()))
+                .settings(systemDescription.getSettings())
                 .build();
     }
 
-    private Map<String, Map<String, Map<String, String>>> toDto(Map<String, Map<String, Map<String, String>>> settings) {
-        Map<String, Map<String, Map<String, String>>> dto = new HashMap<>();
-        for(String envKey: settings.keySet()) {
-            Map<String, Map<String, String>> envSettings = settings.get(envKey);
-            Map<String, Map<String, String>> envSettingsDto = new HashMap<>(envSettings);
-            dto.put(envKey, envSettingsDto);
-        }
-        return dto;
+    public void updateSystemDescription(SystemDescriptionDTO dto) {
+        this.systemDescriptionStorage.saveSystemDescription(SystemDescription.builder()
+                .environments(dto.getEnvironments().stream()
+                        .map(environmentDTO -> Environment.builder()
+                                .key(environmentDTO.getKey())
+                                .label(environmentDTO.getLabel())
+                                .build())
+                        .collect(Collectors.toList())
+                )
+                .systemComponents(dto.getSystemComponents().stream()
+                        .map(systemComponentDTO -> SystemComponent.builder()
+                                .key(systemComponentDTO.getKey())
+                                .label(systemComponentDTO.getLabel())
+                                .systemType(systemComponentDTO.getSystemType())
+                                .build()
+                        )
+                        .collect(Collectors.toList())
+                )
+                .settings(dto.getSettings())
+                .build());
     }
-
-
 }

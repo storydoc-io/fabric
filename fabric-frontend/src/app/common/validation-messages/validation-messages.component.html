@@ -1,0 +1,3 @@
+<span *ngIf="show()" class="help-block">
+    <span *ngFor="let message of validationMessages()" style="display: block;" class="invalid-feedback" [innerHTML]="message"></span>
+  </span>
