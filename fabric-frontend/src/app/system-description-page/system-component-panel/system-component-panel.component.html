@@ -1,0 +1,41 @@
+<app-panel>
+    <h4>Datasources</h4>
+    <table class="table table-sm table-striped table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Key</th>
+            <th scope="col">Label</th>
+            <th scope="col">System type</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let systemComponent of systemDescription.systemComponents">
+            <th scope="row"></th>
+            <td>{{systemComponent.key}}</td>
+            <td>{{systemComponent.label}}</td>
+            <td>{{systemComponent.systemType}}</td>
+            <td>
+                <div class="btn  btn-sm btn-outline-primary float-right m-2"
+                     (click)="editComponent(systemDescription, systemComponent)">Edit
+                </div>
+                <div class="btn  btn-sm btn-outline-primary float-right m-2"
+                     (click)="removeComponent(systemComponent)">Remove
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="btn  btn-sm btn-outline-primary float-right m-2" (click)="addComponent(systemDescription)">
+        Add
+    </div>
+</app-panel>
+
+<jw-modal [id]="systemComponentDialogId()">
+    <app-system-component-dialog [spec]="systemComponentDialogSpec"></app-system-component-dialog>
+</jw-modal>
+
+<jw-modal [id]="confirmationDialogId()">
+    <app-confirmation-dialog [spec]="confirmationDialogSpec"></app-confirmation-dialog>
+</jw-modal>

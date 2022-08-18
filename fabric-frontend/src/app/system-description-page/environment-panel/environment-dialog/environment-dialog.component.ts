@@ -1,7 +1,6 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {unique} from '@fabric/common'
-import {showValidationMessages} from "../../common/validators";
+import {showValidationMessages, unique} from '@fabric/common'
 
 export interface EnvironmentDialogData {
   key: string,

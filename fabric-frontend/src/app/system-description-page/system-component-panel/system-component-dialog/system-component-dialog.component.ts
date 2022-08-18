@@ -1,8 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {unique} from '../../common'
-import {SystemDescriptionService} from "../system-description.service";
-import {showValidationMessages} from "../../common/validators";
+import {showValidationMessages, unique} from '@fabric/common'
+import {SystemDescriptionService} from '../../system-description.service';
 
 export interface SystemComponentDialogData {
     key: string,

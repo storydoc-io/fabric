@@ -25,131 +25,13 @@
 
 <ng-template #middle>
     <div *ngIf="systemDescription$ | async as systemDescription">
-        <app-panel>
-            <h4>Datasources</h4>
-            <table class="table table-sm table-striped table-bordered">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Key</th>
-                    <th scope="col">Label</th>
-                    <th scope="col">System type</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let systemComponent of systemDescription.systemComponents">
-                    <th scope="row"></th>
-                    <td>{{systemComponent.key}}</td>
-                    <td>{{systemComponent.label}}</td>
-                    <td>{{systemComponent.systemType}}</td>
-                    <td>
-                        <div class="btn  btn-sm btn-outline-primary float-right m-2"
-                             (click)="editComponent(systemDescription, systemComponent)">Edit
-                        </div>
-                        <div class="btn  btn-sm btn-outline-primary float-right m-2"
-                             (click)="removeComponent(systemComponent)">Remove
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-            <div class="btn  btn-sm btn-outline-primary float-right m-2" (click)="addComponent(systemDescription)">
-                Add
-            </div>
-        </app-panel>
-
+        <app-system-component-panel [systemDescription]="systemDescription"></app-system-component-panel>
         <br>
-
-        <app-panel>
-            <h4>Environments</h4>
-            <table class="table table-sm table-striped table-bordered">
-                <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Key</th>
-                    <th scope="col">Label</th>
-                    <th scope="col"></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let environment of systemDescription.environments">
-                    <th scope="row"></th>
-                    <td>{{environment.key}}</td>
-                    <td>{{environment.label}}</td>
-                    <td>
-                        <div class="btn  btn-sm btn-outline-primary float-right m-2"
-                             (click)="editEnvironment(systemDescription, environment)">Edit
-                        </div>
-                        <div class="btn  btn-sm btn-outline-primary float-right m-2"
-                             (click)="removeEnvironment(environment)">Remove
-                        </div>
-                    </td>
-
-                </tr>
-                </tbody>
-            </table>
-            <div class="btn  btn-sm btn-outline-primary float-right m-2"
-                 (click)="addEnvironment(systemDescription)">
-                Add
-            </div>
-        </app-panel>
-
+        <app-environment-panel [systemDescription]="systemDescription"></app-environment-panel>
         <br>
-        <app-panel>
-            <h4>Connection settings</h4>
-            <table class="table table-sm table-striped table-bordered">
-                <thead>
-                <tr>
-                    <th scope="col">Environment</th>
-                    <th scope="col">Datasource</th>
-                    <th scope="col">Settings</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let settingRow of settingRows(systemDescription)">
-                    <td>{{settingRow.environmentKey}}</td>
-                    <td>{{settingRow.systemComponentKey}}</td>
-                    <td>
-                        <div *ngFor="let setting of settingRow.settings">
-                            {{setting.key}} = {{setting.value}}
-                        </div>
-                    </td>
-                    <td>
-                        <div class="btn  btn-sm btn-outline-primary float-right m-2"
-                             (click)="editSetting(systemDescription, settingRow)">Edit
-                        </div>
-                        <div class="btn  btn-sm btn-outline-primary float-right m-2"
-                             (click)="removeSetting(systemDescription, settingRow)">Remove
-                        </div>
-                    </td>
-
-                </tr>
-                </tbody>
-            </table>
-            <div class="btn  btn-sm btn-outline-primary float-right m-2"
-                 (click)="addSetting(systemDescription)">
-                Add
-            </div>
-        </app-panel>
-
+        <app-settings-panel [systemDescription]="systemDescription"></app-settings-panel>
     </div>
 
     <app-mongo-navmodel-panel></app-mongo-navmodel-panel>
 </ng-template>
 
-<jw-modal [id]="systemComponentDialogId()">
-    <app-system-component-dialog [spec]="systemComponentDialogSpec"></app-system-component-dialog>
-</jw-modal>
-
-<jw-modal [id]="environmentDialogId()">
-    <app-environment-dialog [spec]="environmentDialogSpec"></app-environment-dialog>
-</jw-modal>
-
-<jw-modal [id]="settingsDialogId()">
-    <app-settings-dialog [spec]="settingsDialogSpec"></app-settings-dialog>
-</jw-modal>
-
-<jw-modal [id]="confirmationDialogId()">
-    <app-confirmation-dialog [spec]="confirmationDialogSpec"></app-confirmation-dialog>
-</jw-modal>

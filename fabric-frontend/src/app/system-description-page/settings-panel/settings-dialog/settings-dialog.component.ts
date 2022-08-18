@@ -1,18 +1,8 @@
 import {Component, Input, OnInit, SimpleChanges} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
+import {showValidationMessages} from "@fabric/common";
 import {EnvironmentDto, SystemComponentDto} from "@fabric/models";
-import {SystemDescriptionService} from "../system-description.service";
-import {showValidationMessages} from "../../common/validators";
-
-export interface Setting {
-    key: string,
-    value: string
-}
-
-export interface SettingDescriptor {
-    key: string,
-    description: string
-}
+import {Setting, SettingDescriptor, SystemDescriptionService} from "../../system-description.service";
 
 export interface SettingsDialogData {
     systemComponentKey: string,

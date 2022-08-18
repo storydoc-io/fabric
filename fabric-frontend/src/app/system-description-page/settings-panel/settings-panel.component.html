@@ -1,0 +1,44 @@
+<app-panel>
+    <h4>Connection settings</h4>
+    <table class="table table-sm table-striped table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">Environment</th>
+            <th scope="col">Datasource</th>
+            <th scope="col">Settings</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let settingRow of settingRows(systemDescription)">
+            <td>{{settingRow.environmentKey}}</td>
+            <td>{{settingRow.systemComponentKey}}</td>
+            <td>
+                <div *ngFor="let setting of settingRow.settings">
+                    {{setting.key}} = {{setting.value}}
+                </div>
+            </td>
+            <td>
+                <div class="btn  btn-sm btn-outline-primary float-right m-2"
+                     (click)="editSetting(systemDescription, settingRow)">Edit
+                </div>
+                <div class="btn  btn-sm btn-outline-primary float-right m-2"
+                     (click)="removeSetting(systemDescription, settingRow)">Remove
+                </div>
+            </td>
+
+        </tr>
+        </tbody>
+    </table>
+    <div class="btn  btn-sm btn-outline-primary float-right m-2"
+         (click)="addSetting(systemDescription)">
+        Add
+    </div>
+</app-panel>
+
+<jw-modal [id]="settingsDialogId()">
+    <app-settings-dialog [spec]="settingsDialogSpec"></app-settings-dialog>
+</jw-modal>
+
+<jw-modal [id]="confirmationDialogId()">
+    <app-confirmation-dialog [spec]="confirmationDialogSpec"></app-confirmation-dialog>
+</jw-modal>

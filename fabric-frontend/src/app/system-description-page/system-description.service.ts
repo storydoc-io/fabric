@@ -1,10 +1,27 @@
 import {Injectable, OnDestroy} from '@angular/core';
+import {BehaviorSubject, Subscription} from "rxjs";
+import {distinctUntilChanged, map} from "rxjs/operators";
+import {logChangesToObservable} from "@fabric/common";
 import {EnvironmentDto, SystemComponentDto, SystemDescriptionDto} from "@fabric/models";
 import {SystemDescriptionControllerService} from "@fabric/services";
-import {distinctUntilChanged, map} from "rxjs/operators";
-import {BehaviorSubject, Subscription} from "rxjs";
-import {logChangesToObservable} from "@fabric/common";
-import {SettingDescriptor, SettingsDialogData} from "./settings-dialog/settings-dialog.component";
+import {SettingsDialogData} from "./settings-panel/settings-dialog/settings-dialog.component";
+
+
+export interface Setting {
+    key: string,
+    value: string
+}
+
+export interface SettingRow {
+    systemComponentKey: string,
+    environmentKey : string,
+    settings: Setting[]
+}
+
+export interface SettingDescriptor {
+    key: string,
+    description: string
+}
 
 interface SystemDescriptionState {
     systemDescription: SystemDescriptionDto
