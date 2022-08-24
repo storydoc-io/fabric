@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {SystemDescriptionService} from "./system-description.service";
-import {ModalService} from "../common/modal/modal-service";
-import {ConfirmationDialogSpec} from "../common/confirmation-dialog/confirmation-dialog.component";
+import {SystemComponentDto} from "@fabric/models";
 
+type SystemDescriptionTabState = 'ENVIRONMENTS' | 'SYSTEM'
+type DataSourceTabState = 'SETTINGS' | 'METADATA'
 
 @Component({
     selector: 'app-system-description-page',
@@ -11,30 +12,29 @@ import {ConfirmationDialogSpec} from "../common/confirmation-dialog/confirmation
 })
 export class SystemDescriptionPageComponent implements OnInit {
 
-    constructor(private modalService: ModalService, private service: SystemDescriptionService) {
-    }
+    constructor(private service: SystemDescriptionService) {}
 
     systemDescription$ = this.service.systemDescription$
+
+    selectedSystemDescriptionTab: SystemDescriptionTabState = 'ENVIRONMENTS'
+
+    selectedDataSourceTab: DataSourceTabState = 'SETTINGS'
 
     ngOnInit(): void {
     }
 
-
-    // confirmation dialog
-
-    confirmationDialogSpec: any;
-
-    confirmationDialogId(): string {
-        return 'confirmation-dialog'
+    selectSystemDescriptionTab(tab: SystemDescriptionTabState) {
+        this.selectedSystemDescriptionTab = tab
     }
 
-    openConfirmationDialog(confirmationDialogSpec: ConfirmationDialogSpec) {
-        this.confirmationDialogSpec = confirmationDialogSpec
-        this.modalService.open(this.confirmationDialogId())
+    selectDataSourceTab(tab: DataSourceTabState) {
+        this.selectedDataSourceTab = tab
     }
 
-    closeConfirmationDialog() {
-        this.modalService.close(this.confirmationDialogId())
+    selectedSystemComponent: SystemComponentDto
+
+    systemComponentSelectionChanged(systemComponent: SystemComponentDto) {
+        this.selectedSystemComponent = systemComponent
     }
 
 }

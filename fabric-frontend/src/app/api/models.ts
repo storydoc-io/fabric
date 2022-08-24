@@ -1,10 +1,14 @@
 export { CollectionNavItem } from './models/collection-nav-item';
 export { CollectionSnapshot } from './models/collection-snapshot';
+export { ConnectionTestRequestDto } from './models/connection-test-request-dto';
+export { ConnectionTestResponseDto } from './models/connection-test-response-dto';
 export { EnvironmentDto } from './models/environment-dto';
 export { FileStore } from './models/file-store';
 export { FileSystem } from './models/file-system';
 export { IterableFileStore } from './models/iterable-file-store';
 export { IterablePath } from './models/iterable-path';
+export { MetaModelId } from './models/meta-model-id';
+export { MongoMetaModel } from './models/mongo-meta-model';
 export { MongoNavigationModel } from './models/mongo-navigation-model';
 export { MongoSnapshot } from './models/mongo-snapshot';
 export { Path } from './models/path';

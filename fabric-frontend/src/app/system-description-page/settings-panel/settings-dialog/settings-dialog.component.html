@@ -36,6 +36,24 @@
                     </ng-container>
                 </ng-container>
 
+                <br>
+                <span>
+                    <button type="button" class="btn btn-outline-primary" [disabled]="connectionTester?.testRunning" (click)="runTest()">
+                        <fa-icon  [icon]="faBolt"></fa-icon> Test Connection
+                    </button>
+                    &nbsp;
+                    <ng-container *ngIf="connectionTester?.testRunning">
+                        <span><img src="/assets/loading.gif" height="100px" alt="image" (click)="cancelTest()"></span>
+                    </ng-container>
+                    <ng-container *ngIf="connectionTester?.testResult">
+                        <fa-icon *ngIf="connectionTester.testResult.result" size="2x" [icon]="faCheckCircle" style="vertical-align:bottom; color: mediumseagreen"></fa-icon>
+                        <span>
+                            <fa-icon *ngIf="!connectionTester.testResult.result" size="2x" [icon]="faCheckCircle" style="vertical-align:bottom; color: orangered"></fa-icon>
+                            {{connectionTester.testResult.message}}
+                        </span>
+                    </ng-container>
+                </span>
+
             </form>
         </div>
         <div class="modal-footer">

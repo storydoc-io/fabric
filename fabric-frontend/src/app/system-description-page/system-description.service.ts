@@ -2,9 +2,11 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {BehaviorSubject, Subscription} from "rxjs";
 import {distinctUntilChanged, map} from "rxjs/operators";
 import {logChangesToObservable} from "@fabric/common";
-import {EnvironmentDto, SystemComponentDto, SystemDescriptionDto} from "@fabric/models";
-import {SystemDescriptionControllerService} from "@fabric/services";
+import {ConnectionTestResponseDto, EnvironmentDto, SystemComponentDto, SystemDescriptionDto} from "@fabric/models";
+import {ConnectionControllerService, MetaModelControllerService, SystemDescriptionControllerService} from "@fabric/services";
 import {SettingsDialogData} from "./settings-panel/settings-dialog/settings-dialog.component";
+import {MetaModelDialogData} from "./meta-model-panel/meta-model-dialog/meta-model-dialog.component";
+import {MongoMetaModelService} from "./meta-model-panel/mongo-metamodel-panel/mongo-metamodel.service";
 
 
 export interface Setting {
@@ -32,7 +34,11 @@ interface SystemDescriptionState {
 })
 export class SystemDescriptionService implements OnDestroy {
 
-    constructor(private systemDescriptionControllerService: SystemDescriptionControllerService) {
+    constructor(
+        private systemDescriptionControllerService: SystemDescriptionControllerService,
+        private metaModelControllerService: MetaModelControllerService,
+        private connectionControllerService: ConnectionControllerService,
+        private mongoMetaModelService: MongoMetaModelService) {
         this.init()
     }
 
@@ -166,4 +172,19 @@ export class SystemDescriptionService implements OnDestroy {
         } else
             return [];
     }
+
+    fetchMetaModel(systemComponent: SystemComponentDto, environmentKey: string) {
+        this.metaModelControllerService.createMetaModelUsingPost({
+            environmentKey,
+            systemComponentKey: systemComponent.key
+        }).subscribe((value) => this.mongoMetaModelService.load(systemComponent.key))
+    }
+
+    test(systemType: string, settings: any): Promise<ConnectionTestResponseDto> {
+        return this.connectionControllerService.testConnectionUsingPost({ body: {
+            settings,
+            systemType
+        }}).toPromise()
+    }
+
 }

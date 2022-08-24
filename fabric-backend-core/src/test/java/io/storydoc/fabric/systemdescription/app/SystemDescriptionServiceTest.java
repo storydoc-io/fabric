@@ -30,4 +30,9 @@ public class SystemDescriptionServiceTest extends TestBase {
 
     }
 
+    @Test
+    public void getMetaData() {
+
+    }
+
 }

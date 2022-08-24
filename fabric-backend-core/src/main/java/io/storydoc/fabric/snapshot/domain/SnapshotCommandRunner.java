@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @Component
 @Slf4j
 public class SnapshotCommandRunner {
@@ -21,21 +20,12 @@ public class SnapshotCommandRunner {
 
     private final SnapshotStorage snapshotStorage;
 
-    private final Map<String, SnapshotHandler> handlerMap;
+    private final SnapshotHandlerRegistry handlerRegistry;
 
-    public SnapshotCommandRunner(SystemDescriptionService systemDescriptionService, SnapshotStorage snapshotStorage, List<SnapshotHandler> handlerList) {
+    public SnapshotCommandRunner(SystemDescriptionService systemDescriptionService, SnapshotStorage snapshotStorage, SnapshotHandlerRegistry handlerRegistry) {
         this.systemDescriptionService = systemDescriptionService;
         this.snapshotStorage = snapshotStorage;
-        this.handlerMap = toHandlerMap(handlerList);
-    }
-
-    private Map<String, SnapshotHandler> toHandlerMap(List<SnapshotHandler> snapshotHandlers) {
-        Map<String, SnapshotHandler> handlerMap = new HashMap<>();
-        snapshotHandlers.forEach(snapshotHandler -> {
-            log.debug("registering snapshot handler for " + snapshotHandler.systemType());
-            handlerMap.put(snapshotHandler.systemType(), snapshotHandler);
-        });
-        return handlerMap;
+        this.handlerRegistry = handlerRegistry;
     }
 
     public void runSnapshotCommand(String envKey, SnapshotId snapshotId, String name) {
@@ -46,18 +36,12 @@ public class SnapshotCommandRunner {
 
         for (SystemComponentDTO systemComponent : systemDescriptionDTO.getSystemComponents()) {
             String systemType = systemComponent.getSystemType();
-            SnapshotHandler snapshotHandler = getSnapshotHandler(systemType);
+            SnapshotHandler snapshotHandler = handlerRegistry.getHandler(systemType);
             SnapshotComponent snapshotComponent = snapshotHandler.takeComponentSnapshot(envKey, systemComponent, snapshotId);
             snapshotStorage.saveSnapshotComponent(snapshotComponent, systemComponent, snapshotHandler.getSerializer(), snapshotId);
         }
 
 
-    }
-
-    private SnapshotHandler getSnapshotHandler(String systemType) {
-        SnapshotHandler snapshotHandler = handlerMap.get(systemType);
-        if (snapshotHandler == null) throw new FabricException("no suitable snapshot handler found for system type " + systemType);
-        return snapshotHandler;
     }
 
 }

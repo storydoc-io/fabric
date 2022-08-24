@@ -11,8 +11,10 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let systemComponent of systemDescription.systemComponents">
-            <th scope="row"></th>
+        <tr *ngFor="let systemComponent of systemDescription.systemComponents" (click)="select(systemComponent)">
+            <th scope="row">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" [checked]="systemComponent.key===selection?.key">
+            </th>
             <td>{{systemComponent.key}}</td>
             <td>{{systemComponent.label}}</td>
             <td>{{systemComponent.systemType}}</td>

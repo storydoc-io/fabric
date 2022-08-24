@@ -1,0 +1,13 @@
+<app-panel>
+    <h4>Metadata</h4>
+    <div class="btn  btn-sm btn-outline-primary float-right m-2" (click)="addMetaModel(systemDescription)">
+        Fetch
+    </div>
+</app-panel>
+<app-mongo-metamodel-panel></app-mongo-metamodel-panel>
+
+
+<jw-modal [id]="metaModelDialogId()">
+    <app-meta-model-dialog [spec]="metaModelDialogSpec"></app-meta-model-dialog>
+</jw-modal>
+

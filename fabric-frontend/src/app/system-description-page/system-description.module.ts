@@ -11,6 +11,9 @@ import { SystemDescriptionPageComponent } from './system-description-page.compon
 import { EnvironmentPanelComponent } from './environment-panel/environment-panel.component';
 import { SystemComponentPanelComponent } from './system-component-panel/system-component-panel.component';
 import { SettingsPanelComponent } from './settings-panel/settings-panel.component';
+import { MetaModelPanelComponent } from './meta-model-panel/meta-model-panel.component';
+import { MetaModelDialogComponent } from './meta-model-panel/meta-model-dialog/meta-model-dialog.component';
+import { MongoMetamodelPanelComponent } from './meta-model-panel/mongo-metamodel-panel/mongo-metamodel-panel.component';
 
 @NgModule({
     declarations: [
@@ -22,6 +25,9 @@ import { SettingsPanelComponent } from './settings-panel/settings-panel.componen
         SettingsPanelComponent,
         SettingsDialogComponent,
         MongoNavmodelPanelComponent,
+        MetaModelPanelComponent,
+        MetaModelDialogComponent,
+        MongoMetamodelPanelComponent,
     ],
     imports: [
         CoreModule,

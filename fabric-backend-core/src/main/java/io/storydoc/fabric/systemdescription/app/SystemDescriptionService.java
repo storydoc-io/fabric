@@ -1,13 +1,13 @@
 package io.storydoc.fabric.systemdescription.app;
 
+import io.storydoc.fabric.connection.app.ConnectionTestRequestDTO;
+import io.storydoc.fabric.connection.app.ConnectionTestResponseDTO;
 import io.storydoc.fabric.systemdescription.domain.SystemDescriptionStorage;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.Environment;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemComponent;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemDescription;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,4 +62,5 @@ public class SystemDescriptionService {
                 .settings(dto.getSettings())
                 .build());
     }
+
 }

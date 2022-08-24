@@ -2,7 +2,6 @@ package io.storydoc.fabric.core.infra;
 
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
-import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemComponent;
 import io.storydoc.fabric.workspace.domain.FolderURN;
 import io.storydoc.fabric.workspace.domain.ResourceUrn;
 import org.springframework.stereotype.Component;
@@ -42,6 +41,11 @@ public class WorkspaceStructure {
 
     public ResourceUrn getNavigationModelUrn(String systemCompenentKey) {
         String filename = "navigationmodel-" + systemCompenentKey + ".json";
+        return ResourceUrn.of(filename);
+    }
+
+    public ResourceUrn getMetaModelUrn(String componentKey) {
+        String filename = String.format("metamodel-%s.json", componentKey);
         return ResourceUrn.of(filename);
     }
 

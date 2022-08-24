@@ -1,0 +1,3 @@
+<app-panel>
+    <pre *ngIf="metaModels$ | async as metaModels">{{ metaModels.get('MONGODB') | json }}</pre>
+</app-panel>

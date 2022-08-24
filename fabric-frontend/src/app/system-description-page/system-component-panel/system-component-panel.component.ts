@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
 import {SystemComponentDto, SystemDescriptionDto} from "@fabric/models";
 import {SystemComponentDialogData, SystemComponentDialogSpec} from "./system-component-dialog/system-component-dialog.component";
 import {HasConfirmationDialogMixin} from "@fabric/common";
@@ -21,6 +21,16 @@ export class SystemComponentPanelComponent extends HasConfirmationDialogMixin im
 
   @Input()
   systemDescription: SystemDescriptionDto
+
+  @Input()
+  selection: SystemComponentDto
+
+  @Output()
+  selectionChanged = new EventEmitter<SystemComponentDto>()
+
+  select(systemComponent: SystemComponentDto) {
+      this.selectionChanged.emit(systemComponent)
+  }
 
   // data sources
 

@@ -1,0 +1,25 @@
+<div *ngIf="formGroup && spec"  class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Fetch {{spec.systemComponent.label}} metadata</h5>
+            <button type="button" class="btn-close" (click)="cancel()"></button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="formGroup">
+                <div class="mb-3" class="form-group">
+                    <label for="environmentKey" class="form-label">Environment</label>
+                    <select id="environmentKey" formControlName="environmentKey" class="form-select" [class.is-invalid]="environmentKeyControlInvalid()" >
+                        <option *ngFor="let environment of spec.systemDescription.environments"
+                                [ngValue]="environment.key">{{environment.key}}</option>
+                    </select>
+                    <div class="form-text">Select the environment where the metadata will be fetched from.</div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="confirm()" [disabled]="!formGroup.valid">Fetch metadata</button>
+            <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+        </div>
+
+    </div>
+</div>

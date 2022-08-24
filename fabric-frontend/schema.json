@@ -19,6 +19,14 @@
   ],
   "tags": [
     {
+      "name": "connection-controller",
+      "description": "Connection Controller"
+    },
+    {
+      "name": "meta-model-controller",
+      "description": "Meta Model Controller"
+    },
+    {
       "name": "mongo-snapshot-controller",
       "description": "Mongo Snapshot Controller"
     },
@@ -36,6 +44,145 @@
     }
   ],
   "paths": {
+    "/api/connection": {
+      "post": {
+        "tags": [
+          "connection-controller"
+        ],
+        "summary": "testConnection",
+        "operationId": "testConnectionUsingPOST",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConnectionTestRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConnectionTestResponseDTO"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/metamodel": {
+      "post": {
+        "tags": [
+          "meta-model-controller"
+        ],
+        "summary": "createMetaModel",
+        "operationId": "createMetaModelUsingPOST",
+        "parameters": [
+          {
+            "name": "environmentKey",
+            "in": "query",
+            "description": "environmentKey",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "systemComponentKey",
+            "in": "query",
+            "description": "systemComponentKey",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MetaModelId"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/mongo/metamodel": {
+      "get": {
+        "tags": [
+          "mongo-snapshot-controller"
+        ],
+        "summary": "getMetaModel",
+        "operationId": "getMetaModelUsingGET",
+        "parameters": [
+          {
+            "name": "systemComponentKey",
+            "in": "query",
+            "description": "systemComponentKey",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MongoMetaModel"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/api/mongo/navigationmodel": {
       "get": {
         "tags": [
@@ -376,6 +523,33 @@
           }
         }
       },
+      "ConnectionTestRequestDTO": {
+        "title": "ConnectionTestRequestDTO",
+        "type": "object",
+        "properties": {
+          "settings": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "systemType": {
+            "type": "string"
+          }
+        }
+      },
+      "ConnectionTestResponseDTO": {
+        "title": "ConnectionTestResponseDTO",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "boolean"
+          }
+        }
+      },
       "EnvironmentDTO": {
         "title": "EnvironmentDTO",
         "type": "object",
@@ -444,6 +618,27 @@
       "Iterable«Path»": {
         "title": "Iterable«Path»",
         "type": "object"
+      },
+      "MetaModelId": {
+        "title": "MetaModelId",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          }
+        }
+      },
+      "MongoMetaModel": {
+        "title": "MongoMetaModel",
+        "type": "object",
+        "properties": {
+          "collections": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
       },
       "MongoNavigationModel": {
         "title": "MongoNavigationModel",

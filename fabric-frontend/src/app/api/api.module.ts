@@ -4,6 +4,8 @@ import { NgModule, ModuleWithProviders, SkipSelf, Optional } from '@angular/core
 import { HttpClient } from '@angular/common/http';
 import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 
+import { ConnectionControllerService } from './services/connection-controller.service';
+import { MetaModelControllerService } from './services/meta-model-controller.service';
 import { MongoSnapshotControllerService } from './services/mongo-snapshot-controller.service';
 import { SnapshotControllerService } from './services/snapshot-controller.service';
 import { SystemDescriptionControllerService } from './services/system-description-controller.service';
@@ -17,6 +19,8 @@ import { WorkspaceRestControllerService } from './services/workspace-rest-contro
   exports: [],
   declarations: [],
   providers: [
+    ConnectionControllerService,
+    MetaModelControllerService,
     MongoSnapshotControllerService,
     SnapshotControllerService,
     SystemDescriptionControllerService,

@@ -9,6 +9,7 @@ import { RequestBuilder } from '../request-builder';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
+import { MongoMetaModel } from '../models/mongo-meta-model';
 import { MongoNavigationModel } from '../models/mongo-navigation-model';
 import { MongoSnapshot } from '../models/mongo-snapshot';
 
@@ -25,6 +26,68 @@ export class MongoSnapshotControllerService extends BaseService {
     http: HttpClient
   ) {
     super(config, http);
+  }
+
+  /**
+   * Path part for operation getMetaModelUsingGet
+   */
+  static readonly GetMetaModelUsingGetPath = '/api/mongo/metamodel';
+
+  /**
+   * getMetaModel.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getMetaModelUsingGet()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getMetaModelUsingGet$Response(params?: {
+
+    /**
+     * systemComponentKey
+     */
+    systemComponentKey?: string;
+  }): Observable<StrictHttpResponse<MongoMetaModel>> {
+
+    const rb = new RequestBuilder(this.rootUrl, MongoSnapshotControllerService.GetMetaModelUsingGetPath, 'get');
+    if (params) {
+      rb.query('systemComponentKey', params.systemComponentKey, {"style":"form"});
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json'
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<MongoMetaModel>;
+      })
+    );
+  }
+
+  /**
+   * getMetaModel.
+   *
+   *
+   *
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `getMetaModelUsingGet$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getMetaModelUsingGet(params?: {
+
+    /**
+     * systemComponentKey
+     */
+    systemComponentKey?: string;
+  }): Observable<MongoMetaModel> {
+
+    return this.getMetaModelUsingGet$Response(params).pipe(
+      map((r: StrictHttpResponse<MongoMetaModel>) => r.body as MongoMetaModel)
+    );
   }
 
   /**

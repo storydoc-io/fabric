@@ -1,13 +1,31 @@
 import {Component, Input, OnInit, SimpleChanges} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {showValidationMessages} from "@fabric/common";
-import {EnvironmentDto, SystemComponentDto} from "@fabric/models";
+import {ConnectionTestResponseDto, EnvironmentDto, SystemComponentDto} from "@fabric/models";
 import {Setting, SettingDescriptor, SystemDescriptionService} from "../../system-description.service";
+import {faBolt, faCheckCircle} from '@fortawesome/free-solid-svg-icons';
+
 
 export interface SettingsDialogData {
     systemComponentKey: string,
     environmentKey: string,
     settings: Setting[]
+}
+
+class ConnectionTester {
+    constructor(private service: SystemDescriptionService) {}
+
+    testRunning: boolean = false
+    testResult: ConnectionTestResponseDto = null
+
+    run(settingObject: {}) {
+        this.testRunning = true
+        this.testResult = null
+        this.service.test('MONGO', settingObject).then((result)=>  {
+            this.testRunning = false
+            this.testResult = result
+        })
+    }
 }
 
 export interface SettingsDialogSpec {
@@ -53,6 +71,7 @@ export class SettingsDialogComponent implements OnInit {
             this.formGroup.setValue(this.spec.data)
             this.formGroup.markAsPristine()
             this.formGroup.markAsUntouched()
+            this.connectionTester = null
         }
     }
 
@@ -122,4 +141,24 @@ export class SettingsDialogComponent implements OnInit {
         this.spec.confirm(this.formGroup.value)
     }
 
+    // connection test
+
+    faBolt = faBolt
+    faCheckCircle = faCheckCircle
+    connectionTester: ConnectionTester
+
+    runTest() {
+        let settingObject = {}
+        this.settingsControl().value.forEach(setting => {
+            settingObject[setting.key] = setting.value
+        })
+
+        this.connectionTester = new ConnectionTester(this.service)
+        this.connectionTester.run(settingObject)
+
+    }
+
+    cancelTest() {
+        this.connectionTester = null
+    }
 }
