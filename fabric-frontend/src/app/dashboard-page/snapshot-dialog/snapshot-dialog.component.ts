@@ -1,7 +1,9 @@
-import {Component, Input, OnInit, SimpleChanges} from '@angular/core';
-import { DatePipe } from '@angular/common';
+import {Component, Input, OnInit, SimpleChanges, ViewChild} from '@angular/core';
+import {DatePipe} from '@angular/common';
 import {SystemDescriptionService} from "../../system-description-page/system-description.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {StructureDto} from "@fabric/models";
+import {ITreeModel, ITreeNode, ITreeOptions, TreeNode} from "@circlon/angular-tree-component/lib/defs/api";
 
 export interface SnapshotDialogData {
     environment: string,
@@ -14,6 +16,39 @@ export interface SnapshotDialogSpec {
     confirm: (data: SnapshotDialogData) => void
     useNameGenerator: boolean
 }
+
+export interface SnapshotDialogTreeNode {
+    name: string,
+    structureDto: StructureDto,
+    children: SnapshotDialogTreeNode[],
+    data? : any
+    parent?: SnapshotDialogTreeNode
+}
+
+class StructureDto2TreeNodeConverter {
+
+    public run(structureDto: StructureDto): SnapshotDialogTreeNode[] {
+        if (!structureDto) return []
+        let node = this.runRecursive(structureDto)
+        return [node]
+    }
+
+    runRecursive(structureDto: StructureDto): SnapshotDialogTreeNode {
+        if (!structureDto) return null
+        let node = <SnapshotDialogTreeNode> {
+            structureDto,
+            name: structureDto.id ? structureDto.id : '',
+        }
+        node.children = structureDto.children?.map(child => {
+            return this.runRecursive(child)
+        })
+        return node
+    }
+
+
+}
+
+
 
 @Component({
     selector: 'app-snapshot-dialog',
@@ -36,6 +71,7 @@ export class SnapshotDialogComponent implements OnInit {
     ngOnChanges(changes: SimpleChanges): void {
         if (this.spec != null) {
             this.formGroup.setValue(this.spec.data)
+            this.treeNodes = []
         }
     }
 
@@ -52,14 +88,58 @@ export class SnapshotDialogComponent implements OnInit {
         return <FormControl> this.formGroup.get('name')
     }
 
+    // tree
+
+    treeNodes: SnapshotDialogTreeNode[]  = []
+
+    options: ITreeOptions = {
+        useCheckbox: true,
+    }
+
+    @ViewChild('tree') tree;
+
+    onSelect(event) {
+        try {
+            console.log('select: ', event.node);
+        } catch (e) {
+            console.log(e.message)
+        }
+    }
+
+    ondeSelect(event) {
+        try {
+            console.log('deselect: ', event.node);
+        } catch (e) {
+            console.log(e.message)
+        }
+    }
+
+
+    test() {
+        function logRecursive(model: ITreeModel, node: ITreeNode) {
+            if (node) {
+                console.log(node.data)
+                // @ts-ignore'
+                console.log('selected: ', node.isSelected)
+                node.children?.forEach(child => logRecursive(model, child))
+            }
+        }
+
+        console.log('selected: ', logRecursive(this.tree.treeModel, this.tree.treeModel.roots[0]))
+    }
+
+
     datepipe: DatePipe = new DatePipe('en-US')
 
     onEnvironmentChanged() {
+        let env = this.environmentControl.value
         if (this.spec.useNameGenerator) {
-            let env = this.environmentControl.value
             let timeStamp = this.datepipe.transform(new Date(), 'YYYY-MM-dd HH:mm:ss')
             this.nameControl.setValue(`${env} snapshot ${timeStamp}`)
         }
+        this.systemDescriptService.loadSystemStructure(env).then((structureDto) => {
+            this.treeNodes = new StructureDto2TreeNodeConverter().run(structureDto)
+        })
     }
 
     onNameChangedManually() {

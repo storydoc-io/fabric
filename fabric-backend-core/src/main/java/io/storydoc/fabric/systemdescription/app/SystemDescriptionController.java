@@ -2,6 +2,7 @@ package io.storydoc.fabric.systemdescription.app;
 
 import io.storydoc.fabric.connection.app.ConnectionTestRequestDTO;
 import io.storydoc.fabric.connection.app.ConnectionTestResponseDTO;
+import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,5 +25,11 @@ public class SystemDescriptionController {
     void setSystemDescription(@RequestBody SystemDescriptionDTO systemDescription) {
         systemDescriptionService.updateSystemDescription(systemDescription);
     }
+
+    @GetMapping(value = "structure", produces = MediaType.APPLICATION_JSON_VALUE)
+    StructureDTO getSystemComponentStructure(String envKey) {
+        return systemDescriptionService.getStructure(envKey);
+    }
+
 
 }

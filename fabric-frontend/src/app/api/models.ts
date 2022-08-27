@@ -16,6 +16,7 @@ export { SnapshotComponentDto } from './models/snapshot-component-dto';
 export { SnapshotDto } from './models/snapshot-dto';
 export { SnapshotId } from './models/snapshot-id';
 export { SnapshotSummaryDto } from './models/snapshot-summary-dto';
+export { StructureDto } from './models/structure-dto';
 export { SystemComponentDto } from './models/system-component-dto';
 export { SystemDescriptionDto } from './models/system-description-dto';
 export { UserPrincipalLookupService } from './models/user-principal-lookup-service';

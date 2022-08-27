@@ -7,6 +7,8 @@ import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 @Component
 @Slf4j
 public class MetaModelCommandRunner {
@@ -26,12 +28,12 @@ public class MetaModelCommandRunner {
 
     public void runMetaModelCommand(String environmentKey, String systemComponentKey, MetaModelId metamodelId) {
         SystemDescriptionDTO systemDescriptionDTO  = systemDescriptionService.getSystemDescription();
-        SystemComponentDTO systemComponentDTO = systemDescriptionDTO.getSystemComponents().stream()
-                .filter(systemComponentDTO1 -> systemComponentDTO1.getKey().equals(systemComponentKey))
-                .findFirst()
-                .get();
+        SystemComponentDTO systemComponentDTO = systemDescriptionService.getSystemComponentDTO(systemComponentKey);
+        Map<String, String> settings = systemDescriptionDTO.getSettings()
+                .get(environmentKey)
+                .get(systemComponentKey);
         MetaModelHandler metaModelHandler = handlerRegistry.getHandler(systemComponentDTO.getSystemType());
-        MetaModel metaModel = metaModelHandler.createMetaModel(environmentKey, systemComponentDTO, metamodelId);
+        MetaModel metaModel = metaModelHandler.createMetaModel(metamodelId, systemComponentDTO, settings);
         metaModelStorage.saveMetaModel(metaModel, systemComponentKey, metamodelId, metaModelHandler.getMetaModelSerializer());
 
     }

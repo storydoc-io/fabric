@@ -10,6 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 
 @Configuration
 @ComponentScan(basePackages = {
@@ -35,7 +36,7 @@ public class TestConfig {
             }
 
             @Override
-            public DummySnapshot takeComponentSnapshot(String environmentKey, SystemComponentDTO systemComponent, SnapshotId snapshotId) {
+            public DummySnapshot takeComponentSnapshot(SnapshotId snapshotId, SystemComponentDTO systemComponent, Map<String, String> settings) {
                 DummySnapshot snapshot = new DummySnapshot();
                 snapshot.setContent( "{ \"dummy\" = \"content\" } ");
                 return snapshot;

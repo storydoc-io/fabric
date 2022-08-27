@@ -1,8 +1,8 @@
 package io.storydoc.fabric.systemdescription.app;
 
-import io.storydoc.fabric.connection.app.ConnectionTestRequestDTO;
-import io.storydoc.fabric.connection.app.ConnectionTestResponseDTO;
+import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
 import io.storydoc.fabric.systemdescription.domain.SystemDescriptionStorage;
+import io.storydoc.fabric.systemdescription.domain.SystemStructureCommandRunner;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.Environment;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemComponent;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemDescription;
@@ -14,20 +14,18 @@ import java.util.stream.Collectors;
 public class SystemDescriptionService {
 
     private final SystemDescriptionStorage systemDescriptionStorage;
+    private final SystemStructureCommandRunner systemStructureCommandRunner;
 
-    public SystemDescriptionService(SystemDescriptionStorage systemDescriptionStorage) {
+    public SystemDescriptionService(SystemDescriptionStorage systemDescriptionStorage, SystemStructureCommandRunner systemStructureCommandRunner) {
         this.systemDescriptionStorage = systemDescriptionStorage;
+        this.systemStructureCommandRunner = systemStructureCommandRunner;
     }
 
     public SystemDescriptionDTO getSystemDescription() {
         SystemDescription systemDescription = systemDescriptionStorage.getOrCreateSystemDescription();
         return SystemDescriptionDTO.builder()
                 .systemComponents(systemDescription.getSystemComponents().stream()
-                        .map(systemComponent -> SystemComponentDTO.builder()
-                                .key(systemComponent.getKey())
-                                .label(systemComponent.getLabel())
-                                .systemType(systemComponent.getSystemType())
-                                .build())
+                        .map(this::getSystemComponentDTO)
                         .collect(Collectors.toList())
                 )
                 .environments(systemDescription.getEnvironments().stream()
@@ -39,6 +37,24 @@ public class SystemDescriptionService {
                 )
                 .settings(systemDescription.getSettings())
                 .build();
+    }
+
+    private SystemComponentDTO getSystemComponentDTO(SystemComponent systemComponent) {
+        return SystemComponentDTO.builder()
+                .key(systemComponent.getKey())
+                .label(systemComponent.getLabel())
+                .systemType(systemComponent.getSystemType())
+                .build();
+    }
+
+    public SystemComponentDTO getSystemComponentDTO(String systemComponentKey) {
+        SystemDescription systemDescription = systemDescriptionStorage.getOrCreateSystemDescription();
+        return systemDescription.getSystemComponents().stream()
+                .filter(systemComponent -> systemComponent.getKey().equals(systemComponentKey))
+                .findFirst()
+                .map(this::getSystemComponentDTO)
+                .get();
+
     }
 
     public void updateSystemDescription(SystemDescriptionDTO dto) {
@@ -61,6 +77,20 @@ public class SystemDescriptionService {
                 )
                 .settings(dto.getSettings())
                 .build());
+    }
+
+    public StructureDTO getStructure(String envKey) {
+        SystemDescriptionDTO systemDescription = getSystemDescription();
+
+        return StructureDTO.builder()
+                .structureType("root")
+                .id(envKey)
+                .children(
+                        systemDescription.getSystemComponents().stream()
+                                .map(systemComponentDTO -> systemStructureCommandRunner.getStructure(systemComponentDTO))
+                                .collect(Collectors.toList())
+                )
+                .build();
     }
 
 }

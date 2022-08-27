@@ -9,6 +9,7 @@ import { RequestBuilder } from '../request-builder';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
+import { StructureDto } from '../models/structure-dto';
 import { SystemDescriptionDto } from '../models/system-description-dto';
 
 
@@ -128,6 +129,68 @@ export class SystemDescriptionControllerService extends BaseService {
 
     return this.setSystemDescriptionUsingPost$Response(params).pipe(
       map((r: StrictHttpResponse<void>) => r.body as void)
+    );
+  }
+
+  /**
+   * Path part for operation getSystemComponentStructureUsingGet
+   */
+  static readonly GetSystemComponentStructureUsingGetPath = '/api/systemdescription/structure';
+
+  /**
+   * getSystemComponentStructure.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `getSystemComponentStructureUsingGet()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getSystemComponentStructureUsingGet$Response(params?: {
+
+    /**
+     * envKey
+     */
+    envKey?: string;
+  }): Observable<StrictHttpResponse<StructureDto>> {
+
+    const rb = new RequestBuilder(this.rootUrl, SystemDescriptionControllerService.GetSystemComponentStructureUsingGetPath, 'get');
+    if (params) {
+      rb.query('envKey', params.envKey, {"style":"form"});
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json'
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<StructureDto>;
+      })
+    );
+  }
+
+  /**
+   * getSystemComponentStructure.
+   *
+   *
+   *
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `getSystemComponentStructureUsingGet$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  getSystemComponentStructureUsingGet(params?: {
+
+    /**
+     * envKey
+     */
+    envKey?: string;
+  }): Observable<StructureDto> {
+
+    return this.getSystemComponentStructureUsingGet$Response(params).pipe(
+      map((r: StrictHttpResponse<StructureDto>) => r.body as StructureDto)
     );
   }
 

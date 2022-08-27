@@ -17,11 +17,23 @@
                     <div id="environment" class="form-text">Enter an environment.</div>
                 </div>
                 <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input formControlName="name" type="text" class="form-control" (keyup)="onNameChangedManually()">
-                    <div id="name" class="form-text">Enter a name for the snapshot.</div>
+                    <label for="structure" class="form-label" >Data Selection</label>
+                    <div style="border: 1px solid rgb(206, 212, 218); overflow: hidden">
+                        <div style="padding: 0.375rem 2.25rem 0.375rem 0.75rem; max-height: 200px; overflow-y: auto;">
+                            <tree-root id="structure" [nodes]="treeNodes" [options]="options" class="reverse" #tree
+                                       (select)="onSelect($event)"
+                                       (deselect)="ondeSelect($event)"
+                            ></tree-root>
+                        </div>
+                    </div>
                 </div>
 
+<!--                <button (click)="test()">get selection</button>-->
+<!--                <div class="mb-3">-->
+<!--                    <label for="name" class="form-label">Name</label>-->
+<!--                    <input formControlName="name" type="text" class="form-control" (keyup)="onNameChangedManually()">-->
+<!--                    <div id="name" class="form-text">Enter a name for the snapshot.</div>-->
+<!--                </div>-->
             </form>
         </div>
         <div class="modal-footer">

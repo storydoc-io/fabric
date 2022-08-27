@@ -14,17 +14,19 @@ import io.storydoc.fabric.mongo.snapshot.MongoSnapshot;
 import io.storydoc.fabric.navigation.domain.NavigationModelStorage;
 import io.storydoc.fabric.snapshot.domain.*;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
-import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
+import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
+import io.storydoc.fabric.systemdescription.domain.SystemStructureHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class MongoSnapshotService extends StorageBase implements SnapshotHandler<MongoSnapshot>, MetaModelHandler<MongoMetaModel>, ConnectionHandler {
+public class MongoSnapshotService extends StorageBase implements SnapshotHandler<MongoSnapshot>, MetaModelHandler<MongoMetaModel>, ConnectionHandler, SystemStructureHandler {
 
     private final SnapshotStorage snapshotStorage;
 
@@ -32,13 +34,10 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
 
     private final MetaModelStorage metaModelStorage;
 
-    private final SystemDescriptionService systemDescriptionService;
-
-    public MongoSnapshotService(SnapshotStorage snapshotStorage, NavigationModelStorage navigationModelStorage, MetaModelStorage metaModelStorage, SystemDescriptionService systemDescriptionService) {
+    public MongoSnapshotService(SnapshotStorage snapshotStorage, NavigationModelStorage navigationModelStorage, MetaModelStorage metaModelStorage) {
         this.snapshotStorage = snapshotStorage;
         this.navigationModelStorage = navigationModelStorage;
         this.metaModelStorage = metaModelStorage;
-        this.systemDescriptionService = systemDescriptionService;
     }
 
     @Override
@@ -47,13 +46,10 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
     }
 
     @Override
-    public MongoSnapshot takeComponentSnapshot(String environmentKey, SystemComponentDTO systemComponent, SnapshotId snapshotId) {
+    public MongoSnapshot takeComponentSnapshot(SnapshotId snapshotId, SystemComponentDTO systemComponent, Map<String, String> settings) {
 
         String systemComponentKey = systemComponent.getKey();
-        MongoSettings mongoSettings = getSettings(systemDescriptionService.getSystemDescription()
-                .getSettings()
-                .get(environmentKey)
-                .get(systemComponentKey));
+        MongoSettings mongoSettings = toMongoSettings(settings);
         MongoClient mongoClient = MongoClients.create(mongoSettings.getConnectionUrl());
         MongoDatabase database = mongoClient.getDatabase(mongoSettings.getDbName());
 
@@ -81,7 +77,7 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
         return mongoSnapshot;
     }
 
-    private MongoSettings getSettings(Map<String, String> settingsMap) {
+    private MongoSettings toMongoSettings(Map<String, String> settingsMap) {
         return MongoSettings.builder()
                 .connectionUrl(settingsMap.get("connectionUrl"))
                 .dbName(settingsMap.get("dbName"))
@@ -108,12 +104,8 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
     // metamodel
 
     @Override
-    public MongoMetaModel createMetaModel(String environmentKey, SystemComponentDTO systemComponent, MetaModelId metaModelId) {
-        String systemComponentKey = systemComponent.getKey();
-        MongoSettings mongoSettings = getSettings(systemDescriptionService.getSystemDescription()
-                .getSettings()
-                .get(environmentKey)
-                .get(systemComponentKey));
+    public MongoMetaModel createMetaModel(MetaModelId metaModelId, SystemComponentDTO systemComponent, Map<String, String> settings) {
+        MongoSettings mongoSettings = toMongoSettings(settings);
         MongoClient mongoClient = MongoClients.create(mongoSettings.getConnectionUrl());
         MongoDatabase database = mongoClient.getDatabase(mongoSettings.getDbName());
 
@@ -146,7 +138,7 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
     @Override
     public ConnectionTestResponseDTO testConnection(ConnectionTestRequestDTO connectionTestRequestDTO) {
         try {
-            MongoSettings mongoSettings = getSettings(connectionTestRequestDTO.getSettings());
+            MongoSettings mongoSettings = toMongoSettings(connectionTestRequestDTO.getSettings());
             MongoClient mongoClient = MongoClients.create(mongoSettings.getConnectionUrl());
             MongoDatabase database = mongoClient.getDatabase(mongoSettings.getDbName());
             MongoIterable<String> collectionNames = database.listCollectionNames();
@@ -162,4 +154,32 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
         }
     }
 
+    // structure
+
+
+    @Override
+    public StructureDTO getStructure(String systemComponentKey) {
+        return toDto(systemComponentKey, getMetaModel(systemComponentKey));
+    }
+
+    private StructureDTO toDto(String systemComponentKey, MongoMetaModel metaModel) {
+        return StructureDTO.builder()
+                .id(systemComponentKey)
+                .systemType(systemType())
+                .structureType("database")
+                .children(metaModel.getCollections().stream()
+                        .map(this::toCollectionDto)
+                        .collect(Collectors.toList())
+                )
+                .build();
+    }
+
+    private StructureDTO toCollectionDto(String collection) {
+        return StructureDTO.builder()
+                .id(collection)
+                .systemType(systemType())
+                .structureType("collection")
+                .attributes(Map.of("name", collection))
+                .build();
+    }
 }

@@ -1,6 +1,5 @@
 package io.storydoc.fabric.snapshot.domain;
 
-import io.storydoc.fabric.core.domain.FabricException;
 import io.storydoc.fabric.snapshot.infra.jsonmodel.SnapshotComponent;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionDTO;
@@ -8,8 +7,6 @@ import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -37,7 +34,10 @@ public class SnapshotCommandRunner {
         for (SystemComponentDTO systemComponent : systemDescriptionDTO.getSystemComponents()) {
             String systemType = systemComponent.getSystemType();
             SnapshotHandler snapshotHandler = handlerRegistry.getHandler(systemType);
-            SnapshotComponent snapshotComponent = snapshotHandler.takeComponentSnapshot(envKey, systemComponent, snapshotId);
+            Map<String, String> settings = systemDescriptionDTO.getSettings()
+                    .get(envKey)
+                    .get(systemComponent.getKey());
+            SnapshotComponent snapshotComponent = snapshotHandler.takeComponentSnapshot(snapshotId, systemComponent, settings);
             snapshotStorage.saveSnapshotComponent(snapshotComponent, systemComponent, snapshotHandler.getSerializer(), snapshotId);
         }
 

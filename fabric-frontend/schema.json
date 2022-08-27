@@ -466,6 +466,48 @@
         }
       }
     },
+    "/api/systemdescription/structure": {
+      "get": {
+        "tags": [
+          "system-description-controller"
+        ],
+        "summary": "getSystemComponentStructure",
+        "operationId": "getSystemComponentStructureUsingGET",
+        "parameters": [
+          {
+            "name": "envKey",
+            "in": "query",
+            "description": "envKey",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StructureDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/api/settings/settings": {
       "get": {
         "tags": [
@@ -743,6 +785,33 @@
           },
           "snapshotId": {
             "$ref": "#/components/schemas/SnapshotId"
+          }
+        }
+      },
+      "StructureDTO": {
+        "title": "StructureDTO",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StructureDTO"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "structureType": {
+            "type": "string"
+          },
+          "systemType": {
+            "type": "string"
           }
         }
       },

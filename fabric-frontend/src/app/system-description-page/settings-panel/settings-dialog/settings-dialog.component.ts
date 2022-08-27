@@ -21,7 +21,7 @@ class ConnectionTester {
     run(settingObject: {}) {
         this.testRunning = true
         this.testResult = null
-        this.service.test('MONGO', settingObject).then((result)=>  {
+        this.service.testConnection('MONGO', settingObject).then((result)=>  {
             this.testRunning = false
             this.testResult = result
         })
