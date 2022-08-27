@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -118,7 +119,10 @@ public class SnapshotServiceTest extends TestBase {
                                 .label("Mongo DB")
                                 .build())
                 )
-                .settings(new HashMap<>())
+                .settings(Map.of("" +
+                        "DEV", Map.of(
+                            "PRODUCTS", Map.of(
+                                    "some_key", "some_value"))))
                 .build());
     }
 
