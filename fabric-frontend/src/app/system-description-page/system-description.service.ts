@@ -2,10 +2,9 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {BehaviorSubject, Subscription} from "rxjs";
 import {distinctUntilChanged, map} from "rxjs/operators";
 import {logChangesToObservable} from "@fabric/common";
-import {ConnectionTestResponseDto, EnvironmentDto, StructureDto, SystemComponentDto, SystemDescriptionDto} from "@fabric/models";
+import {ConnectionTestResponseDto, EnvironmentDto, StructureDto, SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from "@fabric/models";
 import {ConnectionControllerService, MetaModelControllerService, SystemDescriptionControllerService} from "@fabric/services";
 import {SettingsDialogData} from "./settings-panel/settings-dialog/settings-dialog.component";
-import {MetaModelDialogData} from "./meta-model-panel/meta-model-dialog/meta-model-dialog.component";
 import {MongoMetaModelService} from "./meta-model-panel/mongo-metamodel-panel/mongo-metamodel.service";
 
 
@@ -18,11 +17,6 @@ export interface SettingRow {
     systemComponentKey: string,
     environmentKey : string,
     settings: Setting[]
-}
-
-export interface SettingDescriptor {
-    key: string,
-    description: string
 }
 
 interface SystemDescriptionState {
@@ -49,15 +43,22 @@ export class SystemDescriptionService implements OnDestroy {
         distinctUntilChanged(),
     )
 
+    systemTypeDescriptors$ = new BehaviorSubject<SystemTypeDescriptorDto[]>(null)
+
     private subscriptions: Subscription[] = []
 
     private init() {
         this.subscriptions.push(logChangesToObservable('systemDescriptionStore::systemDescription$ >>', this.systemDescription$))
+        this.loadSystemTypeDescriptors()
         this.loadSystemDescription()
     }
 
     ngOnDestroy(): void {
         this.subscriptions.forEach(s => s.unsubscribe())
+    }
+
+    loadSystemTypeDescriptors() {
+        this.systemDescriptionControllerService.getSystemTypeDescriptorsUsingGet({}).subscribe(dto => this.systemTypeDescriptors$.next(dto))
     }
 
     loadSystemDescription() {
@@ -154,7 +155,7 @@ export class SystemDescriptionService implements OnDestroy {
     }
 
     getSystemTypes(): string[] {
-        return ['MONGO']
+        return ['MONGO','ELASTICSEARCH']
     }
 
     getSettingDescriptors(systemType: string) {
@@ -173,11 +174,12 @@ export class SystemDescriptionService implements OnDestroy {
             return [];
     }
 
-    fetchMetaModel(systemComponent: SystemComponentDto, environmentKey: string) {
-        this.metaModelControllerService.createMetaModelUsingPost({
+    fetchMetaModel(systemComponent: SystemComponentDto, environmentKey: string): Promise<StructureDto> {
+        return this.metaModelControllerService.createMetaModelUsingPost({
             environmentKey,
             systemComponentKey: systemComponent.key
-        }).subscribe((value) => this.mongoMetaModelService.load(systemComponent.key))
+        }).toPromise()
+          .then(() => this.loadEnvironmentSystemComponentStructure(environmentKey, systemComponent.key))
     }
 
     testConnection(systemType: string, settings: any): Promise<ConnectionTestResponseDto> {
@@ -187,8 +189,14 @@ export class SystemDescriptionService implements OnDestroy {
         }}).toPromise()
     }
 
-    loadSystemStructure(envKey: string): Promise<StructureDto> {
-        return this.systemDescriptionControllerService.getSystemComponentStructureUsingGet({ envKey }).toPromise()
+    loadEnvironmentSystemStructure(envKey: string): Promise<StructureDto> {
+        return this.systemDescriptionControllerService.getEnvironmentStructureUsingGet({ envKey }).toPromise()
     }
+
+    loadEnvironmentSystemComponentStructure(envKey: string, systemComponentKey: string): Promise<StructureDto> {
+        return this.systemDescriptionControllerService.getSystemComponentEnvironmentStructureUsingGet({ envKey, systemComponentKey }).toPromise()
+    }
+
+
 
 }

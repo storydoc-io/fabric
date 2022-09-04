@@ -14,6 +14,7 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 
 import java.io.FileNotFoundException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 
 @Component
@@ -107,4 +108,20 @@ public class SnapshotStorageImpl extends StorageBase implements SnapshotStorage 
 
         workspaceService.saveResource(workspaceStructure.getComponentSnapshotUrn(snapshotId, systemComponent), (outputStream) -> serializer.write(snapshotComponent, outputStream));
     }
+
+    @Override
+    @SneakyThrows
+    public OutputStream streamSnapshotComponent(SystemComponentDTO systemComponent, SnapshotId snapshotId) {
+
+        Snapshot snapshot = loadSnapshot(snapshotId);
+        snapshot.getSnapshotComponentSummaries().add(SnapshotComponentSummary.builder()
+                .componentKey(systemComponent.getKey())
+                .systemType(systemComponent.getSystemType())
+                .build());
+        saveSnapshot(snapshot);
+
+        return workspaceService.getOutputStream(workspaceStructure.getComponentSnapshotUrn(snapshotId, systemComponent));
+    }
+
+
 }

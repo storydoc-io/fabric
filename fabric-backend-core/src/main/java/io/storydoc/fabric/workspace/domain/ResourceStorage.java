@@ -2,7 +2,9 @@ package io.storydoc.fabric.workspace.domain;
 
 import io.storydoc.fabric.workspace.app.dto.ResourceDTO;
 
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.List;
 
 public interface ResourceStorage {
@@ -17,4 +19,5 @@ public interface ResourceStorage {
 
     void delete(ResourceUrn resourceUrn) throws WorkspaceException;
 
+    OutputStream getOutputStream(ResourceUrn resourceUrn) throws WorkspaceException;
 }

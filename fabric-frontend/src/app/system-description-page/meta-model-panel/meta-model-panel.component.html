@@ -3,8 +3,8 @@
     <div class="btn  btn-sm btn-outline-primary float-right m-2" (click)="addMetaModel(systemDescription)">
         Fetch
     </div>
+    <pre>{{ structureDTo | json }}</pre>
 </app-panel>
-<app-mongo-metamodel-panel></app-mongo-metamodel-panel>
 
 
 <jw-modal [id]="metaModelDialogId()">

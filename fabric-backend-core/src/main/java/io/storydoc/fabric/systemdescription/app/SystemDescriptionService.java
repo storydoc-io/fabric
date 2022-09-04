@@ -1,13 +1,17 @@
 package io.storydoc.fabric.systemdescription.app;
 
 import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
+import io.storydoc.fabric.systemdescription.app.systemtype.SystemTypeDescriptorDTO;
 import io.storydoc.fabric.systemdescription.domain.SystemDescriptionStorage;
 import io.storydoc.fabric.systemdescription.domain.SystemStructureCommandRunner;
+import io.storydoc.fabric.systemdescription.domain.SystemStructureHandler;
+import io.storydoc.fabric.systemdescription.domain.SystemStructureHandlerRegistry;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.Environment;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemComponent;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemDescription;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -15,10 +19,12 @@ public class SystemDescriptionService {
 
     private final SystemDescriptionStorage systemDescriptionStorage;
     private final SystemStructureCommandRunner systemStructureCommandRunner;
+    private final SystemStructureHandlerRegistry systemStructureHandlerRegistry;
 
-    public SystemDescriptionService(SystemDescriptionStorage systemDescriptionStorage, SystemStructureCommandRunner systemStructureCommandRunner) {
+    public SystemDescriptionService(SystemDescriptionStorage systemDescriptionStorage, SystemStructureCommandRunner systemStructureCommandRunner, SystemStructureHandlerRegistry systemStructureHandlerRegistry) {
         this.systemDescriptionStorage = systemDescriptionStorage;
         this.systemStructureCommandRunner = systemStructureCommandRunner;
+        this.systemStructureHandlerRegistry = systemStructureHandlerRegistry;
     }
 
     public SystemDescriptionDTO getSystemDescription() {
@@ -91,6 +97,17 @@ public class SystemDescriptionService {
                                 .collect(Collectors.toList())
                 )
                 .build();
+    }
+
+    public StructureDTO getStructure(String envKey, String systemComponentKey) {
+        SystemComponentDTO systemComponentDTO = getSystemComponentDTO(systemComponentKey);
+        return systemStructureCommandRunner.getStructure(systemComponentDTO);
+    }
+
+    public List<SystemTypeDescriptorDTO> getSystemTypeDescriptors() {
+        return this.systemStructureHandlerRegistry.getHandlers().stream()
+                .map(SystemStructureHandler::getSystemTypeDescriptor)
+                .collect(Collectors.toList());
     }
 
 }

@@ -16,7 +16,9 @@ export class SystemDescriptionPageComponent implements OnInit {
 
     systemDescription$ = this.service.systemDescription$
 
-    selectedSystemDescriptionTab: SystemDescriptionTabState = 'ENVIRONMENTS'
+    systemTypeDescriptors$ = this.service.systemTypeDescriptors$
+
+    selectedSystemDescriptionTab: SystemDescriptionTabState = 'SYSTEM'
 
     selectedDataSourceTab: DataSourceTabState = 'SETTINGS'
 

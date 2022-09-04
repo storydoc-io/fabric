@@ -57,10 +57,10 @@ class StructureDto2TreeNodeConverter {
 })
 export class SnapshotDialogComponent implements OnInit {
 
-    constructor(private systemDescriptService: SystemDescriptionService) {
+    constructor(private systemDescriptionService: SystemDescriptionService) {
     }
 
-    systemDescription$ = this.systemDescriptService.systemDescription$
+    systemDescription$ = this.systemDescriptionService.systemDescription$
 
     ngOnInit(): void {
     }
@@ -137,7 +137,7 @@ export class SnapshotDialogComponent implements OnInit {
             let timeStamp = this.datepipe.transform(new Date(), 'YYYY-MM-dd HH:mm:ss')
             this.nameControl.setValue(`${env} snapshot ${timeStamp}`)
         }
-        this.systemDescriptService.loadSystemStructure(env).then((structureDto) => {
+        this.systemDescriptionService.loadEnvironmentSystemStructure(env).then((structureDto) => {
             this.treeNodes = new StructureDto2TreeNodeConverter().run(structureDto)
         })
     }

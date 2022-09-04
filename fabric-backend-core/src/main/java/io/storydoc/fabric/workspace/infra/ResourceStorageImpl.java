@@ -39,8 +39,12 @@ public class ResourceStorageImpl implements ResourceStorage {
         }
     }
 
-    private OutputStream getOutputStream(ResourceUrn resourceUrn) throws FileNotFoundException {
-        return new FileOutputStream(getFile(resourceUrn));
+    public OutputStream getOutputStream(ResourceUrn resourceUrn) throws WorkspaceException {
+        try {
+            return new FileOutputStream(getFile(resourceUrn));
+        } catch (FileNotFoundException e) {
+            throw new WorkspaceException("could not open outputstream", e);
+        }
     }
 
     private Path resolveFolderPath(FolderURN folderURN) {

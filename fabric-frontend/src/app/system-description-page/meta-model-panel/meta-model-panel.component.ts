@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {ModalService} from "../../common/modal/modal-service";
 import {SystemDescriptionService} from "../system-description.service";
-import {SystemComponentDto, SystemDescriptionDto} from "@fabric/models";
+import {StructureDto, SystemComponentDto, SystemDescriptionDto} from "@fabric/models";
 import {HasConfirmationDialogMixin} from "@fabric/common";
 import {MetaModelDialogData, MetaModelDialogSpec} from "./meta-model-dialog/meta-model-dialog.component";
 
@@ -45,6 +45,8 @@ export class MetaModelPanelComponent extends HasConfirmationDialogMixin  impleme
     this.modalService.close(this.metaModelDialogId())
   }
 
+  structureDTo: StructureDto
+
   addMetaModel(systemDescription: SystemDescriptionDto) {
     this.openMetaModelDialog({
       systemComponent: this.systemComponent,
@@ -54,7 +56,7 @@ export class MetaModelPanelComponent extends HasConfirmationDialogMixin  impleme
       },
       confirm: (data: MetaModelDialogData) => {
         this.closeMetaModelDialog()
-        this.service.fetchMetaModel(this.systemComponent, data.environmentKey)
+        this.service.fetchMetaModel(this.systemComponent, data.environmentKey).then((structureDto =>  this.structureDTo = structureDto))
       },
       cancel: () => this.closeMetaModelDialog()
     })

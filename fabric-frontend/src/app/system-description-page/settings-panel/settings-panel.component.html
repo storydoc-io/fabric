@@ -9,7 +9,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let settingRow of settingRows(systemDescription)">
+        <tr *ngFor="let settingRow of settingRowsForSystemComponent()">
             <td>{{settingRow.environmentKey}}</td>
             <td>{{settingRow.systemComponentKey}}</td>
             <td>
@@ -25,7 +25,6 @@
                      (click)="removeSetting(systemDescription, settingRow)">Remove
                 </div>
             </td>
-
         </tr>
         </tbody>
     </table>

@@ -24,56 +24,80 @@
 
 
 <ng-template #middle>
-    <div *ngIf="systemDescription$ | async as systemDescription">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-md-2">
-                    <ul class="nav nav-tabs flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" [class.active]="selectedSystemDescriptionTab==='ENVIRONMENTS'"
-                               (click)="selectSystemDescriptionTab('ENVIRONMENTS')" href="javascript:void(0);">Environments</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" [class.active]="selectedSystemDescriptionTab==='SYSTEM'" aria-current="page"
-                               (click)="selectSystemDescriptionTab('SYSTEM')" href="javascript:void(0);">Datasources</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="col-md-10">
-                    <ng-container [ngSwitch]="selectedSystemDescriptionTab">
-                        <ng-container *ngSwitchCase="'ENVIRONMENTS'">
-                            <app-environment-panel [systemDescription]="systemDescription"></app-environment-panel>
-                        </ng-container>
-                        <ng-container *ngSwitchCase="'SYSTEM'">
-                            <app-system-component-panel [systemDescription]="systemDescription" (selectionChanged)="systemComponentSelectionChanged($event)" [selection]="selectedSystemComponent"></app-system-component-panel>
-                            <br>
-                            <ng-container *ngIf="selectedSystemComponent">
-                                <h4>{{selectedSystemComponent.label}} details</h4>
-                                <ul class="nav nav-tabs">
-                                    <li class="nav-item">
-                                        <a class="nav-link" [class.active]="selectedDataSourceTab==='SETTINGS'"
-                                           (click)="selectDataSourceTab('SETTINGS')" href="javascript:void(0);">Connection settings</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" [class.active]="selectedDataSourceTab==='METADATA'"
-                                           (click)="selectDataSourceTab('METADATA')" href="javascript:void(0);">Metadata</a>
-                                    </li>
-                                </ul>
-                                <ng-container [ngSwitch]="selectedDataSourceTab">
-                                    <ng-container *ngSwitchCase="'SETTINGS'">
-                                        <app-settings-panel [systemDescription]="systemDescription"></app-settings-panel>
-                                    </ng-container>
-                                    <ng-container *ngSwitchCase="'METADATA'">
-                                        <app-meta-model-panel [systemDescription]="systemDescription" [systemComponent]="selectedSystemComponent"></app-meta-model-panel>
+    <ng-container *ngIf="systemTypeDescriptors$ | async as systemTypeDescriptors">
+        <div *ngIf="systemDescription$ | async as systemDescription">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-2">
+                        <ul class="nav nav-tabs flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" [class.active]="selectedSystemDescriptionTab==='SYSTEM'"
+                                   aria-current="page"
+                                   (click)="selectSystemDescriptionTab('SYSTEM')"
+                                   href="javascript:void(0);">Datasources</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" [class.active]="selectedSystemDescriptionTab==='ENVIRONMENTS'"
+                                   (click)="selectSystemDescriptionTab('ENVIRONMENTS')" href="javascript:void(0);">Environments</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-10">
+                        <ng-container [ngSwitch]="selectedSystemDescriptionTab">
+                            <ng-container *ngSwitchCase="'ENVIRONMENTS'">
+                                <app-environment-panel [systemDescription]="systemDescription"></app-environment-panel>
+                            </ng-container>
+                            <ng-container *ngSwitchCase="'SYSTEM'">
+                                <app-system-component-panel
+                                        [systemDescription]="systemDescription"
+                                        [systemTypes]="systemTypeDescriptors"
+                                        (selectionChanged)="systemComponentSelectionChanged($event)"
+                                        [selection]="selectedSystemComponent">
+                                </app-system-component-panel>
+                                <br>
+                                <ng-container *ngIf="selectedSystemComponent">
+                                    <h4>{{selectedSystemComponent.label}} details</h4>
+                                    <ul class="nav nav-tabs">
+                                        <li class="nav-item">
+                                            <a class="nav-link"
+                                               [class.active]="selectedDataSourceTab==='SETTINGS'"
+                                               (click)="selectDataSourceTab('SETTINGS')"
+                                               href="javascript:void(0);">
+                                                Connection settings
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link"
+                                               [class.active]="selectedDataSourceTab==='METADATA'"
+                                               (click)="selectDataSourceTab('METADATA')"
+                                               href="javascript:void(0);">
+                                                Metadata
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <ng-container [ngSwitch]="selectedDataSourceTab">
+                                        <ng-container *ngSwitchCase="'SETTINGS'">
+                                            <app-settings-panel
+                                                    [systemDescription]="systemDescription"
+                                                    [systemTypes]="systemTypeDescriptors"
+                                                    [systemComponent]="selectedSystemComponent">
+                                            </app-settings-panel>
+                                        </ng-container>
+                                        <ng-container *ngSwitchCase="'METADATA'">
+                                            <app-meta-model-panel
+                                                    [systemDescription]="systemDescription"
+                                                    [systemComponent]="selectedSystemComponent">
+                                            </app-meta-model-panel>
+                                        </ng-container>
                                     </ng-container>
                                 </ng-container>
                             </ng-container>
                         </ng-container>
-                    </ng-container>
+                    </div>
                 </div>
             </div>
         </div>
+    </ng-container>
 
-    </div>
 </ng-template>
 

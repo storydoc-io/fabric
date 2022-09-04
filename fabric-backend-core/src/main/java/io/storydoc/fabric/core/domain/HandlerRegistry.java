@@ -2,6 +2,7 @@ package io.storydoc.fabric.core.domain;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,9 @@ public class HandlerRegistry<COMMAND_HANDLER_TYPE extends CommandHandler> {
         return handler;
     }
 
+    public Collection<COMMAND_HANDLER_TYPE> getHandlers() {
+        return handlerMap.values();
+    }
 }
 
 

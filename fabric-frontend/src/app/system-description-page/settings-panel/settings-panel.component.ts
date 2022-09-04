@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {SystemDescriptionDto} from "@fabric/models";
+import {EnvironmentDto, SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from "@fabric/models";
 import {ModalService} from "../../common/modal/modal-service";
 import {Setting, SettingRow, SystemDescriptionService} from "../system-description.service";
 import {HasConfirmationDialogMixin} from "@fabric/common";
@@ -17,7 +17,13 @@ export class SettingsPanelComponent extends HasConfirmationDialogMixin implement
   }
 
   @Input()
+  systemTypes: SystemTypeDescriptorDto[]
+
+  @Input()
   systemDescription: SystemDescriptionDto
+
+  @Input()
+  systemComponent: SystemComponentDto
 
   ngOnInit(): void {
   }
@@ -42,11 +48,12 @@ export class SettingsPanelComponent extends HasConfirmationDialogMixin implement
 
   public addSetting(systemDescription: SystemDescriptionDto) {
     this.openSettingsDialog({
-      environments: systemDescription.environments,
+      systemTypes: this.systemTypes,
+      environments: this.availableEnvironments(),
       systemComponents: systemDescription.systemComponents,
       data: {
         environmentKey: null,
-        systemComponentKey: null,
+        systemComponentKey: this.systemComponent.key,
         settings: []
       },
       confirm: (data) => {
@@ -59,6 +66,7 @@ export class SettingsPanelComponent extends HasConfirmationDialogMixin implement
 
   public editSetting(systemDescription: SystemDescriptionDto, setting: SettingRow) {
     this.openSettingsDialog({
+      systemTypes: this.systemTypes,
       environments: systemDescription.environments,
       systemComponents: systemDescription.systemComponents,
       data: {
@@ -87,10 +95,21 @@ export class SettingsPanelComponent extends HasConfirmationDialogMixin implement
 
   }
 
-  public settingRows(systemDescription: SystemDescriptionDto): SettingRow[] {
+  availableEnvironments(): EnvironmentDto[] {
+    let takenEnvKeys: string[] = this.settingRowsForSystemComponent().map(row => row.environmentKey)
+    return this.systemDescription.environments.filter(env =>
+        !takenEnvKeys.find((takenEnv) => takenEnv === env.key)
+    )
+  }
+
+  public settingRowsForSystemComponent(): SettingRow[] {
+    return this.settingRows().filter(r => r.systemComponentKey === this.systemComponent.key)
+  }
+
+  public settingRows(): SettingRow[] {
     let settingRows: SettingRow[] = []
-    Object.keys(systemDescription.settings).map(environmentKey => {
-      let envSettings = systemDescription.settings[environmentKey]
+    Object.keys(this.systemDescription.settings).map(environmentKey => {
+      let envSettings = this.systemDescription.settings[environmentKey]
       Object.keys(envSettings).map(systemComponentKey => {
         let settingsArray: Setting[] = []
         let settingsDto = envSettings[systemComponentKey]

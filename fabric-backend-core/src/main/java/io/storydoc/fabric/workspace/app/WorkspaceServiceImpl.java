@@ -4,6 +4,7 @@ import io.storydoc.fabric.workspace.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.io.OutputStream;
 
 @Service
 public class WorkspaceServiceImpl implements WorkspaceService {
@@ -44,6 +45,11 @@ public class WorkspaceServiceImpl implements WorkspaceService {
     @Override
     public void saveResource(ResourceUrn resourceUrn, WorkspaceResourceSerializer serializer) throws WorkspaceException {
         resourceStore.saveResource(resourceUrn, serializer);
+    }
+
+    @Override
+    public OutputStream getOutputStream(ResourceUrn resourceUrn) throws WorkspaceException{
+            return resourceStore.getOutputStream(resourceUrn);
     }
 
     @Override

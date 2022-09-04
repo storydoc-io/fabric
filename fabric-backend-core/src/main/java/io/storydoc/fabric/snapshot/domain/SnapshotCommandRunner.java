@@ -7,6 +7,7 @@ import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.OutputStream;
 import java.util.Map;
 
 @Component
@@ -32,13 +33,25 @@ public class SnapshotCommandRunner {
         snapshotStorage.createSnapshot(snapshotId, name, envKey);
 
         for (SystemComponentDTO systemComponent : systemDescriptionDTO.getSystemComponents()) {
-            String systemType = systemComponent.getSystemType();
-            SnapshotHandler snapshotHandler = handlerRegistry.getHandler(systemType);
-            Map<String, String> settings = systemDescriptionDTO.getSettings()
-                    .get(envKey)
-                    .get(systemComponent.getKey());
-            SnapshotComponent snapshotComponent = snapshotHandler.takeComponentSnapshot(snapshotId, systemComponent, settings);
-            snapshotStorage.saveSnapshotComponent(snapshotComponent, systemComponent, snapshotHandler.getSerializer(), snapshotId);
+            try {
+                String systemType = systemComponent.getSystemType();
+                SnapshotHandler snapshotHandler = handlerRegistry.getHandler(systemType);
+                Map<String, String> settings = systemDescriptionDTO.getSettings()
+                        .get(envKey)
+                        .get(systemComponent.getKey());
+                if (snapshotHandler instanceof SnapshotHandler_ModelBased) {
+                    SnapshotHandler_ModelBased modelBasedHandler = (SnapshotHandler_ModelBased) snapshotHandler;
+                    SnapshotComponent snapshotComponent = modelBasedHandler.takeComponentSnapshot(snapshotId, systemComponent, settings);
+                    snapshotStorage.saveSnapshotComponent(snapshotComponent, systemComponent, modelBasedHandler.getSerializer(), snapshotId);
+                } else {
+                    SnapshotHandler_StreamBased streamHandler = (SnapshotHandler_StreamBased) snapshotHandler;
+                    OutputStream outputStream = snapshotStorage.streamSnapshotComponent(systemComponent, snapshotId);
+                    streamHandler.streamSnapshot(snapshotId, systemComponent, settings, outputStream);
+                }
+            } catch (Throwable e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         }
 
 

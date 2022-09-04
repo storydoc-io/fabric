@@ -1,7 +1,7 @@
 package io.storydoc.fabric;
 
 import io.storydoc.fabric.config.FabricServerProperties;
-import io.storydoc.fabric.snapshot.domain.SnapshotHandler;
+import io.storydoc.fabric.snapshot.domain.SnapshotHandler_ModelBased;
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.snapshot.domain.SnapshotSerializer;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
@@ -28,8 +28,8 @@ public class TestConfig {
     }
 
     @Bean
-    public SnapshotHandler<DummySnapshot> mockMongoHandler() {
-        return new SnapshotHandler<DummySnapshot>() {
+    public SnapshotHandler_ModelBased<DummySnapshot> mockMongoHandler() {
+        return new SnapshotHandler_ModelBased<DummySnapshot>() {
             @Override
             public String systemType() {
                 return "MONGO";

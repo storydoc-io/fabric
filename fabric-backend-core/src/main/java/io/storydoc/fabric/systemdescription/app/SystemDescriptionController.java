@@ -3,8 +3,11 @@ package io.storydoc.fabric.systemdescription.app;
 import io.storydoc.fabric.connection.app.ConnectionTestRequestDTO;
 import io.storydoc.fabric.connection.app.ConnectionTestResponseDTO;
 import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
+import io.storydoc.fabric.systemdescription.app.systemtype.SystemTypeDescriptorDTO;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/systemdescription")
@@ -16,6 +19,13 @@ public class SystemDescriptionController {
         this.systemDescriptionService = systemDescriptionService;
     }
 
+    @GetMapping(value = "types", produces = MediaType.APPLICATION_JSON_VALUE)
+    List<SystemTypeDescriptorDTO> getSystemTypeDescriptors() {
+        return systemDescriptionService.getSystemTypeDescriptors();
+    }
+
+
+
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     SystemDescriptionDTO getSystemDescription() {
         return systemDescriptionService.getSystemDescription();
@@ -26,10 +36,14 @@ public class SystemDescriptionController {
         systemDescriptionService.updateSystemDescription(systemDescription);
     }
 
-    @GetMapping(value = "structure", produces = MediaType.APPLICATION_JSON_VALUE)
-    StructureDTO getSystemComponentStructure(String envKey) {
+    @GetMapping(value = "structure/env", produces = MediaType.APPLICATION_JSON_VALUE)
+    StructureDTO getEnvironmentStructure(String envKey) {
         return systemDescriptionService.getStructure(envKey);
     }
 
+    @GetMapping(value = "structure/", produces = MediaType.APPLICATION_JSON_VALUE)
+    StructureDTO getSystemComponentEnvironmentStructure(String envKey, String systemComponentKey) {
+        return systemDescriptionService.getStructure(envKey, systemComponentKey);
+    }
 
 }

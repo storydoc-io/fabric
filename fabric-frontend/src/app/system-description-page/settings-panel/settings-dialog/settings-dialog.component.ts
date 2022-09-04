@@ -1,8 +1,8 @@
 import {Component, Input, OnInit, SimpleChanges} from '@angular/core';
 import {AbstractControl, FormArray, FormControl, FormGroup, Validators} from "@angular/forms";
 import {showValidationMessages} from "@fabric/common";
-import {ConnectionTestResponseDto, EnvironmentDto, SystemComponentDto} from "@fabric/models";
-import {Setting, SettingDescriptor, SystemDescriptionService} from "../../system-description.service";
+import {ConnectionTestResponseDto, EnvironmentDto, SettingDescriptorDto, SystemComponentDto, SystemTypeDescriptorDto} from "@fabric/models";
+import {Setting, SystemDescriptionService} from "../../system-description.service";
 import {faBolt, faCheckCircle} from '@fortawesome/free-solid-svg-icons';
 
 
@@ -18,10 +18,10 @@ class ConnectionTester {
     testRunning: boolean = false
     testResult: ConnectionTestResponseDto = null
 
-    run(settingObject: {}) {
+    run(settingObject: {}, systemType) {
         this.testRunning = true
         this.testResult = null
-        this.service.testConnection('MONGO', settingObject).then((result)=>  {
+        this.service.testConnection(systemType, settingObject).then((result)=>  {
             this.testRunning = false
             this.testResult = result
         })
@@ -29,8 +29,9 @@ class ConnectionTester {
 }
 
 export interface SettingsDialogSpec {
-    systemComponents: SystemComponentDto[];
-    environments: EnvironmentDto[];
+    systemTypes: SystemTypeDescriptorDto[]
+    systemComponents: SystemComponentDto[]
+    environments: EnvironmentDto[]
     data: SettingsDialogData
     cancel: () => void
     confirm: (data: SettingsDialogData) => void
@@ -53,8 +54,7 @@ class SettingsDialogSpecWrapper {
 })
 export class SettingsDialogComponent implements OnInit {
 
-    constructor(private service: SystemDescriptionService) {
-    }
+    constructor(private service: SystemDescriptionService) {}
 
     ngOnInit(): void {
     }
@@ -67,8 +67,8 @@ export class SettingsDialogComponent implements OnInit {
     ngOnChanges(changes: SimpleChanges): void {
         if (this.spec != null) {
             this.specWrapper = new SettingsDialogSpecWrapper(this.spec)
-            this.configureSettingsControlForSystemType(this.specWrapper.getSystemType(this.spec.data.systemComponentKey))
             this.formGroup.setValue(this.spec.data)
+            this.configureSettingsControlForSystemType(this.specWrapper.getSystemType(this.spec.data.systemComponentKey))
             this.formGroup.markAsPristine()
             this.formGroup.markAsUntouched()
             this.connectionTester = null
@@ -120,10 +120,10 @@ export class SettingsDialogComponent implements OnInit {
         return showValidationMessages(this.settingValueControl(i))
     }
 
-    settingDescriptors: SettingDescriptor[] = []
+    settingDescriptors: SettingDescriptorDto[] = []
 
     configureSettingsControlForSystemType(systemType: string) {
-        this.settingDescriptors = this.service.getSettingDescriptors(systemType)
+        this.settingDescriptors = this.getSettingDescriptors(systemType)
         this.settingsControl().controls = []
         this.settingDescriptors.forEach(descriptor =>
             this.settingsControl().push(new FormGroup({
@@ -132,6 +132,12 @@ export class SettingsDialogComponent implements OnInit {
             }))
         )
     }
+
+    private getSettingDescriptors(systemType: string): SettingDescriptorDto[] {
+        let systemTypeDescriptorDto = this.spec.systemTypes.find(st => st.systemType === systemType);
+        return systemTypeDescriptorDto ? systemTypeDescriptorDto.settingDescriptors : []
+    }
+
 
     cancel() {
         this.spec.cancel()
@@ -148,17 +154,20 @@ export class SettingsDialogComponent implements OnInit {
     connectionTester: ConnectionTester
 
     runTest() {
+        let systemComponentKey = this.systemComponentKeyControl().value;
+        let systemType = this.specWrapper.getSystemType(systemComponentKey)
         let settingObject = {}
         this.settingsControl().value.forEach(setting => {
             settingObject[setting.key] = setting.value
         })
 
         this.connectionTester = new ConnectionTester(this.service)
-        this.connectionTester.run(settingObject)
+        this.connectionTester.run(settingObject, systemType)
 
     }
 
     cancelTest() {
         this.connectionTester = null
     }
+
 }

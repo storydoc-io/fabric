@@ -1,4 +1,4 @@
-<div *ngIf="formGroup"  class="modal-dialog">
+<div *ngIf="spec && formGroup "  class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">Add Datasource</h5>
@@ -20,8 +20,8 @@
                 <div class="mb-3">
                     <label for="systemType" class="form-label">Datasource type</label>
                     <select id="systemType" formControlName="systemType" class="form-select" [class.is-invalid]="systemTypeControlInvalid()" >
-                        <option *ngFor="let systemType of systemTypes"
-                                [ngValue]="systemType">{{systemType}}</option>
+                        <option *ngFor="let systemType of spec.systemTypes"
+                                [ngValue]="systemType.systemType">{{systemType.systemType}}</option>
                     </select>
 
                     <div class="form-text">Select a datasource type.</div>

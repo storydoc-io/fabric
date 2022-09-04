@@ -15,18 +15,21 @@ import io.storydoc.fabric.navigation.domain.NavigationModelStorage;
 import io.storydoc.fabric.snapshot.domain.*;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
 import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
+import io.storydoc.fabric.systemdescription.app.systemtype.SettingDescriptorDTO;
+import io.storydoc.fabric.systemdescription.app.systemtype.SystemTypeDescriptorDTO;
 import io.storydoc.fabric.systemdescription.domain.SystemStructureHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class MongoSnapshotService extends StorageBase implements SnapshotHandler<MongoSnapshot>, MetaModelHandler<MongoMetaModel>, ConnectionHandler, SystemStructureHandler {
+public class MongoSnapshotService extends StorageBase implements SnapshotHandler_ModelBased<MongoSnapshot>, MetaModelHandler<MongoMetaModel>, ConnectionHandler, SystemStructureHandler {
 
     private final SnapshotStorage snapshotStorage;
 
@@ -40,9 +43,30 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
         this.metaModelStorage = metaModelStorage;
     }
 
+    // systemtype
+
     @Override
     public String systemType() {
         return "MONGO";
+    }
+
+    @Override
+    public SystemTypeDescriptorDTO getSystemTypeDescriptor() {
+        return SystemTypeDescriptorDTO.builder()
+                .systemType(systemType())
+                .settingDescriptors(List.of(
+                        SettingDescriptorDTO.builder()
+                                .key("connectionUrl")
+                                .description("Connection URL")
+                                .placeHolder("enter a connection url to the mongo db")
+                                .build(),
+                        SettingDescriptorDTO.builder()
+                                .key("dbName")
+                                .description("Mongo Database")
+                                .placeHolder("enter the mongo database")
+                                .build()
+                ))
+                .build();
     }
 
     @Override

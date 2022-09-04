@@ -2,6 +2,7 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core'
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {showValidationMessages, unique} from '@fabric/common'
 import {SystemDescriptionService} from '../../system-description.service';
+import {SystemTypeDescriptorDto} from "@fabric/models";
 
 export interface SystemComponentDialogData {
     key: string,
@@ -10,6 +11,7 @@ export interface SystemComponentDialogData {
 }
 
 export interface SystemComponentDialogSpec {
+    systemTypes: SystemTypeDescriptorDto[]
     keys: string[];
     data: SystemComponentDialogData
     cancel: () => void
@@ -24,17 +26,13 @@ export interface SystemComponentDialogSpec {
 })
 export class SystemComponentDialogComponent implements OnInit, OnChanges {
 
-    constructor(private service: SystemDescriptionService) {
-        this.systemTypes = this.service.getSystemTypes()
-    }
+    constructor() {}
 
     ngOnInit(): void {
     }
 
     @Input()
     spec: SystemComponentDialogSpec
-
-    systemTypes: string[]
 
     ngOnChanges(changes: SimpleChanges): void {
         if (this.spec != null) {

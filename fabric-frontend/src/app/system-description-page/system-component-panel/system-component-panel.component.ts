@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
-import {SystemComponentDto, SystemDescriptionDto} from "@fabric/models";
+import {SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from "@fabric/models";
 import {SystemComponentDialogData, SystemComponentDialogSpec} from "./system-component-dialog/system-component-dialog.component";
 import {HasConfirmationDialogMixin} from "@fabric/common";
 import {ModalService} from "../../common/modal/modal-service";
@@ -18,6 +18,9 @@ export class SystemComponentPanelComponent extends HasConfirmationDialogMixin im
 
   ngOnInit(): void {
   }
+
+  @Input()
+  systemTypes: SystemTypeDescriptorDto[]
 
   @Input()
   systemDescription: SystemDescriptionDto
@@ -52,6 +55,7 @@ export class SystemComponentPanelComponent extends HasConfirmationDialogMixin im
 
   addComponent(systemDescription: SystemDescriptionDto) {
     this.openSystemComponentDialog({
+      systemTypes: this.systemTypes,
       keys: this.systemComponentKeys(systemDescription),
       data: {
         key: null,
@@ -68,6 +72,7 @@ export class SystemComponentPanelComponent extends HasConfirmationDialogMixin im
 
   editComponent(systemDescription: SystemDescriptionDto, systemComponent: SystemComponentDto) {
     this.openSystemComponentDialog({
+      systemTypes: this.systemTypes,
       keys: this.systemComponentKeys(systemDescription, systemComponent),
       data: <SystemComponentDialogData> { ... systemComponent},
       confirm: data => {
