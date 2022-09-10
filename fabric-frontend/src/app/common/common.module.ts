@@ -4,11 +4,13 @@ import {CoreModule} from "../core.module";
 
 import {PopupMenuComponent} from './popup-menu/popup-menu.component';
 import {ModalComponent} from './modal/modal.component'
-import {Layout1ColComponent} from "./layout-1col/layout-1col.component";
+import {Layout1ColComponent} from "./layout/layout-1col/layout-1col.component";
 import {BackButtonComponent} from "./back-button/back-button.component";
 import {PanelComponent} from "./panel/panel.component";
 import {ConfirmationDialogComponent} from "./confirmation-dialog/confirmation-dialog.component";
 import { ValidationMessagesComponent } from './validation-messages/validation-messages.component';
+import { TitleComponent } from './layout/title/title.component';
+import { BreadcrumbComponent } from './layout/breadcrumb/breadcrumb.component';
 
 @NgModule({
     declarations: [
@@ -18,7 +20,9 @@ import { ValidationMessagesComponent } from './validation-messages/validation-me
         BackButtonComponent,
         PanelComponent,
         ConfirmationDialogComponent,
-        ValidationMessagesComponent
+        ValidationMessagesComponent,
+        TitleComponent,
+        BreadcrumbComponent
     ],
     imports: [
         CoreModule,
@@ -30,7 +34,9 @@ import { ValidationMessagesComponent } from './validation-messages/validation-me
         BackButtonComponent,
         PanelComponent,
         ConfirmationDialogComponent,
-        ValidationMessagesComponent
+        ValidationMessagesComponent,
+        TitleComponent,
+        BreadcrumbComponent
     ]
 })
 export class FabricCommonModule {

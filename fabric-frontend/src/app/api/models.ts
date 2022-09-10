@@ -12,6 +12,8 @@ export { MongoMetaModel } from './models/mongo-meta-model';
 export { MongoNavigationModel } from './models/mongo-navigation-model';
 export { MongoSnapshot } from './models/mongo-snapshot';
 export { Path } from './models/path';
+export { QueryRequestDto } from './models/query-request-dto';
+export { QueryResponseItemDto } from './models/query-response-item-dto';
 export { SettingDescriptorDto } from './models/setting-descriptor-dto';
 export { SnapshotComponentDto } from './models/snapshot-component-dto';
 export { SnapshotDto } from './models/snapshot-dto';

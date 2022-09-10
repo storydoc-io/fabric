@@ -4,7 +4,7 @@ import {distinctUntilChanged, map} from "rxjs/operators";
 import {logChangesToObservable} from "@fabric/common";
 import {ConnectionTestResponseDto, EnvironmentDto, StructureDto, SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from "@fabric/models";
 import {ConnectionControllerService, MetaModelControllerService, SystemDescriptionControllerService} from "@fabric/services";
-import {SettingsDialogData} from "./settings-panel/settings-dialog/settings-dialog.component";
+import {SettingsDialogData, SettingsDialogSpec} from "./settings-panel/settings-dialog/settings-dialog.component";
 import {MongoMetaModelService} from "./meta-model-panel/mongo-metamodel-panel/mongo-metamodel.service";
 
 
@@ -22,6 +22,53 @@ export interface SettingRow {
 interface SystemDescriptionState {
     systemDescription: SystemDescriptionDto
 }
+
+export class SystemDescriptionWrapper {
+    constructor(private systemDescription: SystemDescriptionDto) {
+    }
+
+    getSystemType(systemComponentKey: string): string {
+        return this.systemDescription.systemComponents.find(systemComponent => systemComponent.key === systemComponentKey)?.systemType
+    }
+
+    public settingRows(): SettingRow[] {
+        let settingRows: SettingRow[] = []
+        Object.keys(this.systemDescription.settings).map(environmentKey => {
+            let envSettings = this.systemDescription.settings[environmentKey]
+            Object.keys(envSettings).map(systemComponentKey => {
+                let settingsArray: Setting[] = []
+                let settingsDto = envSettings[systemComponentKey]
+                Object.keys(settingsDto).map(key => {
+                    settingsArray.push({
+                        key,
+                        value: settingsDto[key]
+                    })
+                })
+                settingRows.push({
+                    environmentKey,
+                    systemComponentKey,
+                    settings: settingsArray
+                })
+            })
+        })
+        return settingRows
+    }
+
+    getEnvironmentByKey(envKey: string): EnvironmentDto {
+        return this.systemDescription.environments.find(env => env.key === envKey)
+    }
+
+    getEnvironments(systemComponent: SystemComponentDto): EnvironmentDto[] {
+        return this.settingRows()
+            .filter(row => row.systemComponentKey === systemComponent.key)
+            .map(row => this.getEnvironmentByKey(row.environmentKey))
+    }
+
+    settingRowsForSystemComponent(systemComponent: SystemComponentDto) {
+        return  this.settingRows().filter(r => r.systemComponentKey === systemComponent.key)
+    }
+}
+
 
 @Injectable({
     providedIn: 'root'

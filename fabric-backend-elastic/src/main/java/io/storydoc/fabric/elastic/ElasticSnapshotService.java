@@ -7,6 +7,9 @@ import io.storydoc.fabric.core.infra.StorageBase;
 import io.storydoc.fabric.elastic.metamodel.ElasticMetaModel;
 import io.storydoc.fabric.elastic.settings.ElasticSettings;
 import io.storydoc.fabric.metamodel.domain.*;
+import io.storydoc.fabric.query.app.QueryRequestDTO;
+import io.storydoc.fabric.query.app.QueryResponseItemDTO;
+import io.storydoc.fabric.query.domain.QueryHandler;
 import io.storydoc.fabric.snapshot.app.SnapshotItemDTO;
 import io.storydoc.fabric.snapshot.domain.SnapshotHandler_StreamBased;
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
@@ -25,12 +28,10 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.client.RequestOptions;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestClientBuilder;
-import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.*;
 import org.elasticsearch.client.indices.GetMappingsRequest;
 import org.elasticsearch.client.indices.GetMappingsResponse;
 import org.elasticsearch.cluster.metadata.MappingMetadata;
@@ -48,7 +49,13 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class ElasticSnapshotService extends StorageBase implements SnapshotHandler_StreamBased<SnapshotItemDTO>, MetaModelHandler<ElasticMetaModel>, ConnectionHandler, SystemStructureHandler {
+public class ElasticSnapshotService extends StorageBase implements
+        ConnectionHandler,
+        MetaModelHandler<ElasticMetaModel>,
+        SnapshotHandler_StreamBased<SnapshotItemDTO>,
+        SystemStructureHandler,
+        QueryHandler
+{
 
     public static final String SETTING_KEY__USER_NAME = "userName";
     public static final String SETTING_KEY__PASSWORD = "password";
@@ -331,5 +338,21 @@ public class ElasticSnapshotService extends StorageBase implements SnapshotHandl
                 .build();
     }
 
+    // Query
 
+
+    @Override
+    @SneakyThrows
+    public QueryResponseItemDTO doQuery(QueryRequestDTO requestDTO, Map<String, String> settings) {
+        ElasticSettings elasticSettings = toSettings(settings);
+        RestHighLevelClient client = getClient(elasticSettings);
+        Request request = new Request("GET", requestDTO.getAttributes().get("endpoint"));
+        if (requestDTO.getAttributes().get("jsonEntity") != null) {
+            request.setJsonEntity(requestDTO.getAttributes().get("jsonEntity"));
+        }
+        Response response = client.getLowLevelClient().performRequest(request);
+        return QueryResponseItemDTO.builder()
+                .attributes(Map.of("content", EntityUtils.toString(response.getEntity())))
+                .build();
+    }
 }

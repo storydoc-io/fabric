@@ -1,0 +1,19 @@
+<app-layout-1col
+        [title]="title"
+        [breadcrumb]="breadcrumb"
+        [middle]="middle"
+>
+</app-layout-1col>
+
+<ng-template #title>
+    <app-title text="Console"></app-title>
+</ng-template>
+
+<ng-template #breadcrumb>
+    <app-breadcrumb [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+</ng-template>
+
+<ng-template #middle>
+    <app-data-source-selection-panel (selected)="selectDataSource($event)"></app-data-source-selection-panel>
+    <app-console-panel *ngIf="selectedDataSource" [dataSource]="selectedDataSource"></app-console-panel>
+</ng-template>

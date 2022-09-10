@@ -11,6 +11,7 @@ import { SnapshotDialogComponent } from './dashboard-page/snapshot-dialog/snapsh
 import { MongoSnapshotComponent } from './snapshot-page/mongo-snapshot/mongo-snapshot.component';
 
 import {SystemDescriptionModule} from "./system-description-page/system-description.module";
+import {ConsolePageModule } from './console-page/console-page.module';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import {SystemDescriptionModule} from "./system-description-page/system-descript
     CoreModule,
     AppRoutingModule,
     FabricCommonModule,
-    SystemDescriptionModule
+    SystemDescriptionModule,
+    ConsolePageModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,0 +1,29 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <app-panel>
+                <div style="min-height: 80vh">
+                    <form [formGroup]="formGroup">
+                        <div class="input-group input-group-lg mb3">
+                            <input type="text" class="form-control" formControlName="query1">
+                            <button type="button" class="btn btn-outline-secondary" (click)="doQuery()">
+                                <fa-icon [icon]="faSearch"></fa-icon>
+                            </button>
+                        </div>
+                        <div class="input-group input-group-lg mb3">
+                            <input type="text" class="form-control" formControlName="query2">
+                        </div>
+                    </form>
+                </div>
+            </app-panel>
+        </div>
+        <div class="col-md-9">
+            <app-panel>
+                <div style="min-height: 80vh; max-height: 80vh; overflow: auto">
+                    <pre>{{output | json}}</pre>
+                </div>
+            </app-panel>
+        </div>
+    </div>
+
+</div>

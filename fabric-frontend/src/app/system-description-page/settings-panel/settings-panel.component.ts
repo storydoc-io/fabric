@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {EnvironmentDto, SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from "@fabric/models";
 import {ModalService} from "../../common/modal/modal-service";
-import {Setting, SettingRow, SystemDescriptionService} from "../system-description.service";
+import {Setting, SettingRow, SystemDescriptionService, SystemDescriptionWrapper} from "../system-description.service";
 import {HasConfirmationDialogMixin} from "@fabric/common";
 import {SettingsDialogSpec} from "./settings-dialog/settings-dialog.component";
 
@@ -103,31 +103,9 @@ export class SettingsPanelComponent extends HasConfirmationDialogMixin implement
   }
 
   public settingRowsForSystemComponent(): SettingRow[] {
-    return this.settingRows().filter(r => r.systemComponentKey === this.systemComponent.key)
+    return new SystemDescriptionWrapper(this.systemDescription).settingRowsForSystemComponent(this.systemComponent)
   }
 
-  public settingRows(): SettingRow[] {
-    let settingRows: SettingRow[] = []
-    Object.keys(this.systemDescription.settings).map(environmentKey => {
-      let envSettings = this.systemDescription.settings[environmentKey]
-      Object.keys(envSettings).map(systemComponentKey => {
-        let settingsArray: Setting[] = []
-        let settingsDto = envSettings[systemComponentKey]
-        Object.keys(settingsDto).map(key => {
-          settingsArray.push({
-            key,
-            value: settingsDto[key]
-          })
-        })
-        settingRows.push({
-          environmentKey,
-          systemComponentKey,
-          settings: settingsArray
-        })
-      })
-    })
-    return settingRows
-  }
 
   confirmationDialogId(): string {
     return 'confirmation-dialog-settings'

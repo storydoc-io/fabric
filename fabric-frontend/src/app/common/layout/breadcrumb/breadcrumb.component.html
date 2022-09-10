@@ -1,0 +1,7 @@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <app-back-button [routerLink]="parentOfActive.route"></app-back-button>
+        <li *ngFor="let breadcrumb of allParents" class="breadcrumb-item"><a [routerLink]="breadcrumb.route">{{breadcrumb.label}}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">{{active.label}}</li>
+    </ol>
+</nav>

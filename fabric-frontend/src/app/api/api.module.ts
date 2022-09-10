@@ -7,6 +7,7 @@ import { ApiConfiguration, ApiConfigurationParams } from './api-configuration';
 import { ConnectionControllerService } from './services/connection-controller.service';
 import { MetaModelControllerService } from './services/meta-model-controller.service';
 import { MongoSnapshotControllerService } from './services/mongo-snapshot-controller.service';
+import { QueryControllerService } from './services/query-controller.service';
 import { SnapshotControllerService } from './services/snapshot-controller.service';
 import { SystemDescriptionControllerService } from './services/system-description-controller.service';
 import { WorkspaceRestControllerService } from './services/workspace-rest-controller.service';
@@ -22,6 +23,7 @@ import { WorkspaceRestControllerService } from './services/workspace-rest-contro
     ConnectionControllerService,
     MetaModelControllerService,
     MongoSnapshotControllerService,
+    QueryControllerService,
     SnapshotControllerService,
     SystemDescriptionControllerService,
     WorkspaceRestControllerService,

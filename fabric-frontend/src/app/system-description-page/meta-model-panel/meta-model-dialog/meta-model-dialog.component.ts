@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {EnvironmentDto, SystemComponentDto, SystemDescriptionDto} from "@fabric/models";
 import {showValidationMessages} from "@fabric/common";
+import {SystemDescriptionWrapper} from "../../system-description.service";
 
 
 export interface MetaModelDialogData {
@@ -41,6 +42,10 @@ export class MetaModelDialogComponent implements OnInit {
 
   environmentKeyControlInvalid() {
     return showValidationMessages(this.environmentKeyControl)
+  }
+
+  availableEnvironments(): EnvironmentDto[] {
+    return new SystemDescriptionWrapper(this.spec.systemDescription).getEnvironments(this.spec.systemComponent);
   }
 
   cancel() {

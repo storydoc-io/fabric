@@ -12,6 +12,7 @@ import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemDescription;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -110,4 +111,21 @@ public class SystemDescriptionService {
                 .collect(Collectors.toList());
     }
 
+    public EnvironmentDTO getEnvironmentDTO(String environmentKey) {
+        SystemDescription systemDescription = systemDescriptionStorage.getOrCreateSystemDescription();
+        return systemDescription.getEnvironments().stream()
+                .filter(environment -> environment.getKey().equals(environmentKey))
+                .findFirst()
+                .map(environment -> EnvironmentDTO.builder()
+                        .key(environment.getKey())
+                        .label(environment.getLabel())
+                        .build()
+                )
+                .get();
+    }
+
+    public Map<String, String> getSettings(String systemComponentKey, String environmentKey) {
+        SystemDescription systemDescription = systemDescriptionStorage.getOrCreateSystemDescription();
+        return systemDescription.getSettings().get(environmentKey).get(systemComponentKey);
+    }
 }

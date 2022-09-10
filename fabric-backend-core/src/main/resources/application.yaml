@@ -3,3 +3,6 @@ server:
 io:
   storydoc:
     workspaceFolder: workspace
+spring:
+  banner:
+    location: classpath:/banner.txt

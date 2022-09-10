@@ -31,6 +31,10 @@
       "description": "Mongo Snapshot Controller"
     },
     {
+      "name": "query-controller",
+      "description": "Query Controller"
+    },
+    {
       "name": "snapshot-controller",
       "description": "Snapshot Controller"
     },
@@ -263,6 +267,48 @@
                 }
               }
             }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/query/run": {
+      "post": {
+        "tags": [
+          "query-controller"
+        ],
+        "summary": "doQuery",
+        "operationId": "doQueryUsingPOST",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QueryRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QueryResponseItemDTO"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
           },
           "401": {
             "description": "Unauthorized"
@@ -813,6 +859,48 @@
           },
           "root": {
             "$ref": "#/components/schemas/Path"
+          }
+        }
+      },
+      "QueryRequestDTO": {
+        "title": "QueryRequestDTO",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "environmentKey": {
+            "type": "string"
+          },
+          "systemComponentKey": {
+            "type": "string"
+          }
+        }
+      },
+      "QueryResponseItemDTO": {
+        "title": "QueryResponseItemDTO",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QueryResponseItemDTO"
+            }
+          },
+          "queryResponseItemType": {
+            "type": "string"
+          },
+          "systemType": {
+            "type": "string"
           }
         }
       },

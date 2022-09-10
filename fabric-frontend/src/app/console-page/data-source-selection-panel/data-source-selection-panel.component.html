@@ -1,0 +1,36 @@
+<ng-container *ngIf="!collapsed && systemDescription$ | async as systemDescription">
+    <form [formGroup]="formGroup">
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-floating  mb-2">
+                <select id="systemComponentKey" formControlName="systemComponentKey" class="form-select"  >
+                    <option *ngFor="let systemComponent of systemDescription.systemComponents"
+                            [ngValue]="systemComponent.key">{{systemComponent.key}}</option>
+                </select>
+                <label for="systemComponentKey" class="form-label">Datasource</label>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-floating mb-2" >
+                <select id="environmentKey" formControlName="environmentKey" class="form-select" (change)="onEnvironmentChange()" >
+                    <option *ngFor="let environment of systemDescription.environments"
+                            [ngValue]="environment.key">{{environment.key}}</option>
+                </select>
+                <label for="environmentKey" class="form-label">Environment</label>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-outline-primary" (click)="connect()">
+                <fa-icon [icon]="faBolt"></fa-icon> Connect
+            </button>
+        </div>
+    </div>
+    </form>
+</ng-container>
+
+<ng-container *ngIf="collapsed">
+    <button type="button" class="btn btn-outline-success" (click)="expand()">
+        <fa-icon [icon]="faBolt"></fa-icon>
+    </button>
+</ng-container>
