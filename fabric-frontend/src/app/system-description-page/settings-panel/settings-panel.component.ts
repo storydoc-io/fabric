@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {EnvironmentDto, SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from "@fabric/models";
 import {ModalService} from "../../common/modal/modal-service";
-import {Setting, SettingRow, SystemDescriptionService, SystemDescriptionWrapper} from "../system-description.service";
+import {SettingRow, SystemDescriptionService, SystemDescriptionWrapper} from "../system-description.service";
 import {HasConfirmationDialogMixin} from "@fabric/common";
 import {SettingsDialogSpec} from "./settings-dialog/settings-dialog.component";
 
@@ -48,6 +48,7 @@ export class SettingsPanelComponent extends HasConfirmationDialogMixin implement
 
   public addSetting(systemDescription: SystemDescriptionDto) {
     this.openSettingsDialog({
+      mode: 'ADD',
       systemTypes: this.systemTypes,
       environments: this.availableEnvironments(),
       systemComponents: systemDescription.systemComponents,
@@ -66,6 +67,7 @@ export class SettingsPanelComponent extends HasConfirmationDialogMixin implement
 
   public editSetting(systemDescription: SystemDescriptionDto, setting: SettingRow) {
     this.openSettingsDialog({
+      mode: 'EDIT',
       systemTypes: this.systemTypes,
       environments: systemDescription.environments,
       systemComponents: systemDescription.systemComponents,

@@ -29,6 +29,7 @@ class ConnectionTester {
 }
 
 export interface SettingsDialogSpec {
+    mode: 'ADD' | 'EDIT'
     systemTypes: SystemTypeDescriptorDto[]
     systemComponents: SystemComponentDto[]
     environments: EnvironmentDto[]
@@ -67,8 +68,10 @@ export class SettingsDialogComponent implements OnInit {
     ngOnChanges(changes: SimpleChanges): void {
         if (this.spec != null) {
             this.specWrapper = new SettingsDialogSpecWrapper(this.spec)
-            this.formGroup.setValue(this.spec.data)
             this.configureSettingsControlForSystemType(this.specWrapper.getSystemType(this.spec.data.systemComponentKey))
+            if (this.spec.mode==='EDIT'){
+                this.formGroup.setValue(this.spec.data)
+            }
             this.formGroup.markAsPristine()
             this.formGroup.markAsUntouched()
             this.connectionTester = null
