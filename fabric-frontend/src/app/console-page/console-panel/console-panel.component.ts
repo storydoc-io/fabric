@@ -1,15 +1,17 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {ConsoleService} from "../console.service";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {FormArray, FormControl, FormGroup} from "@angular/forms";
 import {DataSourceSelection} from "../data-source-selection-panel/data-source-selection-panel.component";
 import {faSearch} from '@fortawesome/free-solid-svg-icons';
+import {ConsoleDescriptorDto, SnippetDto} from "@fabric/models";
 
 @Component({
   selector: 'app-console-panel',
   templateUrl: './console-panel.component.html',
-  styleUrls: ['./console-panel.component.scss']
+  styleUrls: ['./console-panel.component.scss'],
+  providers: [ConsoleService]
 })
-export class ConsolePanelComponent implements OnInit {
+export class ConsolePanelComponent implements OnChanges {
 
   faSearch = faSearch
 
@@ -18,35 +20,78 @@ export class ConsolePanelComponent implements OnInit {
   @Input()
   dataSource: DataSourceSelection
 
-  ngOnInit(): void {
+  ngOnChanges(changes: SimpleChanges) {
+    let systemComponentKey = this.dataSource.systemComponentKey;
+    this.service.loadDescriptor(systemComponentKey).then((descriptor)=> this.initForm(descriptor))
+    this.service.loadSnippets(systemComponentKey).then((snippets)=>this.initSnippets(snippets))
   }
+
+  descriptor: ConsoleDescriptorDto
 
   formGroup: FormGroup = new FormGroup({
-    query1: new FormControl(null, [Validators.required]),
-    query2: new FormControl(null, ),
+    fields: new FormArray([])
   })
 
-  public get query1Control(): FormControl {
-    return <FormControl> this.formGroup.get('query1')
+  get fieldsControl():FormArray {
+    return <FormArray> this.formGroup.get('fields')
   }
 
-  public get query2Control(): FormControl {
-    return <FormControl> this.formGroup.get('query2')
+  fieldControl(i: number): FormControl {
+    return <FormControl> this.fieldsControl.controls[i]
   }
 
-  output: string
+  private initForm(descriptorDto: ConsoleDescriptorDto) {
+    this.descriptor = descriptorDto
+    this.fieldsControl.controls = []
+    this.descriptor.items.forEach(item =>
+        this.fieldsControl.push(new FormControl(null))
+    )
+  }
+
+  snippets: SnippetDto[]
+
+  private initSnippets(snippets: SnippetDto[]) {
+    return this.snippets = snippets;
+  }
+
+  jsonOutput: string
+  stackTraceOutput: string
 
   doQuery() {
-    this.service.doQuery(
+    let attributes = {}
+    console.log('attributes:', attributes)
+    console.log('value', this.fieldsControl.value)
+    this.fieldsControl.value.forEach((fieldValue, i) => {
+      attributes[this.descriptor.items[i].name] = fieldValue
+    })
+    console.log('attributes:', attributes)
+    this.service.runRequest(
         this.dataSource.environmentKey,
         this.dataSource.systemComponentKey,
-        {
-            'endpoint' : this.query1Control.value,
-            'jsonEntity' : this.query2Control.value
-        }
+        attributes
     ).then((response) => {
-      this.output = JSON.parse(response.attributes['content'])
+      this.jsonOutput = null
+      this.stackTraceOutput = null
+      switch (response.consoleOutputType) {
+        case 'JSON': {
+          this.jsonOutput = JSON.parse(response.content)
+          break
+        }
+        case 'STACKTRACE': {
+          this.stackTraceOutput = response.content
+          break
+        }
+      }
     })
   }
 
+  snippetSelected(snippet: SnippetDto) {
+    this.descriptor.items.forEach((item, index) => {
+      let value = snippet.attributes[item.name]
+      console.log('item: ', item.name)
+      console.log('value: ', value)
+      this.fieldControl(index).setValue(value)
+    })
+
+  }
 }

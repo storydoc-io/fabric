@@ -4,8 +4,6 @@ import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @Builder
 public class SnapshotSummaryDTO {

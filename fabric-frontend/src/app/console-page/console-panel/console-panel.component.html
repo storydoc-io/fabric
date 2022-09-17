@@ -1,26 +1,44 @@
-<div class="container-fluid">
+<div *ngIf="descriptor" class="container-fluid">
     <div class="row">
         <div class="col-md-3">
             <app-panel>
                 <div style="min-height: 80vh">
                     <form [formGroup]="formGroup">
-                        <div class="input-group input-group-lg mb3">
-                            <input type="text" class="form-control" formControlName="query1">
+                        <ng-container formArrayName="fields">
+                            <ng-container *ngFor="let item of descriptor.items; let i=index">
+                                <ng-container *ngIf="item.inputType==='TEXT'">
+                                    <input type="text" class="form-control" [formControl]="fieldControl(i)">
+                                </ng-container>
+                                <ng-container *ngIf="item.inputType==='TEXTAREA'">
+                                    <textarea class="form-control" [formControl]="fieldControl(i)"></textarea>
+                                </ng-container>
+                                <ng-container *ngIf="item.inputType==='SELECT'">
+                                    <select class="form-control" [formControl]="fieldControl(i)">
+                                        <option *ngFor="let selectValue of item.selectValues"
+                                                [ngValue]="selectValue">{{selectValue}}</option>
+                                    </select>
+                                </ng-container>
+                            </ng-container>
+                        </ng-container>
                             <button type="button" class="btn btn-outline-secondary" (click)="doQuery()">
                                 <fa-icon [icon]="faSearch"></fa-icon>
                             </button>
-                        </div>
-                        <div class="input-group input-group-lg mb3">
-                            <input type="text" class="form-control" formControlName="query2">
-                        </div>
                     </form>
+                    <app-snippet-panel [snippets]="snippets" (selected)="snippetSelected($event)"></app-snippet-panel>
                 </div>
             </app-panel>
         </div>
         <div class="col-md-9">
             <app-panel>
                 <div style="min-height: 80vh; max-height: 80vh; overflow: auto">
-                    <pre>{{output | json}}</pre>
+                    <ng-container *ngIf="jsonOutput">
+                        <pre>{{jsonOutput | json}}</pre>
+                    </ng-container>
+                    <ng-container *ngIf="stackTraceOutput" >
+                        <div class="bg-warning">
+                            {{stackTraceOutput}}
+                        </div>
+                    </ng-container>
                 </div>
             </app-panel>
         </div>

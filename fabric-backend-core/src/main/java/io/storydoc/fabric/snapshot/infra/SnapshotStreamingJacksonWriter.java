@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.storydoc.fabric.snapshot.app.SnapshotItemDTO;
 import lombok.SneakyThrows;
 
-import java.io.IOException;
 import java.io.OutputStream;
 
 public class SnapshotStreamingJacksonWriter {

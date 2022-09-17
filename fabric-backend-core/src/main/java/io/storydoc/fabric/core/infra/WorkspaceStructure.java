@@ -49,4 +49,9 @@ public class WorkspaceStructure {
         return ResourceUrn.of(filename);
     }
 
+    public ResourceUrn getSnippetsUrn(String systemType) {
+        String filename = String.format("snippets-%s.json", systemType);
+        return ResourceUrn.of(filename);
+    }
+
 }

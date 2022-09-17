@@ -1,0 +1,7 @@
+<div *ngIf="spec" class="d-flex flex-row mb-3">
+    <ng-container *ngFor="let action of this.actions">
+        <a class="btn  btn-sm btn-outline-primary  m-2"
+           (click)="callActionHandler(action)">{{action.label}}
+        </a>
+    </ng-container>
+</div>

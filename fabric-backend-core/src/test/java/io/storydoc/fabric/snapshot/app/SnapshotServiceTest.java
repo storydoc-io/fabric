@@ -104,6 +104,35 @@ public class SnapshotServiceTest extends TestBase {
 
     }
 
+    @Test
+    public void delete_snapshot() {
+        // given an system description
+        createdummySystemDescription();
+        SystemDescriptionDTO systemDescriptionDTO = systemDescriptionService.getSystemDescription();
+
+        // and a snapshot
+        String name = "name-" + UUID.randomUUID();
+        String environmentKey = "DEV";
+        SnapshotId snapshotId = snapshotService.createSnapshot(environmentKey, name);
+
+        // when I delete the snapshot
+
+        workspaceTestFixture.logFolderStructure("before delete");
+        workspaceTestFixture.logResourceContent(String.format("summaries", snapshotId), workspaceStructure.getSummariesUrn());
+
+
+        snapshotService.deleteSnapshot(snapshotId);
+
+        workspaceTestFixture.logFolderStructure("after delete");
+        workspaceTestFixture.logResourceContent(String.format("summaries", snapshotId), workspaceStructure.getSummariesUrn());
+
+        // then the snapshot is gone
+        List<SnapshotSummaryDTO> snapshotSummaryDTOS = snapshotService.list();
+        assertNotNull(snapshotSummaryDTOS);
+        assertEquals(0, snapshotSummaryDTOS.size());
+
+    }
+
     private void createdummySystemDescription() {
         systemDescriptionStorage.saveSystemDescription(SystemDescription.builder()
                 .environments(List.of(

@@ -1,23 +1,30 @@
 import {Injectable} from '@angular/core';
-import {QueryControllerService} from "@fabric/services";
-import {QueryResponseItemDto} from "@fabric/models";
+import {ConsoleControllerService} from "@fabric/services";
+import {ConsoleDescriptorDto, ConsoleResponseItemDto, SnippetDto} from "@fabric/models";
 
-@Injectable({
-    providedIn: 'root'
-})
+@Injectable()
 export class ConsoleService {
 
-    constructor(private queryControllerService: QueryControllerService) {
+    constructor(private consoleControllerService: ConsoleControllerService) {
     }
 
-    doQuery(environmentKey: string, systemComponentKey: string, attributes): Promise<QueryResponseItemDto> {
-        return this.queryControllerService.doQueryUsingPost({
+    loadDescriptor(systemComponentKey: string) : Promise<ConsoleDescriptorDto>{
+        return this.consoleControllerService.getDescriptorUsingGet({systemComponentKey})
+            .toPromise()
+    }
+
+    runRequest(environmentKey: string, systemComponentKey: string, attributes): Promise<ConsoleResponseItemDto> {
+        return this.consoleControllerService.runRequestUsingPost({
             body: {
                 environmentKey,
                 systemComponentKey,
                 attributes
             }
         }).toPromise()
+    }
+
+    loadSnippets(systemComponentKey:string): Promise<SnippetDto[]> {
+        return this.consoleControllerService.getSnippetsUsingGet({systemComponentKey}).toPromise()
     }
 
 }

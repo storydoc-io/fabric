@@ -1,7 +1,6 @@
 package io.storydoc.fabric.metamodel.app;
 
 import io.storydoc.fabric.metamodel.domain.MetaModelId;
-import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,7 +1,5 @@
 package io.storydoc.fabric.systemdescription.app;
 
-import io.storydoc.fabric.connection.app.ConnectionTestRequestDTO;
-import io.storydoc.fabric.connection.app.ConnectionTestResponseDTO;
 import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
 import io.storydoc.fabric.systemdescription.app.systemtype.SystemTypeDescriptorDTO;
 import org.springframework.http.MediaType;

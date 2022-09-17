@@ -4,7 +4,6 @@ import io.storydoc.fabric.snapshot.infra.jsonmodel.Snapshot;
 import io.storydoc.fabric.snapshot.infra.jsonmodel.SnapshotComponent;
 import io.storydoc.fabric.snapshot.infra.jsonmodel.SnapshotSummaries;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
-import lombok.SneakyThrows;
 
 import java.io.OutputStream;
 
@@ -20,4 +19,6 @@ public interface SnapshotStorage {
     <SC extends SnapshotComponent> SC loadSnapshotComponent(SnapshotId snapshotId, String componentKey, SnapshotDeserializer<SC> deserializer, String systemType);
 
     OutputStream streamSnapshotComponent(SystemComponentDTO systemComponent, SnapshotId snapshotId);
+
+    void deleteSnapshot(SnapshotId snapshotId);
 }

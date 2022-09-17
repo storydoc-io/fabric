@@ -1,0 +1,36 @@
+<ng-container *ngIf="systemDescription$ | async as systemDescription ">
+    <ng-container *ngIf="summaries$ | async as summaries">
+        <table class="table table-sm table-striped table-bordered">
+            <thead>
+            <tr>
+                <th scope="col">Snapshot</th>
+                <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let summary of summaries">
+                <td>
+                    <a routerLink="/fe/snapshot/{{summary.snapshotId.id}}">{{summary.name}}</a>
+                </td>
+                <td>
+                    <app-action-buttons [spec]="summaryActions(summary, systemDescription)"></app-action-buttons>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <a class="btn  btn-sm btn-outline-primary float-right" (click)="createSnapshot()">Take snapshot</a>
+        <!--<a class="btn  btn-sm btn-outline-primary float-right" (click)="createDummySnapshot()">Dummy async snapshot</a>-->
+    </ng-container>
+</ng-container>
+
+<jw-modal [id]="snapshotDialogId()">
+    <app-snapshot-dialog [spec]="spec"></app-snapshot-dialog>
+</jw-modal>
+
+<jw-modal [id]="snapshotUploadDialogId()">
+    <app-snapshot-upload-dialog [spec]="uploadDialogSpec"></app-snapshot-upload-dialog>
+</jw-modal>
+
+<jw-modal [id]="confirmationDialogId()">
+    <app-confirmation-dialog [spec]="confirmationDialogSpec"></app-confirmation-dialog>
+</jw-modal>

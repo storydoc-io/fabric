@@ -1,9 +1,9 @@
 package io.storydoc.fabric.systemdescription.infra;
 
 import io.storydoc.fabric.core.domain.FabricException;
-import io.storydoc.fabric.systemdescription.domain.SystemDescriptionStorage;
 import io.storydoc.fabric.core.infra.StorageBase;
 import io.storydoc.fabric.core.infra.WorkspaceStructure;
+import io.storydoc.fabric.systemdescription.domain.SystemDescriptionStorage;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemDescription;
 import io.storydoc.fabric.workspace.app.WorkspaceService;
 import io.storydoc.fabric.workspace.domain.WorkspaceException;

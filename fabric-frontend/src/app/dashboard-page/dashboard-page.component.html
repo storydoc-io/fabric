@@ -32,30 +32,6 @@
 </ng-template>
 
 <ng-template #middle>
-    <div class="container-fluid">
-
-        <div class="row">
-            <div class="col-md-12">
-                <div *ngIf="summaries$ | async as summaries">
-                    <ul class="list-group">
-                        <li *ngFor="let summary of summaries" class="list-group-item">
-                            <a routerLink="/fe/snapshot/{{summary.snapshotId.id}}">{{summary.name}}</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="row">
-            <div class="col-md-12">
-                <a class="btn  btn-sm btn-outline-primary float-right" (click)="createSnapshot()">Take snapshot</a>
-            </div>
-        </div>
-
-    </div>
+        <app-snapshot-overview-panel></app-snapshot-overview-panel>
 </ng-template>
 
-<jw-modal [id]="snapshotDialogId()">
-    <app-snapshot-dialog [spec]="spec"></app-snapshot-dialog>
-</jw-modal>

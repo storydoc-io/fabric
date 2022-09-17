@@ -19,8 +19,16 @@
   ],
   "tags": [
     {
+      "name": "command-controller",
+      "description": "Command Controller"
+    },
+    {
       "name": "connection-controller",
       "description": "Connection Controller"
+    },
+    {
+      "name": "console-controller",
+      "description": "Console Controller"
     },
     {
       "name": "meta-model-controller",
@@ -29,10 +37,6 @@
     {
       "name": "mongo-snapshot-controller",
       "description": "Mongo Snapshot Controller"
-    },
-    {
-      "name": "query-controller",
-      "description": "Query Controller"
     },
     {
       "name": "snapshot-controller",
@@ -48,6 +52,80 @@
     }
   ],
   "paths": {
+    "/api/metamodel/dummy": {
+      "post": {
+        "tags": [
+          "command-controller"
+        ],
+        "summary": "dummy",
+        "operationId": "dummyUsingPOST",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionId"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/metamodel/info": {
+      "get": {
+        "tags": [
+          "command-controller"
+        ],
+        "summary": "getExecutionInfo",
+        "operationId": "getExecutionInfoUsingGET",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExecutionDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/api/connection": {
       "post": {
         "tags": [
@@ -77,6 +155,135 @@
           },
           "201": {
             "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/console/descriptor": {
+      "get": {
+        "tags": [
+          "console-controller"
+        ],
+        "summary": "getDescriptor",
+        "operationId": "getDescriptorUsingGET",
+        "parameters": [
+          {
+            "name": "systemComponentKey",
+            "in": "query",
+            "description": "systemComponentKey",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsoleDescriptorDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/console/run": {
+      "post": {
+        "tags": [
+          "console-controller"
+        ],
+        "summary": "runRequest",
+        "operationId": "runRequestUsingPOST",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsoleRequestDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConsoleResponseItemDTO"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/console/snippets": {
+      "get": {
+        "tags": [
+          "console-controller"
+        ],
+        "summary": "getSnippets",
+        "operationId": "getSnippetsUsingGET",
+        "parameters": [
+          {
+            "name": "systemComponentKey",
+            "in": "query",
+            "description": "systemComponentKey",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SnippetDTO"
+                  }
+                }
+              }
+            }
           },
           "401": {
             "description": "Unauthorized"
@@ -280,44 +487,36 @@
         }
       }
     },
-    "/api/query/run": {
-      "post": {
+    "/api/snaphot/delete": {
+      "delete": {
         "tags": [
-          "query-controller"
+          "snapshot-controller"
         ],
-        "summary": "doQuery",
-        "operationId": "doQueryUsingPOST",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/QueryRequestDTO"
-              }
+        "summary": "deleteById",
+        "operationId": "deleteByIdUsingDELETE",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QueryResponseItemDTO"
-                }
-              }
-            }
+            "description": "OK"
           },
-          "201": {
-            "description": "Created"
+          "204": {
+            "description": "No Content"
           },
           "401": {
             "description": "Unauthorized"
           },
           "403": {
             "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
           }
         }
       }
@@ -723,6 +922,78 @@
           }
         }
       },
+      "ConsoleDescriptorDTO": {
+        "title": "ConsoleDescriptorDTO",
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConsoleDescriptorItemDTO"
+            }
+          }
+        }
+      },
+      "ConsoleDescriptorItemDTO": {
+        "title": "ConsoleDescriptorItemDTO",
+        "type": "object",
+        "properties": {
+          "inputType": {
+            "type": "string",
+            "enum": [
+              "SELECT",
+              "TEXT",
+              "TEXTAREA"
+            ]
+          },
+          "name": {
+            "type": "string"
+          },
+          "selectValues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ConsoleRequestDTO": {
+        "title": "ConsoleRequestDTO",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "environmentKey": {
+            "type": "string"
+          },
+          "systemComponentKey": {
+            "type": "string"
+          }
+        }
+      },
+      "ConsoleResponseItemDTO": {
+        "title": "ConsoleResponseItemDTO",
+        "type": "object",
+        "properties": {
+          "consoleOutputType": {
+            "type": "string",
+            "enum": [
+              "JSON",
+              "STACKTRACE"
+            ]
+          },
+          "content": {
+            "type": "string"
+          },
+          "systemType": {
+            "type": "string"
+          }
+        }
+      },
       "EnvironmentDTO": {
         "title": "EnvironmentDTO",
         "type": "object",
@@ -731,6 +1002,41 @@
             "type": "string"
           },
           "label": {
+            "type": "string"
+          }
+        }
+      },
+      "ExecutionDTO": {
+        "title": "ExecutionDTO",
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExecutionDTO"
+            }
+          },
+          "label": {
+            "type": "string"
+          },
+          "percentDone": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DONE",
+              "RUNNING"
+            ]
+          }
+        }
+      },
+      "ExecutionId": {
+        "title": "ExecutionId",
+        "type": "object",
+        "properties": {
+          "id": {
             "type": "string"
           }
         }
@@ -862,48 +1168,6 @@
           }
         }
       },
-      "QueryRequestDTO": {
-        "title": "QueryRequestDTO",
-        "type": "object",
-        "properties": {
-          "attributes": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "environmentKey": {
-            "type": "string"
-          },
-          "systemComponentKey": {
-            "type": "string"
-          }
-        }
-      },
-      "QueryResponseItemDTO": {
-        "title": "QueryResponseItemDTO",
-        "type": "object",
-        "properties": {
-          "attributes": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "children": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/QueryResponseItemDTO"
-            }
-          },
-          "queryResponseItemType": {
-            "type": "string"
-          },
-          "systemType": {
-            "type": "string"
-          }
-        }
-      },
       "SettingDescriptorDTO": {
         "title": "SettingDescriptorDTO",
         "type": "object",
@@ -973,6 +1237,21 @@
           },
           "snapshotId": {
             "$ref": "#/components/schemas/SnapshotId"
+          }
+        }
+      },
+      "SnippetDTO": {
+        "title": "SnippetDTO",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "title": {
+            "type": "string"
           }
         }
       },

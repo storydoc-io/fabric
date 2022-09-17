@@ -2,7 +2,7 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {SnapshotControllerService} from "@fabric/services";
 import {BehaviorSubject, Subscription} from "rxjs";
 import {distinctUntilChanged, map} from "rxjs/operators";
-import {SnapshotSummaryDto} from "@fabric/models";
+import {SnapshotId, SnapshotSummaryDto} from "@fabric/models";
 
 interface DashboardStoreState {
     summaries: SnapshotSummaryDto[]
@@ -46,4 +46,10 @@ export class DashboardService implements OnDestroy {
         )
     }
 
+    delete(snapshotId: SnapshotId) {
+        this.snapshotControllerService.deleteByIdUsingDelete({id: snapshotId.id}).subscribe(()=> {
+            this.loadSummaries()
+        })
+
+    }
 }

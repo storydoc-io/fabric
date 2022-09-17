@@ -1,7 +1,9 @@
 package io.storydoc.fabric.snapshot.app;
 
 import io.storydoc.fabric.infra.IDGenerator;
-import io.storydoc.fabric.snapshot.domain.*;
+import io.storydoc.fabric.snapshot.domain.SnapshotCommandRunner;
+import io.storydoc.fabric.snapshot.domain.SnapshotId;
+import io.storydoc.fabric.snapshot.domain.SnapshotStorage;
 import io.storydoc.fabric.snapshot.infra.jsonmodel.Snapshot;
 import org.springframework.stereotype.Service;
 
@@ -55,5 +57,9 @@ public class SnapshotService {
                 .environmentKey(summary.getEnvKey())
                 .build())
             .collect(Collectors.toList());
+    }
+
+    public void deleteSnapshot(SnapshotId snapshotId) {
+        snapshotStorage.deleteSnapshot(snapshotId);
     }
 }

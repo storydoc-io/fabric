@@ -4,6 +4,7 @@ import {DashboardPageComponent} from "./dashboard-page/dashboard-page.component"
 import {SnapshotPageComponent} from "./snapshot-page/snapshot-page.component";
 import {SystemDescriptionPageComponent} from "./system-description-page/system-description-page.component";
 import {ConsolePageComponent} from "./console-page/console-page.component";
+import {DummyPageComponent} from "./dashboard-page/dummy-page/dummy-page.component";
 
 
 const routes: Routes = [
@@ -12,6 +13,7 @@ const routes: Routes = [
   {path: 'fe/console', component: ConsolePageComponent},
   {path: 'fe/systemdescription', component: SystemDescriptionPageComponent},
   {path: 'fe/snapshot/:snapshotId', component: SnapshotPageComponent},
+  {path: 'fe/dummy/:executionId', component: DummyPageComponent},
 ];
 
 

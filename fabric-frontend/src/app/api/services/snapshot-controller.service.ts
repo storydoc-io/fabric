@@ -29,6 +29,60 @@ export class SnapshotControllerService extends BaseService {
   }
 
   /**
+   * Path part for operation deleteByIdUsingDelete
+   */
+  static readonly DeleteByIdUsingDeletePath = '/api/snaphot/delete';
+
+  /**
+   * deleteById.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `deleteByIdUsingDelete()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  deleteByIdUsingDelete$Response(params?: {
+    id?: string;
+  }): Observable<StrictHttpResponse<void>> {
+
+    const rb = new RequestBuilder(this.rootUrl, SnapshotControllerService.DeleteByIdUsingDeletePath, 'delete');
+    if (params) {
+      rb.query('id', params.id, {"style":"form"});
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'text',
+      accept: '*/*'
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      })
+    );
+  }
+
+  /**
+   * deleteById.
+   *
+   *
+   *
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `deleteByIdUsingDelete$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  deleteByIdUsingDelete(params?: {
+    id?: string;
+  }): Observable<void> {
+
+    return this.deleteByIdUsingDelete$Response(params).pipe(
+      map((r: StrictHttpResponse<void>) => r.body as void)
+    );
+  }
+
+  /**
    * Path part for operation getByIdUsingGet
    */
   static readonly GetByIdUsingGetPath = '/api/snaphot/snapshot';

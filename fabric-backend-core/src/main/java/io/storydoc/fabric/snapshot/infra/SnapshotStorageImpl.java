@@ -1,11 +1,11 @@
 package io.storydoc.fabric.snapshot.infra;
 
 import io.storydoc.fabric.core.infra.StorageBase;
+import io.storydoc.fabric.core.infra.WorkspaceStructure;
 import io.storydoc.fabric.snapshot.domain.SnapshotDeserializer;
+import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.snapshot.domain.SnapshotSerializer;
 import io.storydoc.fabric.snapshot.domain.SnapshotStorage;
-import io.storydoc.fabric.snapshot.domain.SnapshotId;
-import io.storydoc.fabric.core.infra.WorkspaceStructure;
 import io.storydoc.fabric.snapshot.infra.jsonmodel.*;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
 import io.storydoc.fabric.workspace.app.WorkspaceService;
@@ -124,4 +124,17 @@ public class SnapshotStorageImpl extends StorageBase implements SnapshotStorage 
     }
 
 
+    @Override
+    @SneakyThrows
+    public void deleteSnapshot(SnapshotId snapshotId) {
+        SnapshotSummaries summaries = loadSummaries();
+        SnapshotSummary snapshotSummary = summaries.getSummaries().stream()
+                .filter(summary -> summary.getSnapshotId().equals(snapshotId))
+                .findFirst()
+                .get();
+        summaries.getSummaries().remove(snapshotSummary);
+        saveSummaries(summaries);
+
+        workspaceService.deleteFolder(workspaceStructure.getSnapshotFolder(snapshotId), true);
+    }
 }

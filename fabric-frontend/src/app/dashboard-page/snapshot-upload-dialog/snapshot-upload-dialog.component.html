@@ -1,0 +1,26 @@
+<div *ngIf="spec" class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Upload Snapshot To Environment</h5>
+            <button type="button" class="btn-close" (click)="cancel()"></button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="formGroup">
+                <div class="mb-3">
+                    <label for="environment" class="form-label">Environment</label>
+                    <select formControlName="environment" class="form-select" >
+                            <option *ngFor="let environment of spec.environments"
+                                    [ngValue]="environment.key">{{environment.label}}</option>
+                    </select>
+                    <div id="environment" class="form-text">Enter an environment.</div>
+                </div>
+
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="confirm()" [disabled]="!formGroup.valid">Start upload</button>
+            <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+        </div>
+
+    </div>
+</div>

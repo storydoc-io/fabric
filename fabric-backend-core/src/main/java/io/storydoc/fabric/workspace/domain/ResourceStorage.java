@@ -2,7 +2,6 @@ package io.storydoc.fabric.workspace.domain;
 
 import io.storydoc.fabric.workspace.app.dto.ResourceDTO;
 
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;

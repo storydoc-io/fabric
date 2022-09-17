@@ -31,4 +31,9 @@ public class SnapshotController {
         return snapshotService.getSnapshot(snapshotId);
     }
 
+    @DeleteMapping(value = "/delete", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteById(SnapshotId snapshotId) {
+        snapshotService.deleteSnapshot(snapshotId);
+    }
+
 }

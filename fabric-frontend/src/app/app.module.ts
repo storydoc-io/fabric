@@ -3,30 +3,23 @@ import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 
 import {CoreModule} from "./core.module";
-
-import { DashboardPageComponent } from './dashboard-page/dashboard-page.component';
-import { SnapshotPageComponent } from './snapshot-page/snapshot-page.component';
 import {FabricCommonModule} from "./common/common.module";
-import { SnapshotDialogComponent } from './dashboard-page/snapshot-dialog/snapshot-dialog.component';
-import { MongoSnapshotComponent } from './snapshot-page/mongo-snapshot/mongo-snapshot.component';
 
 import {SystemDescriptionModule} from "./system-description-page/system-description.module";
-import {ConsolePageModule } from './console-page/console-page.module';
+import {ConsolePageModule} from './console-page/console-page.module';
+import {DashboardModule} from "./dashboard-page/dashboard.module";
 
 @NgModule({
   declarations: [
     AppComponent,
-    DashboardPageComponent,
-    SnapshotPageComponent,
-    SnapshotDialogComponent,
-    MongoSnapshotComponent,
   ],
   imports: [
     CoreModule,
     AppRoutingModule,
     FabricCommonModule,
     SystemDescriptionModule,
-    ConsolePageModule
+    ConsolePageModule,
+    DashboardModule
   ],
   providers: [],
   bootstrap: [AppComponent]

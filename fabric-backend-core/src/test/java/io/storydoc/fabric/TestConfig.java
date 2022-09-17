@@ -15,6 +15,7 @@ import java.util.Map;
 @Configuration
 @ComponentScan(basePackages = {
         "io.storydoc.fabric.core",
+        "io.storydoc.fabric.command",
         "io.storydoc.fabric.systemdescription",
         "io.storydoc.fabric.snapshot",
         "io.storydoc.fabric.workspace",
