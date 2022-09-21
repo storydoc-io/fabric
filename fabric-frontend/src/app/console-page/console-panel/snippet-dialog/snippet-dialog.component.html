@@ -1,0 +1,40 @@
+<div *ngIf="spec && formGroup"  class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Create Snippet</h5>
+            <button type="button" class="btn-close" (click)="cancel()"></button>
+        </div>
+        <div class="modal-body">
+            <form [formGroup]="formGroup">
+                <div class="form-floating  mb-3">
+                    <input id="title" formControlName="title" type="text" class="form-control" placeholder="enter title" [class.is-invalid]="titleControlInvalid()">
+                    <label for="title" class="form-label" >Name</label>
+                </div>
+                <div>
+                    <ng-container formArrayName="fields">
+                        <ng-container *ngFor="let item of spec.descriptor.items; let i=index">
+                            <ng-container *ngIf="item.inputType==='TEXT'">
+                                <input type="text" class="form-control" [formControl]="fieldControl(i)">
+                            </ng-container>
+                            <ng-container *ngIf="item.inputType==='TEXTAREA'">
+                                <textarea rows="12" class="form-control" [formControl]="fieldControl(i)"></textarea>
+                            </ng-container>
+                            <ng-container *ngIf="item.inputType==='SELECT'">
+                                <select class="form-control" [formControl]="fieldControl(i)">
+                                    <option *ngFor="let selectValue of item.selectValues"
+                                            [ngValue]="selectValue">{{selectValue}}</option>
+                                </select>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-primary" (click)="confirm()" [disabled]="!formGroup.valid">Save changes
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
+        </div>
+
+    </div>
+</div>

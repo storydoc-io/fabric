@@ -2,7 +2,7 @@ package io.storydoc.fabric.elastic;
 
 import io.storydoc.fabric.elastic.metamodel.ElasticMetaModel;
 import io.storydoc.fabric.elastic.settings.ElasticSettings;
-import io.storydoc.fabric.snapshot.app.SnapshotItemDTO;
+import io.storydoc.fabric.snapshot.app.result.SnapshotItemDTO;
 import io.storydoc.fabric.snapshot.domain.SnapshotHandler_StreamBased;
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.snapshot.domain.SnapshotSerializer;

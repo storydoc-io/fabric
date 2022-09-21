@@ -2,6 +2,9 @@ package io.storydoc.fabric.snapshot.app;
 
 import io.storydoc.fabric.TestBase;
 import io.storydoc.fabric.core.infra.WorkspaceStructure;
+import io.storydoc.fabric.snapshot.app.result.SnapshotComponentDTO;
+import io.storydoc.fabric.snapshot.app.result.SnapshotDTO;
+import io.storydoc.fabric.snapshot.app.result.SnapshotSummaryDTO;
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionDTO;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
@@ -13,7 +16,6 @@ import io.storydoc.fabric.workspace.WorkspaceTestFixture;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;

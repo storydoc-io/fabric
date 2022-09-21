@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.storydoc.fabric.snapshot.app.SnapshotItemDTO;
+import io.storydoc.fabric.snapshot.app.result.SnapshotItemDTO;
 import lombok.SneakyThrows;
 
 import java.io.OutputStream;

@@ -27,6 +27,11 @@ public class ConsoleController {
         return consoleService.runRequest(consoleRequestDTO);
     }
 
+    @PostMapping(value = "/snippet", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void createSnippet(String systemComponentKey, @RequestBody SnippetDTO snippetDTO) {
+        consoleService.createSnippet(systemComponentKey, snippetDTO);
+    }
+
     @GetMapping(value="/snippets", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<SnippetDTO> getSnippets(String systemComponentKey) {
         return consoleService.getSnippets(systemComponentKey);

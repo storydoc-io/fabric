@@ -146,6 +146,71 @@ export class ConsoleControllerService extends BaseService {
   }
 
   /**
+   * Path part for operation createSnippetUsingPost
+   */
+  static readonly CreateSnippetUsingPostPath = '/api/console/snippet';
+
+  /**
+   * createSnippet.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `createSnippetUsingPost()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createSnippetUsingPost$Response(params?: {
+
+    /**
+     * systemComponentKey
+     */
+    systemComponentKey?: string;
+    body?: SnippetDto
+  }): Observable<StrictHttpResponse<void>> {
+
+    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.CreateSnippetUsingPostPath, 'post');
+    if (params) {
+      rb.query('systemComponentKey', params.systemComponentKey, {"style":"form"});
+      rb.body(params.body, 'application/json');
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'text',
+      accept: '*/*'
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;
+      })
+    );
+  }
+
+  /**
+   * createSnippet.
+   *
+   *
+   *
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `createSnippetUsingPost$Response()` instead.
+   *
+   * This method sends `application/json` and handles request body of type `application/json`.
+   */
+  createSnippetUsingPost(params?: {
+
+    /**
+     * systemComponentKey
+     */
+    systemComponentKey?: string;
+    body?: SnippetDto
+  }): Observable<void> {
+
+    return this.createSnippetUsingPost$Response(params).pipe(
+      map((r: StrictHttpResponse<void>) => r.body as void)
+    );
+  }
+
+  /**
    * Path part for operation getSnippetsUsingGet
    */
   static readonly GetSnippetsUsingGetPath = '/api/console/snippets';

@@ -2,8 +2,13 @@ import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {ConsoleService} from "../console.service";
 import {FormArray, FormControl, FormGroup} from "@angular/forms";
 import {DataSourceSelection} from "../data-source-selection-panel/data-source-selection-panel.component";
-import {faSearch} from '@fortawesome/free-solid-svg-icons';
+import {faPlay, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {ConsoleDescriptorDto, SnippetDto} from "@fabric/models";
+import {HistoryItem} from "./history-panel/history-panel.component";
+import {SnippetDialogData, SnippetDialogSpec} from "./snippet-dialog/snippet-dialog.component";
+import {ModalService} from "../../common/modal/modal-service";
+
+type TabState = 'HISTORY' | 'SNIPPETS'
 
 @Component({
   selector: 'app-console-panel',
@@ -13,9 +18,10 @@ import {ConsoleDescriptorDto, SnippetDto} from "@fabric/models";
 })
 export class ConsolePanelComponent implements OnChanges {
 
-  faSearch = faSearch
+  faPlay = faPlay
+  faTimes = faTimes
 
-  constructor(private service: ConsoleService) { }
+  constructor(private modalService: ModalService, private service: ConsoleService) { }
 
   @Input()
   dataSource: DataSourceSelection
@@ -27,6 +33,8 @@ export class ConsolePanelComponent implements OnChanges {
   }
 
   descriptor: ConsoleDescriptorDto
+
+  // input query
 
   formGroup: FormGroup = new FormGroup({
     fields: new FormArray([])
@@ -48,23 +56,11 @@ export class ConsolePanelComponent implements OnChanges {
     )
   }
 
-  snippets: SnippetDto[]
-
-  private initSnippets(snippets: SnippetDto[]) {
-    return this.snippets = snippets;
-  }
-
-  jsonOutput: string
-  stackTraceOutput: string
-
   doQuery() {
     let attributes = {}
-    console.log('attributes:', attributes)
-    console.log('value', this.fieldsControl.value)
     this.fieldsControl.value.forEach((fieldValue, i) => {
       attributes[this.descriptor.items[i].name] = fieldValue
     })
-    console.log('attributes:', attributes)
     this.service.runRequest(
         this.dataSource.environmentKey,
         this.dataSource.systemComponentKey,
@@ -82,16 +78,118 @@ export class ConsolePanelComponent implements OnChanges {
           break
         }
       }
+      if(response.consoleOutputType != 'STACKTRACE') {
+        this.addHistoryItem(attributes)
+      }
     })
+  }
+
+  clear() {
+    this.descriptor.items.forEach((descriptorItem, index) => {
+          this.fieldControl(index).setValue(null)
+        }
+    )
+
+  }
+
+  // tabs history/snippet
+
+  tabState: TabState = 'SNIPPETS'
+
+  selectTab(tabState: TabState) {
+    this.tabState = tabState
+  }
+
+  // history
+
+  historyItems: HistoryItem[] = []
+
+  private addHistoryItem(attributes: {}) {
+    this.historyItems.push({
+      attributes
+    })
+  }
+
+  deleteHistoryItem(item: HistoryItem) {
+    const index = this.historyItems.indexOf(item, 0);
+    if (index > -1) {
+      this.historyItems.splice(index, 1);
+    }
+  }
+
+  historyCount():string {
+    return this.historyItems.length==0 ? '' : `(${this.historyItems.length})`
+  }
+
+  convertHistoryItemToSnippet(historyItem: HistoryItem) {
+      this.openSnippetDialog({
+        descriptor: this.descriptor,
+        data: {
+          attributes: historyItem.attributes
+        },
+        cancel: () => this.closeSnippetDialog(),
+        confirm: (data) => { this.addSnippet(this.descriptor, data); this.closeSnippetDialog() }
+      })
+  }
+
+  selectHistoryItem(historyItem: HistoryItem) {
+    this.descriptor.items.forEach((descriptorItem, index) => {
+        let value = historyItem.attributes[descriptorItem.name]
+        this.fieldControl(index).setValue(value)
+      }
+    )
+  }
+
+
+  // snippets
+
+  snippets: SnippetDto[]
+
+  private initSnippets(snippets: SnippetDto[]) {
+    return this.snippets = snippets;
   }
 
   snippetSelected(snippet: SnippetDto) {
     this.descriptor.items.forEach((item, index) => {
       let value = snippet.attributes[item.name]
-      console.log('item: ', item.name)
-      console.log('value: ', value)
       this.fieldControl(index).setValue(value)
     })
-
   }
+
+  private addSnippet(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {
+    let attributes = {}
+    descriptor.items.forEach((item, index) => {
+      attributes[item.name] = data.fields[index]
+    })
+    this.service.addSnippet(data.title, this.dataSource.systemComponentKey, attributes)
+        .then((snippets) => {
+          this.snippets = snippets
+        })
+  }
+
+  // snippet dialog
+
+  snippetDialogId(): string {
+    return 'snippet-dialog-id'
+  }
+
+  snippetDialogSpec: SnippetDialogSpec;
+
+  private openSnippetDialog(spec: SnippetDialogSpec) {
+    this.snippetDialogSpec = spec
+    this.modalService.open(this.snippetDialogId())
+  }
+
+  private closeSnippetDialog() {
+    this.snippetDialogSpec = null
+    this.modalService.close(this.snippetDialogId())
+  }
+
+
+
+  // output
+
+  jsonOutput: string
+  stackTraceOutput: string
+
 }

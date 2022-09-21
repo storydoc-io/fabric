@@ -1,4 +1,4 @@
-package io.storydoc.fabric.snapshot.app;
+package io.storydoc.fabric.snapshot.app.result;
 
 import io.storydoc.fabric.snapshot.infra.jsonmodel.SnapshotComponent;
 import lombok.AllArgsConstructor;

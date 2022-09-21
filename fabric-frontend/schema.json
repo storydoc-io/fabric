@@ -252,6 +252,53 @@
         }
       }
     },
+    "/api/console/snippet": {
+      "post": {
+        "tags": [
+          "console-controller"
+        ],
+        "summary": "createSnippet",
+        "operationId": "createSnippetUsingPOST",
+        "parameters": [
+          {
+            "name": "systemComponentKey",
+            "in": "query",
+            "description": "systemComponentKey",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SnippetDTO"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "201": {
+            "description": "Created"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/api/console/snippets": {
       "get": {
         "tags": [

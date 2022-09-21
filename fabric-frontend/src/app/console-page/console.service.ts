@@ -27,4 +27,14 @@ export class ConsoleService {
         return this.consoleControllerService.getSnippetsUsingGet({systemComponentKey}).toPromise()
     }
 
+    addSnippet(title: string, systemComponentKey: string, attributes: {}): Promise<SnippetDto[]> {
+        return this.consoleControllerService.createSnippetUsingPost({
+            systemComponentKey,
+            body: {
+                title,
+                attributes
+            }
+        }).toPromise().then(()=> this.loadSnippets(systemComponentKey))
+
+    }
 }

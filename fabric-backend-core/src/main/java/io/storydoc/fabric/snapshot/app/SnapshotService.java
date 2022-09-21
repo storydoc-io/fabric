@@ -1,6 +1,9 @@
 package io.storydoc.fabric.snapshot.app;
 
 import io.storydoc.fabric.infra.IDGenerator;
+import io.storydoc.fabric.snapshot.app.result.SnapshotComponentDTO;
+import io.storydoc.fabric.snapshot.app.result.SnapshotDTO;
+import io.storydoc.fabric.snapshot.app.result.SnapshotSummaryDTO;
 import io.storydoc.fabric.snapshot.domain.SnapshotCommandRunner;
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.snapshot.domain.SnapshotStorage;

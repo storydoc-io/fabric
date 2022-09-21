@@ -61,4 +61,12 @@ public class ConsoleService {
                 .build();
     }
 
+    public void createSnippet(String systemComponentKey, SnippetDTO snippetDTO) {
+        String systemType =  getSystemComponentDTO(systemComponentKey).getSystemType();
+        snippetStorage.addSnippet(systemType, Snippet.builder()
+                .title(snippetDTO.getTitle())
+                .attributes(snippetDTO.getAttributes())
+                .build()
+        );
+    }
 }

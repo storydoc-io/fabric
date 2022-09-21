@@ -10,7 +10,7 @@
                                     <input type="text" class="form-control" [formControl]="fieldControl(i)">
                                 </ng-container>
                                 <ng-container *ngIf="item.inputType==='TEXTAREA'">
-                                    <textarea class="form-control" [formControl]="fieldControl(i)"></textarea>
+                                    <textarea rows="12" class="form-control" [formControl]="fieldControl(i)"></textarea>
                                 </ng-container>
                                 <ng-container *ngIf="item.inputType==='SELECT'">
                                     <select class="form-control" [formControl]="fieldControl(i)">
@@ -21,10 +21,36 @@
                             </ng-container>
                         </ng-container>
                             <button type="button" class="btn btn-outline-secondary" (click)="doQuery()">
-                                <fa-icon [icon]="faSearch"></fa-icon>
+                                <fa-icon [icon]="faPlay"></fa-icon>
                             </button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="clear()">
+                            <fa-icon [icon]="faTimes"></fa-icon>
+                        </button>
                     </form>
-                    <app-snippet-panel [snippets]="snippets" (selected)="snippetSelected($event)"></app-snippet-panel>
+
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link" [class.active]="tabState==='SNIPPETS'" (click)="selectTab('SNIPPETS')" href="javascript:void(0);">
+                                Snippets
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" [class.active]="tabState==='HISTORY'" (click)="selectTab('HISTORY')" href="javascript:void(0);">
+                                History {{historyCount()}}
+                            </a>
+                        </li>
+                    </ul>
+                    <ng-container *ngIf="tabState==='SNIPPETS'">
+                        <app-snippet-panel [snippets]="snippets" (selected)="snippetSelected($event)"></app-snippet-panel>
+                    </ng-container>
+                    <ng-container *ngIf="tabState==='HISTORY'">
+                        <app-history-panel [historyItems]="historyItems"
+                           (onConvert)="convertHistoryItemToSnippet($event)"
+                           (onSelect)="selectHistoryItem($event)"
+                           (onDelete)="deleteHistoryItem($event)"
+                        >
+                        </app-history-panel>
+                    </ng-container>
                 </div>
             </app-panel>
         </div>
@@ -45,3 +71,7 @@
     </div>
 
 </div>
+
+<jw-modal [id]="snippetDialogId()">
+    <app-snippet-dialog [spec]="snippetDialogSpec"></app-snippet-dialog>
+</jw-modal>

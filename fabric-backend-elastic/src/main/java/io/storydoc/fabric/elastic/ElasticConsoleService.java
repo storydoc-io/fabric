@@ -72,9 +72,14 @@ public class ElasticConsoleService extends ElasticServiceBase implements Connect
         try {
             ElasticSettings elasticSettings = toSettings(settings);
             RestHighLevelClient client = getClient(elasticSettings);
-            Request request = new Request("GET", requestDTO.getAttributes().get(CONSOLE_FIELD_ENDPOINT));
-            if (requestDTO.getAttributes().get(CONSOLE_FIELD_JSON_ENTITY) != null) {
-                request.setJsonEntity(requestDTO.getAttributes().get(CONSOLE_FIELD_JSON_ENTITY));
+
+            String httpMethod = requestDTO.getAttributes().get(CONSOLE_FIELD_HTTP_METHOD);
+            String endpoint = requestDTO.getAttributes().get(CONSOLE_FIELD_ENDPOINT);
+            String requestBody = requestDTO.getAttributes().get(CONSOLE_FIELD_JSON_ENTITY);
+
+            Request request = new Request(httpMethod, endpoint);
+            if (requestBody != null) {
+                request.setJsonEntity(requestBody);
             }
             Response response = client.getLowLevelClient().performRequest(request);
             return ConsoleResponseItemDTO.builder()
