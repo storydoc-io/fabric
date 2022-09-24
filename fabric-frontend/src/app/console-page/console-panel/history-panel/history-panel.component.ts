@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
-import {ActionsSpec} from "../../../common/grid/action-buttons/action-buttons.component";
+import {ActionsSpec} from "@fabric/common";
 
 export interface HistoryItem {
   attributes?: { [key: string]: string };

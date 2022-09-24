@@ -1,3 +1,5 @@
 export {log, logChangesToObservable} from './logging'
 export {unique, showValidationMessages} from './validators'
 export {HasConfirmationDialogMixin} from './confirmation-dialog/has-confirmation-dialog.mixin'
+export {BreadcrumbComponent, BreadcrumbItem} from './styleguide/breadcrumb/breadcrumb.component'
+export {ActionSpec, ActionsSpec, ActionButtonsComponent} from './styleguide/grid/action-buttons/action-buttons.component'

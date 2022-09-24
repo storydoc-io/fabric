@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {BreadcrumbItem} from "../common/layout/breadcrumb/breadcrumb.component";
+import {Component, OnInit} from '@angular/core';
+import {BreadcrumbItem} from "../common/";
 import {DataSourceSelection} from "./data-source-selection-panel/data-source-selection-panel.component";
 
 @Component({

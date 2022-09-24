@@ -3,10 +3,9 @@ import {SnapshotId, SnapshotSummaryDto, SystemDescriptionDto} from "@fabric/mode
 import {ModalService} from "../../common/modal/modal-service";
 import {DashboardService} from "../dashboard.service";
 import {SnapshotDialogData, SnapshotDialogSpec} from "../snapshot-dialog/snapshot-dialog.component";
-import {ActionsSpec} from "../../common/grid/action-buttons/action-buttons.component";
+import {ActionsSpec, HasConfirmationDialogMixin} from "@fabric/common";
 import {SnapshotUploadDialogSpec} from "../snapshot-upload-dialog/snapshot-upload-dialog.component";
 import {SystemDescriptionService} from "../../system-description-page/system-description.service";
-import {HasConfirmationDialogMixin} from "@fabric/common";
 import {CommandControllerService} from "@fabric/services";
 import {Router} from "@angular/router";
 
