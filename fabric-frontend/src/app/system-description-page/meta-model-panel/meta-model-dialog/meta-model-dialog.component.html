@@ -1,9 +1,6 @@
 <div *ngIf="formGroup && spec"  class="modal-dialog">
     <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Fetch {{spec.systemComponent.label}} metadata</h5>
-            <button type="button" class="btn-close" (click)="cancel()"></button>
-        </div>
+        <app-modal-header [title]="'Fetch ' + spec.systemComponent.label + ' metadata'" (onCancel)="cancel()" ></app-modal-header>
         <div class="modal-body">
             <form [formGroup]="formGroup">
                 <div class="mb-3" class="form-group">

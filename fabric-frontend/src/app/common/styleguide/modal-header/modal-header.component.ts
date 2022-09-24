@@ -11,9 +11,9 @@ export class ModalHeaderComponent implements OnInit {
   title: string;
 
   @Output()
-  onCancel: EventEmitter<void>
+  onCancel: EventEmitter<void> = new EventEmitter<void>()
 
-  cancel() {
+  doCancel() {
     this.onCancel.emit()
   }
 

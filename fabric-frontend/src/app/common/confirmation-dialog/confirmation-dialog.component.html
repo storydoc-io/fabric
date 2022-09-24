@@ -1,9 +1,6 @@
 <div *ngIf="spec" class="modal-dialog">
   <div class="modal-content">
-    <div class="modal-header">
-      <h5 class="modal-title">{{spec.title}}</h5>
-      <button type="button" class="btn-close" (click)="cancel()"></button>
-    </div>
+    <app-modal-header [title]="spec.title" (onCancel)="cancel()"></app-modal-header>
     <div class="modal-body">
       <p>{{spec.message}}</p>
       <p><div *ngIf="spec.warning">

@@ -1,9 +1,6 @@
 <div *ngIf="spec" class="modal-dialog">
     <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title">Upload Snapshot To Environment</h5>
-            <button type="button" class="btn-close" (click)="cancel()"></button>
-        </div>
+        <app-modal-header [title]="'Upload Snapshot To Environment'" (onCancel)="cancel()"></app-modal-header>
         <div class="modal-body">
             <form [formGroup]="formGroup">
                 <div class="mb-3">

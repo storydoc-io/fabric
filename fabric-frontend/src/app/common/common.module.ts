@@ -45,6 +45,7 @@ import {ModalHeaderComponent} from './styleguide/modal-header/modal-header.compo
         BreadcrumbComponent,
         ActionButtonsComponent,
         SideBarComponent,
+        ModalHeaderComponent,
     ]
 })
 export class FabricCommonModule {
