@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {SnapshotId, SnapshotSummaryDto, SystemDescriptionDto} from "@fabric/models";
 import {ModalService} from "../../common/modal/modal-service";
 import {DashboardService} from "../dashboard.service";
@@ -69,7 +69,7 @@ export class SnapshotOverviewPanelComponent extends HasConfirmationDialogMixin i
   }
 
   private confirmUpload(snapshotId: SnapshotId, envkKey: string) {
-    this.createDummySnapshot()
+    this.createDummySnapshot(snapshotId, envkKey)
   }
 
   createSnapshot() {
@@ -128,9 +128,8 @@ export class SnapshotOverviewPanelComponent extends HasConfirmationDialogMixin i
     return 'delete-snapshot-confirmation-dialog'
   }
 
-
-    createDummySnapshot() {
-        this.commandControllerService.dummyUsingPost({}).subscribe((executionId)=> {
+  createDummySnapshot(snapshotId: SnapshotId, envKey: string) {
+        this.service.upload(snapshotId, envKey).then((executionId)=> {
             this._router.navigate(["fe", "dummy", executionId.id] )
         })
     }

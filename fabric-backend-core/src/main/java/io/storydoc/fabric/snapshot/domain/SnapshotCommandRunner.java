@@ -1,6 +1,12 @@
 package io.storydoc.fabric.snapshot.domain;
 
+import io.storydoc.fabric.command.app.CommandService;
+import io.storydoc.fabric.command.domain.ExecutionId;
+import io.storydoc.fabric.snapshot.domain.upload.UploadSnapshotCommand;
+import io.storydoc.fabric.snapshot.domain.upload.UploadSnapshotComponentCommand;
+import io.storydoc.fabric.snapshot.infra.jsonmodel.Snapshot;
 import io.storydoc.fabric.snapshot.infra.jsonmodel.SnapshotComponent;
+import io.storydoc.fabric.snapshot.infra.jsonmodel.SnapshotComponentSummary;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionDTO;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
@@ -8,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -20,10 +28,13 @@ public class SnapshotCommandRunner {
 
     private final SnapshotHandlerRegistry handlerRegistry;
 
-    public SnapshotCommandRunner(SystemDescriptionService systemDescriptionService, SnapshotStorage snapshotStorage, SnapshotHandlerRegistry handlerRegistry) {
+    private final CommandService commandService;
+
+    public SnapshotCommandRunner(SystemDescriptionService systemDescriptionService, SnapshotStorage snapshotStorage, SnapshotHandlerRegistry handlerRegistry, CommandService commandService) {
         this.systemDescriptionService = systemDescriptionService;
         this.snapshotStorage = snapshotStorage;
         this.handlerRegistry = handlerRegistry;
+        this.commandService = commandService;
     }
 
     public void runSnapshotCommand(String envKey, SnapshotId snapshotId, String name) {
@@ -56,5 +67,19 @@ public class SnapshotCommandRunner {
 
 
     }
+
+    public ExecutionId runUploadSnapshotCommand(String environmentKey, SnapshotId snapshotId) {
+        Snapshot snapshot = snapshotStorage.loadSnapshot(snapshotId);
+
+        List<UploadSnapshotComponentCommand> componentCommands = new ArrayList<>();
+        for(SnapshotComponentSummary snapshotComponentSummary : snapshot.getSnapshotComponentSummaries()) {
+            componentCommands.add(new UploadSnapshotComponentCommand(100, snapshotComponentSummary));
+        }
+        UploadSnapshotCommand command = new UploadSnapshotCommand(componentCommands, snapshot, environmentKey);
+
+        return commandService.run(command);
+
+    }
+
 
 }

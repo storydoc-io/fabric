@@ -16,4 +16,9 @@ public class DummyCommand1 extends Command {
     public List<DummyCommand2> getSubCommands() {
         return subCommands;
     }
+
+    @Override
+    public String getName() {
+        return "dummy command";
+    }
 }

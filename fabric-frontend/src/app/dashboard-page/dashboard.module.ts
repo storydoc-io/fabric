@@ -8,6 +8,7 @@ import {MongoSnapshotComponent} from "../snapshot-page/mongo-snapshot/mongo-snap
 import { SnapshotOverviewPanelComponent } from './snapshot-overview-panel/snapshot-overview-panel.component';
 import { SnapshotUploadDialogComponent } from './snapshot-upload-dialog/snapshot-upload-dialog.component';
 import { DummyPageComponent } from './dummy-page/dummy-page.component';
+import { CommandProgressComponent } from './dummy-page/command-progress/command-progress.component';
 
 
 @NgModule({
@@ -19,6 +20,7 @@ import { DummyPageComponent } from './dummy-page/dummy-page.component';
         SnapshotOverviewPanelComponent,
         SnapshotUploadDialogComponent,
         DummyPageComponent,
+        CommandProgressComponent,
     ],
     imports: [
         CoreModule,

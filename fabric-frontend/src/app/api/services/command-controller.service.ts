@@ -10,7 +10,6 @@ import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
 import { ExecutionDto } from '../models/execution-dto';
-import { ExecutionId } from '../models/execution-id';
 
 
 /**
@@ -25,57 +24,6 @@ export class CommandControllerService extends BaseService {
     http: HttpClient
   ) {
     super(config, http);
-  }
-
-  /**
-   * Path part for operation dummyUsingPost
-   */
-  static readonly DummyUsingPostPath = '/api/metamodel/dummy';
-
-  /**
-   * dummy.
-   *
-   *
-   *
-   * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `dummyUsingPost()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  dummyUsingPost$Response(params?: {
-  }): Observable<StrictHttpResponse<ExecutionId>> {
-
-    const rb = new RequestBuilder(this.rootUrl, CommandControllerService.DummyUsingPostPath, 'post');
-    if (params) {
-    }
-
-    return this.http.request(rb.build({
-      responseType: 'json',
-      accept: 'application/json'
-    })).pipe(
-      filter((r: any) => r instanceof HttpResponse),
-      map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<ExecutionId>;
-      })
-    );
-  }
-
-  /**
-   * dummy.
-   *
-   *
-   *
-   * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `dummyUsingPost$Response()` instead.
-   *
-   * This method doesn't expect any request body.
-   */
-  dummyUsingPost(params?: {
-  }): Observable<ExecutionId> {
-
-    return this.dummyUsingPost$Response(params).pipe(
-      map((r: StrictHttpResponse<ExecutionId>) => r.body as ExecutionId)
-    );
   }
 
   /**

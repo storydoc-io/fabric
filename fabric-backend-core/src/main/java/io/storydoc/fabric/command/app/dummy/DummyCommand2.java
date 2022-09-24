@@ -14,4 +14,9 @@ public class DummyCommand2 extends Command {
     public int getRecordCount() {
         return recordCount;
     }
+
+    @Override
+    public String getName() {
+        return "dummy subcommand";
+    }
 }

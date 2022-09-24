@@ -1,5 +1,6 @@
 package io.storydoc.fabric.snapshot.app;
 
+import io.storydoc.fabric.command.domain.ExecutionId;
 import io.storydoc.fabric.snapshot.app.result.SnapshotDTO;
 import io.storydoc.fabric.snapshot.app.result.SnapshotSummaryDTO;
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
@@ -38,4 +39,8 @@ public class SnapshotController {
         snapshotService.deleteSnapshot(snapshotId);
     }
 
+    @PostMapping(value="/upload", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ExecutionId upload(SnapshotId snapshotId, String environmentKey) {
+        return snapshotService.upload(snapshotId, environmentKey);
+    }
 }

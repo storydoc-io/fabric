@@ -9,6 +9,7 @@ import { RequestBuilder } from '../request-builder';
 import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
+import { ExecutionId } from '../models/execution-id';
 import { SnapshotDto } from '../models/snapshot-dto';
 import { SnapshotId } from '../models/snapshot-id';
 import { SnapshotSummaryDto } from '../models/snapshot-summary-dto';
@@ -257,6 +258,71 @@ export class SnapshotControllerService extends BaseService {
 
     return this.listUsingGet$Response(params).pipe(
       map((r: StrictHttpResponse<Array<SnapshotSummaryDto>>) => r.body as Array<SnapshotSummaryDto>)
+    );
+  }
+
+  /**
+   * Path part for operation uploadUsingPost
+   */
+  static readonly UploadUsingPostPath = '/api/snaphot/upload';
+
+  /**
+   * upload.
+   *
+   *
+   *
+   * This method provides access to the full `HttpResponse`, allowing access to response headers.
+   * To access only the response body, use `uploadUsingPost()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  uploadUsingPost$Response(params?: {
+    id?: string;
+
+    /**
+     * environmentKey
+     */
+    environmentKey?: string;
+  }): Observable<StrictHttpResponse<ExecutionId>> {
+
+    const rb = new RequestBuilder(this.rootUrl, SnapshotControllerService.UploadUsingPostPath, 'post');
+    if (params) {
+      rb.query('id', params.id, {"style":"form"});
+      rb.query('environmentKey', params.environmentKey, {"style":"form"});
+    }
+
+    return this.http.request(rb.build({
+      responseType: 'json',
+      accept: 'application/json'
+    })).pipe(
+      filter((r: any) => r instanceof HttpResponse),
+      map((r: HttpResponse<any>) => {
+        return r as StrictHttpResponse<ExecutionId>;
+      })
+    );
+  }
+
+  /**
+   * upload.
+   *
+   *
+   *
+   * This method provides access to only to the response body.
+   * To access the full response (for headers, for example), `uploadUsingPost$Response()` instead.
+   *
+   * This method doesn't expect any request body.
+   */
+  uploadUsingPost(params?: {
+    id?: string;
+
+    /**
+     * environmentKey
+     */
+    environmentKey?: string;
+  }): Observable<ExecutionId> {
+
+    return this.uploadUsingPost$Response(params).pipe(
+      map((r: StrictHttpResponse<ExecutionId>) => r.body as ExecutionId)
     );
   }
 

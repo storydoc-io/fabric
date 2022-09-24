@@ -1,5 +1,6 @@
 package io.storydoc.fabric.snapshot.app;
 
+import io.storydoc.fabric.command.domain.ExecutionId;
 import io.storydoc.fabric.infra.IDGenerator;
 import io.storydoc.fabric.snapshot.app.result.SnapshotComponentDTO;
 import io.storydoc.fabric.snapshot.app.result.SnapshotDTO;
@@ -64,5 +65,9 @@ public class SnapshotService {
 
     public void deleteSnapshot(SnapshotId snapshotId) {
         snapshotStorage.deleteSnapshot(snapshotId);
+    }
+
+    public ExecutionId upload(SnapshotId snapshotId, String environmentKey) {
+        return snapshotCommandRunner.runUploadSnapshotCommand(environmentKey, snapshotId);
     }
 }

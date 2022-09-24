@@ -2,7 +2,7 @@ import {Injectable, OnDestroy} from '@angular/core';
 import {SnapshotControllerService} from "@fabric/services";
 import {BehaviorSubject, Subscription} from "rxjs";
 import {distinctUntilChanged, map} from "rxjs/operators";
-import {SnapshotId, SnapshotSummaryDto} from "@fabric/models";
+import {ExecutionId, SnapshotId, SnapshotSummaryDto} from "@fabric/models";
 
 interface DashboardStoreState {
     summaries: SnapshotSummaryDto[]
@@ -51,5 +51,12 @@ export class DashboardService implements OnDestroy {
             this.loadSummaries()
         })
 
+    }
+
+    upload(snapshotId: SnapshotId, envKey: string): Promise<ExecutionId> {
+        return this.snapshotControllerService.uploadUsingPost({
+            environmentKey: envKey,
+            id: snapshotId.id
+        }).toPromise()
     }
 }
