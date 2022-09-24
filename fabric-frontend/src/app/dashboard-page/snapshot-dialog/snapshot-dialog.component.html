@@ -33,11 +33,6 @@
 <!--                </div>-->
             </form>
         </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-primary" (click)="confirm()" [disabled]="!formGroup.valid">Save changes
-            </button>
-            <button type="button" class="btn btn-secondary" (click)="cancel()">Cancel</button>
-        </div>
-
+        <app-modal-footer (onConfirm)="confirm()" (onCancel)="cancel()" [confirmDisabled]="!formGroup.valid" ></app-modal-footer>
     </div>
 </div>

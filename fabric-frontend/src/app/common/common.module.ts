@@ -14,6 +14,7 @@ import {BreadcrumbComponent} from './styleguide/breadcrumb/breadcrumb.component'
 import {ActionButtonsComponent} from './styleguide/action-buttons/action-buttons.component';
 import {SideBarComponent} from './styleguide/side-bar/side-bar.component';
 import {ModalHeaderComponent} from './styleguide/modal-header/modal-header.component';
+import {ModalFooterComponent} from './styleguide/modal-footer/modal-footer.component';
 
 @NgModule({
     declarations: [
@@ -29,6 +30,7 @@ import {ModalHeaderComponent} from './styleguide/modal-header/modal-header.compo
         ActionButtonsComponent,
         SideBarComponent,
         ModalHeaderComponent,
+        ModalFooterComponent,
     ],
     imports: [
         CoreModule,
@@ -46,6 +48,7 @@ import {ModalHeaderComponent} from './styleguide/modal-header/modal-header.compo
         ActionButtonsComponent,
         SideBarComponent,
         ModalHeaderComponent,
+        ModalFooterComponent
     ]
 })
 export class FabricCommonModule {
