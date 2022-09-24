@@ -8,6 +8,9 @@ import {Component, Input, TemplateRef} from '@angular/core';
 export class Layout1ColComponent {
 
   @Input()
+  sidebar: TemplateRef<any>
+
+  @Input()
   breadcrumb: TemplateRef<any>
 
   @Input()

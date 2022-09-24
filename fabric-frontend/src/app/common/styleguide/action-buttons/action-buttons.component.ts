@@ -3,6 +3,7 @@ import {Component, Input, OnInit} from '@angular/core';
 export interface ActionSpec {
   handler: () => void
   label: string
+  id? : string
 }
 
 export interface ActionsSpec {

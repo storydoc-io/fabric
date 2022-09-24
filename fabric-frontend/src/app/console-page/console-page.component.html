@@ -1,9 +1,14 @@
 <app-layout-1col
+        [sidebar]="sidebar"
         [title]="title"
         [breadcrumb]="breadcrumb"
         [middle]="middle"
 >
 </app-layout-1col>
+
+<ng-template #sidebar>
+    <app-side-bar [active]="'console'"></app-side-bar>
+</ng-template>
 
 <ng-template #title>
     <app-title text="Console"></app-title>

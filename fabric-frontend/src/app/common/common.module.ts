@@ -11,7 +11,9 @@ import {ConfirmationDialogComponent} from "./confirmation-dialog/confirmation-di
 import {ValidationMessagesComponent} from './validation-messages/validation-messages.component';
 import {TitleComponent} from './styleguide/title/title.component';
 import {BreadcrumbComponent} from './styleguide/breadcrumb/breadcrumb.component';
-import {ActionButtonsComponent} from './styleguide/grid/action-buttons/action-buttons.component';
+import {ActionButtonsComponent} from './styleguide/action-buttons/action-buttons.component';
+import {SideBarComponent} from './styleguide/side-bar/side-bar.component';
+import {ModalHeaderComponent} from './styleguide/modal-header/modal-header.component';
 
 @NgModule({
     declarations: [
@@ -25,6 +27,8 @@ import {ActionButtonsComponent} from './styleguide/grid/action-buttons/action-bu
         TitleComponent,
         BreadcrumbComponent,
         ActionButtonsComponent,
+        SideBarComponent,
+        ModalHeaderComponent,
     ],
     imports: [
         CoreModule,
@@ -40,6 +44,7 @@ import {ActionButtonsComponent} from './styleguide/grid/action-buttons/action-bu
         TitleComponent,
         BreadcrumbComponent,
         ActionButtonsComponent,
+        SideBarComponent,
     ]
 })
 export class FabricCommonModule {
