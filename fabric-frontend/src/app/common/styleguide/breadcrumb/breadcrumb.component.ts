@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 
 export interface BreadcrumbItem {
   label?: string
-  route?: string
+  route?: string | string[]
 }
 
 @Component({

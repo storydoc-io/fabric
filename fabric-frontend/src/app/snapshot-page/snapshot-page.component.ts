@@ -1,7 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {SnapshotService} from "./snapshot.service";
 import {ActivatedRoute} from "@angular/router";
-import {SnapshotId} from "@fabric/models";
+import {SnapshotDto, SnapshotId} from "@fabric/models";
+import {BreadcrumbItem} from "@fabric/common";
 
 @Component({
   selector: 'app-snapshot-page',
@@ -27,4 +28,20 @@ export class SnapshotPageComponent implements OnInit {
     })
   }
 
+    breadcrumbs(snapshot: SnapshotDto): BreadcrumbItem[] {
+        return  [
+        {
+          label: 'Home',
+          route: '/'
+        },
+          {
+            label: 'Snapshots',
+            route: ['/', 'fe', 'dashboard']
+          },
+        {
+          label: `Snapshot: ${snapshot.name}`
+        }
+      ]
+
+    }
 }

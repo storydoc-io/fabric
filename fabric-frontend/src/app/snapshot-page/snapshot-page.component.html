@@ -1,27 +1,24 @@
 <app-layout-1col
+        [sidebar]="sidebar"
         [title]="title"
         [breadcrumb]="breadcrumb"
         [middle]="middle"
 >
 </app-layout-1col>
 
+<ng-template #sidebar>
+    <app-side-bar [active]="'dashboard'"></app-side-bar>
+</ng-template>
+
 <ng-template #title>
     <div class="container-fluid" *ngIf="snapshot$ | async as snapshot">
-        <div class="row">
-            <h3>Snapshot: {{snapshot.name}}</h3>
-        </div>
+        <app-title text="Snapshot: {{snapshot.name}}"></app-title>
     </div>
 </ng-template>
 
 <ng-template #breadcrumb>
     <div *ngIf="snapshot$ | async as snapshot">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <app-back-button [routerLink]="'/'"></app-back-button>
-                <li class="breadcrumb-item"><a routerLink="/">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">{{snapshot.name}}</li>
-            </ol>
-        </nav>
+        <app-breadcrumb [breadcrumbs]="breadcrumbs(snapshot)"></app-breadcrumb>
     </div>
 </ng-template>
 
