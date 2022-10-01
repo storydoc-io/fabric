@@ -26,6 +26,11 @@ import java.util.Map;
 @Slf4j
 public class ElasticSnapshotService extends ElasticServiceBase implements SnapshotHandler_StreamBased<SnapshotItemDTO> {
 
+    public static final String SNAPSHOT_ITEM_TYPE__SNAPSHOT = "snapshot";
+    public static final String SNAPSHOT_ITEM_TYPE__INDEX = "index";
+    public static final String SNAPSHOT_ITEM_TYPE__HIT = "hit";
+    public static final String SNAPSHOT_ATTRIBUTE__CONTENT = "content";
+
     private final ElasticMetaModelService elasticMetaModelService;
 
     public ElasticSnapshotService(ElasticMetaModelService elasticMetaModelService) {
@@ -105,7 +110,7 @@ public class ElasticSnapshotService extends ElasticServiceBase implements Snapsh
 
         SnapshotItemDTO elasticSnapshot = SnapshotItemDTO.builder()
                 .systemType(systemType())
-                .snapshotItemType("snapshot")
+                .snapshotItemType(SNAPSHOT_ITEM_TYPE__SNAPSHOT)
                 .build();
         jacksonWriter.item(elasticSnapshot);
 
@@ -120,7 +125,7 @@ public class ElasticSnapshotService extends ElasticServiceBase implements Snapsh
                     RequestOptions.DEFAULT);
             SnapshotItemDTO indexSnapshot = SnapshotItemDTO.builder()
                     .systemType(systemType())
-                    .snapshotItemType("index")
+                    .snapshotItemType(SNAPSHOT_ITEM_TYPE__INDEX)
                     .id(index)
                     .attributes(Map.of("hitCount", "" + response.getHits().getTotalHits().value))
                     .build();
@@ -133,9 +138,9 @@ public class ElasticSnapshotService extends ElasticServiceBase implements Snapsh
                 SearchHit hit = response.getHits().iterator().next();
                 SnapshotItemDTO hitSnapshot = SnapshotItemDTO.builder()
                         .systemType(systemType())
-                        .snapshotItemType("hit")
+                        .snapshotItemType(SNAPSHOT_ITEM_TYPE__HIT)
                         .id(hit.getId())
-                        .attributes(Map.of("content", "" + hit.getSourceAsString()))
+                        .attributes(Map.of(SNAPSHOT_ATTRIBUTE__CONTENT, "" + hit.getSourceAsString()))
                         .build();
                 jacksonWriter.item(hitSnapshot);
                 jacksonWriter.itemEnd();

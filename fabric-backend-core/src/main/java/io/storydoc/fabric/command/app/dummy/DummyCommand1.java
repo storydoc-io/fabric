@@ -1,24 +1,16 @@
 package io.storydoc.fabric.command.app.dummy;
 
-import io.storydoc.fabric.command.domain.Command;
+import io.storydoc.fabric.command.domain.CommandParams;
 
-import java.util.List;
+public class DummyCommand1 extends CommandParams {
 
-public class DummyCommand1 extends Command {
+    private String percent;
 
-    private final List<DummyCommand2> subCommands;
-
-    public DummyCommand1(List<DummyCommand2> subCommands) {
-        super(DummyCommandTypes.DUMMY_COMMAND_TYPE_1);
-        this.subCommands = subCommands;
+    public String getPercent() {
+        return percent;
     }
 
-    public List<DummyCommand2> getSubCommands() {
-        return subCommands;
-    }
-
-    @Override
-    public String getName() {
-        return "dummy command";
+    public void setPercent(String percent) {
+        this.percent = percent;
     }
 }

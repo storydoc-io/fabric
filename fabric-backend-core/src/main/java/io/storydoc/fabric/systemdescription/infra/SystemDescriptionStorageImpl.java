@@ -32,7 +32,7 @@ public class SystemDescriptionStorageImpl extends StorageBase implements SystemD
     public SystemDescription getOrCreateSystemDescription() {
         try {
             return loadSystemDescription();
-        } catch (FabricException e) { log.info("error loading system description, creating new one", e);}
+        } catch (FabricException e) { log.info("no system description yet, creating new one");}
         return createtSystemDescription();
     }
 

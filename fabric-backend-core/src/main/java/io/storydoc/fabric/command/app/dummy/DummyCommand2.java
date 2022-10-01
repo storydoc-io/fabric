@@ -1,22 +1,17 @@
 package io.storydoc.fabric.command.app.dummy;
 
-import io.storydoc.fabric.command.domain.Command;
+import io.storydoc.fabric.command.domain.CommandParams;
 
-public class DummyCommand2 extends Command {
-
-    private final int recordCount;
+public class DummyCommand2 extends CommandParams {
 
     public DummyCommand2(int recordCount) {
-        super(DummyCommandTypes.DUMMY_COMMAND_TYPE_2);
         this.recordCount = recordCount;
     }
+
+    private int recordCount;
 
     public int getRecordCount() {
         return recordCount;
     }
 
-    @Override
-    public String getName() {
-        return "dummy subcommand";
-    }
 }

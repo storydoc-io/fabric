@@ -15,6 +15,9 @@ import {ActionButtonsComponent} from './styleguide/action-buttons/action-buttons
 import {SideBarComponent} from './styleguide/side-bar/side-bar.component';
 import {ModalHeaderComponent} from './styleguide/modal-header/modal-header.component';
 import {ModalFooterComponent} from './styleguide/modal-footer/modal-footer.component';
+import {HTTP_INTERCEPTORS} from "@angular/common/http";
+import {HttpErrorInterceptor} from "./connection-status/http-error.interceptor";
+import {ConnectionStatusComponent} from './connection-status/connection-status.component';
 
 @NgModule({
     declarations: [
@@ -31,6 +34,14 @@ import {ModalFooterComponent} from './styleguide/modal-footer/modal-footer.compo
         SideBarComponent,
         ModalHeaderComponent,
         ModalFooterComponent,
+        ConnectionStatusComponent,
+    ],
+    providers: [
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptor,
+            multi: true
+        }
     ],
     imports: [
         CoreModule,

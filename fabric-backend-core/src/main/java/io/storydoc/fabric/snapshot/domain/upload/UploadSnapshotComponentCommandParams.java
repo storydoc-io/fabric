@@ -1,16 +1,15 @@
 package io.storydoc.fabric.snapshot.domain.upload;
 
-import io.storydoc.fabric.command.domain.Command;
+import io.storydoc.fabric.command.domain.CommandParams;
 import io.storydoc.fabric.snapshot.infra.jsonmodel.SnapshotComponentSummary;
 
-public class UploadSnapshotComponentCommand extends Command {
+public class UploadSnapshotComponentCommandParams extends CommandParams {
 
     private final int recordCount;
 
     private final SnapshotComponentSummary snapshotComponentSummary;
 
-    public UploadSnapshotComponentCommand(int recordCount, SnapshotComponentSummary snapshotComponentSummary) {
-        super(UploadCommandTypes.SNAPSHOT_COMPONENT);
+    public UploadSnapshotComponentCommandParams(int recordCount, SnapshotComponentSummary snapshotComponentSummary) {
         this.recordCount = recordCount;
         this.snapshotComponentSummary = snapshotComponentSummary;
     }
@@ -19,9 +18,5 @@ public class UploadSnapshotComponentCommand extends Command {
         return recordCount;
     }
 
-    @Override
-    public String getName() {
-        return snapshotComponentSummary.getComponentKey();
-    }
 
 }

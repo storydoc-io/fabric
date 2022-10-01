@@ -30,7 +30,7 @@ public class CommandExecutionEngine {
 
     }
 
-    public <CT extends Command> void  runCommand(ExecutionId executionId, CT command) {
+    public <CT extends CommandParams> void  runCommand(ExecutionId executionId, Command<CT> command) {
         CommandHandler<CT> commandHandler = commandHandlerRegistry.getExecutor(command.getCommandType());
         ExecutionContext context  = commandHandler.createContext(command, null);
         executionContextRepository.save(executionId, context);
@@ -38,15 +38,6 @@ public class CommandExecutionEngine {
             commandHandler.run(command, context, this);
         });
     }
-
-    public void runSubCommand(Command command, ExecutionContext parentContext) {
-        CommandHandler commandHandler = commandHandlerRegistry.getExecutor(command.getCommandType());
-        ExecutionContext context  = commandHandler.createContext(command, parentContext);
-        executorService.execute(()->{
-            commandHandler.run(command, context, this);
-        });
-    }
-
 
     public ExecutionContext getContext(ExecutionId executionId) {
         return executionContextRepository.get(executionId);
