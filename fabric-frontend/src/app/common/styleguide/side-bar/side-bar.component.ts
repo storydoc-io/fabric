@@ -1,5 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
+import {SideBarService} from "./side-bar.service";
+import {faBars, faTimes} from '@fortawesome/free-solid-svg-icons';
 
 export interface ActionSpec {
   label: string
@@ -41,9 +43,21 @@ export class SideBarComponent implements OnInit {
     this.router.navigate(route )
   }
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private service: SideBarService) { }
 
   ngOnInit(): void {
+  }
+
+  toggleCollapse() {
+    this.service.toggleState()
+  }
+
+  collapsed(): boolean {
+    return this.service.collapsed;
+  }
+
+  icon() {
+    return this.collapsed() ? faBars : faTimes
   }
 
 }

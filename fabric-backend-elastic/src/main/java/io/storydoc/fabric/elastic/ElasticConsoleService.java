@@ -7,6 +7,7 @@ import io.storydoc.fabric.console.app.describe.ConsoleDescriptorDTO;
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorItemDTO;
 import io.storydoc.fabric.console.app.describe.ConsoleInputType;
 import io.storydoc.fabric.console.app.describe.ConsoleOutputType;
+import io.storydoc.fabric.console.app.metanav.MetaNavItem;
 import io.storydoc.fabric.console.app.query.ConsoleRequestDTO;
 import io.storydoc.fabric.console.app.query.ConsoleResponseItemDTO;
 import io.storydoc.fabric.console.domain.ConsoleHandler;
@@ -94,4 +95,8 @@ public class ElasticConsoleService extends ElasticServiceBase implements Connect
     }
 
 
+    @Override
+    public List<MetaNavItem> getMetaNav(String systemComponentKey) {
+        return null;
+    }
 }

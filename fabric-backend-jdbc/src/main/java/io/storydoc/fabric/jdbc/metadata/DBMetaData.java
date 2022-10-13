@@ -5,7 +5,17 @@ import java.util.List;
 
 public class DBMetaData  {
 
+	private String schemaName;
+
 	private List<TableMetaData> tables = new ArrayList<>();
+
+	public String getSchemaName() {
+		return schemaName;
+	}
+
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
+	}
 
 	public void add(TableMetaData tableMetaData) {
 		tables.add(tableMetaData);

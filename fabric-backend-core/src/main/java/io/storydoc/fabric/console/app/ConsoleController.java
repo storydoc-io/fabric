@@ -1,6 +1,7 @@
 package io.storydoc.fabric.console.app;
 
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorDTO;
+import io.storydoc.fabric.console.app.metanav.MetaNavItem;
 import io.storydoc.fabric.console.app.query.ConsoleRequestDTO;
 import io.storydoc.fabric.console.app.query.ConsoleResponseItemDTO;
 import io.storydoc.fabric.console.app.snippet.SnippetDTO;
@@ -37,6 +38,11 @@ public class ConsoleController {
     @GetMapping(value="/snippets", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<SnippetDTO> getSnippets(String systemComponentKey) {
         return consoleService.getSnippets(systemComponentKey);
+    }
+
+    @GetMapping(value="/metanav", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<MetaNavItem> getMetaNav(String systemComponentKey) {
+        return consoleService.getMetaNav(systemComponentKey);
     }
 
 }

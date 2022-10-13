@@ -16,6 +16,7 @@ export { FileSystem } from './models/file-system';
 export { IterableFileStore } from './models/iterable-file-store';
 export { IterablePath } from './models/iterable-path';
 export { MetaModelId } from './models/meta-model-id';
+export { MetaNavItem } from './models/meta-nav-item';
 export { MongoMetaModel } from './models/mongo-meta-model';
 export { MongoNavigationModel } from './models/mongo-navigation-model';
 export { MongoSnapshot } from './models/mongo-snapshot';

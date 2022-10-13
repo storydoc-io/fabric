@@ -54,6 +54,10 @@ export class SystemDescriptionWrapper {
         return settingRows
     }
 
+    getDefaultEnvironment(): EnvironmentDto {
+        return this.systemDescription.environments[0]
+    }
+
     getEnvironmentByKey(envKey: string): EnvironmentDto {
         return this.systemDescription.environments.find(env => env.key === envKey)
     }

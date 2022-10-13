@@ -1,7 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {ModalService} from "../../common/modal/modal-service";
-import {SystemDescriptionService} from "../system-description.service";
-import {StructureDto, SystemComponentDto, SystemDescriptionDto} from "@fabric/models";
+import {SystemDescriptionService, SystemDescriptionWrapper} from "../system-description.service";
+import {EnvironmentDto, StructureDto, SystemComponentDto, SystemDescriptionDto} from "@fabric/models";
 import {HasConfirmationDialogMixin} from "@fabric/common";
 import {MetaModelDialogData, MetaModelDialogSpec} from "./meta-model-dialog/meta-model-dialog.component";
 
@@ -10,13 +10,10 @@ import {MetaModelDialogData, MetaModelDialogSpec} from "./meta-model-dialog/meta
   templateUrl: './meta-model-panel.component.html',
   styleUrls: ['./meta-model-panel.component.scss']
 })
-export class MetaModelPanelComponent extends HasConfirmationDialogMixin  implements OnInit {
+export class MetaModelPanelComponent extends HasConfirmationDialogMixin  implements OnInit, OnChanges {
 
   constructor(modalService: ModalService, private service: SystemDescriptionService) {
     super(modalService);
-  }
-
-  ngOnInit(): void {
   }
 
   @Input()
@@ -24,6 +21,18 @@ export class MetaModelPanelComponent extends HasConfirmationDialogMixin  impleme
 
   @Input()
   systemComponent: SystemComponentDto
+
+  ngOnInit(): void {
+  }
+
+  environment: EnvironmentDto
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.systemDescription && this.systemComponent) {
+        this.environment = new SystemDescriptionWrapper(this.systemDescription).getDefaultEnvironment()
+        this.service.loadEnvironmentSystemComponentStructure(this.environment.key, this.systemComponent.key).then(dto => this.structureDTo = dto)
+    }
+  }
 
   metaModelDialogSpec: MetaModelDialogSpec;
 

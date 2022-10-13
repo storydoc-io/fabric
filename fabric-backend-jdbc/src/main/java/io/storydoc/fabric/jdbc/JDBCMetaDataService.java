@@ -16,9 +16,9 @@ import io.storydoc.fabric.systemdescription.domain.SystemStructureHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -40,14 +40,33 @@ public class JDBCMetaDataService extends JDBCServiceBase implements MetaModelHan
     }
 
     private StructureDTO toDto(DBMetaData dbMetaData) {
-        List<StructureDTO> tableDtoList = new ArrayList<>();
-        dbMetaData.getTables().forEach(table -> {
-            tableDtoList.add(StructureDTO.builder()
-                .id(table.getName())
-                .build());
-        });
         return StructureDTO.builder()
-            .children(tableDtoList)
+            .systemType(systemType())
+            .structureType("SCHEMA")
+            .id(dbMetaData.getSchemaName())
+            .children(dbMetaData.getTables().stream()
+                    .map(this::toTableStructureDto)
+                    .collect(Collectors.toList()))
+            .build();
+    }
+
+    private StructureDTO toTableStructureDto(io.storydoc.fabric.jdbc.metadata.TableMetaData table) {
+        return StructureDTO.builder()
+            .systemType(systemType())
+            .structureType("TABLE")
+            .id(table.getName())
+            .children(table.getColumns().keySet().stream()
+                    .map(this::toColumnStructureDto)
+                    .collect(Collectors.toList())
+            )
+            .build();
+    }
+
+    private StructureDTO toColumnStructureDto(String columnName) {
+        return StructureDTO.builder()
+            .systemType(systemType())
+            .structureType("COLUMN")
+            .id(columnName)
             .build();
     }
 

@@ -30,6 +30,11 @@
 
                     <ul class="nav nav-tabs">
                         <li class="nav-item">
+                            <a class="nav-link" [class.active]="tabState==='NAVIGATE'" (click)="selectTab('NAVIGATE')" href="javascript:void(0);">
+                                Navigation
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" [class.active]="tabState==='SNIPPETS'" (click)="selectTab('SNIPPETS')" href="javascript:void(0);">
                                 Snippets
                             </a>
@@ -50,6 +55,9 @@
                            (onDelete)="deleteHistoryItem($event)"
                         >
                         </app-history-panel>
+                    </ng-container>
+                    <ng-container *ngIf="tabState==='NAVIGATE'">
+                        <app-navigation-panel [items]="navItems" (selected)="navItemSelected($event)"></app-navigation-panel>
                     </ng-container>
                 </div>
             </app-panel>

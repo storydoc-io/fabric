@@ -27,6 +27,7 @@ public class DBMetaDataBuilder {
 	@SneakyThrows
 	private DBMetaData todDBMetaData(String schema, DatabaseMetaData jdbcMetaData) {
 		DBMetaData dbMetaData = new DBMetaData();
+		dbMetaData.setSchemaName(schema);
 
 		List<String> tableNames = new ArrayList<>();
 		ResultSet rs = jdbcMetaData.getTables(null, schema, "%", null);

@@ -3,12 +3,12 @@ import {ConsoleService} from "../console.service";
 import {FormArray, FormControl, FormGroup} from "@angular/forms";
 import {DataSourceSelection} from "../data-source-selection-panel/data-source-selection-panel.component";
 import {faPlay, faTimes} from '@fortawesome/free-solid-svg-icons';
-import {Column, ConsoleDescriptorDto, Row, SnippetDto} from "@fabric/models";
+import {Column, ConsoleDescriptorDto, MetaNavItem, Row, SnippetDto} from "@fabric/models";
 import {HistoryItem} from "./history-panel/history-panel.component";
 import {SnippetDialogData, SnippetDialogSpec} from "./snippet-dialog/snippet-dialog.component";
 import {ModalService} from "../../common/modal/modal-service";
 
-type TabState = 'HISTORY' | 'SNIPPETS'
+type TabState = 'HISTORY' | 'SNIPPETS' | 'NAVIGATE'
 
 @Component({
   selector: 'app-console-panel',
@@ -28,8 +28,9 @@ export class ConsolePanelComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     let systemComponentKey = this.dataSource.systemComponentKey;
-    this.service.loadDescriptor(systemComponentKey).then((descriptor)=> this.initForm(descriptor))
-    this.service.loadSnippets(systemComponentKey).then((snippets)=>this.initSnippets(snippets))
+    this.service.loadDescriptor(systemComponentKey).then(descriptor => this.initForm(descriptor))
+    this.service.loadSnippets(systemComponentKey).then(snippets => this.initSnippets(snippets))
+    this.service.loadNavItems(systemComponentKey).then(navItems => this.initNavItems(navItems))
   }
 
   descriptor: ConsoleDescriptorDto
@@ -105,6 +106,24 @@ export class ConsolePanelComponent implements OnChanges {
   selectTab(tabState: TabState) {
     this.tabState = tabState
   }
+
+  // navitems
+
+  navItems: MetaNavItem[]
+
+  private initNavItems(navItems: MetaNavItem[]) {
+    return this.navItems = navItems;
+  }
+
+  navItemSelected(navItem: MetaNavItem) {
+    this.descriptor.items.forEach((descriptorItem, index) => {
+          let value = navItem.attributes[descriptorItem.name]
+          this.fieldControl(index).setValue(value)
+        }
+    )
+    this.doQuery()
+  }
+
 
   // history
 
