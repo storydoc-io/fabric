@@ -41,7 +41,12 @@ export class DashboardService implements OnDestroy {
     }
 
     createSnapshot(environment: string, name: string) {
-        this.snapshotControllerService.createUsingPost({ environment, name}).subscribe(
+        this.snapshotControllerService.createUsingPost({
+            body: {
+                environmentKey: environment,
+                name
+            }
+        }).subscribe(
         (dto) => this.loadSummaries()
         )
     }

@@ -1,10 +1,10 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {DashboardPageComponent} from "./dashboard-page/dashboard-page.component";
-import {SnapshotPageComponent} from "./snapshot-page/snapshot-page.component";
-import {SystemDescriptionPageComponent} from "./system-description-page/system-description-page.component";
-import {ConsolePageComponent} from "./console-page/console-page.component";
-import {DummyPageComponent} from "./dashboard-page/dummy-page/dummy-page.component";
+import {DashboardPageComponent} from './dashboard-page/dashboard-page.component';
+import {SnapshotPageComponent} from './snapshot-page/snapshot-page.component';
+import {SystemDescriptionPageComponent} from './system-description-page/system-description-page.component';
+import {ConsolePageComponent} from './console-page/console-page.component';
+import {DummyPageComponent} from './dashboard-page/dummy-page/dummy-page.component';
 
 
 const routes: Routes = [

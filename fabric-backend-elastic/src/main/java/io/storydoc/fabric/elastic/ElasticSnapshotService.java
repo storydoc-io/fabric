@@ -1,5 +1,6 @@
 package io.storydoc.fabric.elastic;
 
+import io.storydoc.fabric.command.domain.ProgressMonitor;
 import io.storydoc.fabric.elastic.metamodel.ElasticMetaModel;
 import io.storydoc.fabric.elastic.settings.ElasticSettings;
 import io.storydoc.fabric.snapshot.app.result.SnapshotItemDTO;
@@ -7,6 +8,7 @@ import io.storydoc.fabric.snapshot.domain.SnapshotHandler_StreamBased;
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.snapshot.domain.SnapshotSerializer;
 import io.storydoc.fabric.snapshot.infra.SnapshotStreamingJacksonWriter;
+import io.storydoc.fabric.snapshot.infra.jsonmodel.Snapshot;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Component;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
@@ -152,6 +155,27 @@ public class ElasticSnapshotService extends ElasticServiceBase implements Snapsh
         jacksonWriter.childrenEnd();
         jacksonWriter.itemEnd();
         jacksonWriter.flush();
+    }
+
+    @Override
+    public void upload(Snapshot snapshot, String environmentKey, String componentKey, ProgressMonitor progressMonitor) {
+
+        int recordCount = 20;
+
+        progressMonitor.setPercentDone(0);
+        for (int i = 0; i < recordCount; i++) {
+            sleep(200);
+            progressMonitor.setPercentDone(100 * (i+1) / recordCount);
+        }
+
+
+    }
+
+    private void sleep(int amount) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(amount);
+        } catch (InterruptedException e) {
+        }
     }
 
 

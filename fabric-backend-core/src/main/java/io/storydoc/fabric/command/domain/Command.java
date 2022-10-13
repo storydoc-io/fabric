@@ -2,10 +2,12 @@ package io.storydoc.fabric.command.domain;
 
 
 import io.storydoc.fabric.command.app.ExecutionStatus;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-public class Command<PARAMS extends CommandParams> {
+@Slf4j
+public class Command<PARAMS extends CommandParams> implements ProgressMonitor {
 
     private final PARAMS params;
 
@@ -13,11 +15,15 @@ public class Command<PARAMS extends CommandParams> {
 
     private Command<? extends CommandParams> parent;
 
-    private final CommandType commandType;
+    private final CommandHandler<PARAMS> run;
 
     private final List<Command<? extends CommandParams>> children;
 
     private ExecutionStatus status;
+
+    private int percentDone = 0;
+
+    private Exception exception;
 
     public PARAMS getParams() {
         return params;
@@ -31,24 +37,19 @@ public class Command<PARAMS extends CommandParams> {
         return children;
     }
 
-    private Command(String name, CommandType commandType, List<Command<? extends CommandParams>> children, PARAMS params) {
+    private Command(String name, List<Command<? extends CommandParams>> children, PARAMS params, CommandHandler<PARAMS> run) {
         this.name = name;
-        this.commandType = commandType;
         this.children = children;
-        this.children.forEach(childCommand -> childCommand.setParent(this));
+        this.run = run;
+        if (this.children != null) {
+            this.children.forEach(childCommand -> childCommand.parent = this);
+        }
         this.params = params;
-    }
-
-    public CommandType getCommandType() {
-        return commandType;
+        status = ExecutionStatus.READY;
     }
 
     public Command getParent() {
         return parent;
-    }
-
-    public void setParent(Command parent) {
-        this.parent = parent;
     }
 
     public ExecutionStatus getStatus() {
@@ -56,23 +57,40 @@ public class Command<PARAMS extends CommandParams> {
     }
 
     public void setStatus(ExecutionStatus status) {
+        log.trace(String.format("%s : %s -> %s", name, this.status, status));
         this.status = status;
+    }
+
+    public int getPercentDone() {
+        return percentDone;
+    }
+
+    public void setPercentDone(int percentDone) {
+        log.trace(String.format("%s : %d%%", name, percentDone));
+        this.percentDone = percentDone;
+    }
+
+    public CommandHandler<PARAMS> getRun() {
+        return run;
     }
 
     static public Builder<? extends CommandParams> builder() {
         return new Builder<>();
     }
 
+    public void setException(Exception exception) {
+        this.exception = exception;
+    }
+
+    public Exception getException() {
+        return exception;
+    }
+
     static public class Builder<PARAMS extends CommandParams> {
         private List<Command<? extends CommandParams>> children;
-        private  CommandType commandType;
         private String name;
         private PARAMS params;
-
-        public Builder<PARAMS> commandType(CommandType commandType) {
-            this.commandType = commandType;
-            return this;
-        }
+        private CommandHandler<PARAMS> run;
 
         public Builder<PARAMS> name(String name) {
             this.name = name;
@@ -89,8 +107,13 @@ public class Command<PARAMS extends CommandParams> {
             return this;
         }
 
+        public Builder<PARAMS> run(CommandHandler<PARAMS> run) {
+            this.run = run;
+            return this;
+        }
+
         public Command<PARAMS> build() {
-            return new Command<PARAMS>(name, commandType, children, params);
+            return new Command<PARAMS>(name, children, params, run);
         }
 
     }

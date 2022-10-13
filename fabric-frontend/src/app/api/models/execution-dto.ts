@@ -4,5 +4,5 @@ export interface ExecutionDto {
   children?: Array<ExecutionDto>;
   label?: string;
   percentDone?: number;
-  status?: 'DONE' | 'RUNNING';
+  status?: 'DONE' | 'ERROR' | 'PAUSED' | 'READY' | 'RUNNING' | 'UNRESPONSIVE';
 }

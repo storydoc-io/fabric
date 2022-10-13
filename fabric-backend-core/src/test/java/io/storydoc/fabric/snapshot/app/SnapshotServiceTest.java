@@ -1,7 +1,9 @@
 package io.storydoc.fabric.snapshot.app;
 
 import io.storydoc.fabric.TestBase;
+import io.storydoc.fabric.command.domain.ExecutionId;
 import io.storydoc.fabric.core.infra.WorkspaceStructure;
+import io.storydoc.fabric.snapshot.app.descriptor.SnapshotDescriptorDTO;
 import io.storydoc.fabric.snapshot.app.result.SnapshotComponentDTO;
 import io.storydoc.fabric.snapshot.app.result.SnapshotDTO;
 import io.storydoc.fabric.snapshot.app.result.SnapshotSummaryDTO;
@@ -65,7 +67,10 @@ public class SnapshotServiceTest extends TestBase {
         // when I create a snapshot
         String name = "name-" + UUID.randomUUID();
         String environmentKey = "DEV";
-        SnapshotId snapshotId = snapshotService.createSnapshot(environmentKey, name);
+        SnapshotId snapshotId = snapshotService.createSnapshot(SnapshotDescriptorDTO.builder()
+                .environmentKey(environmentKey)
+                .name(name)
+                .build());
 
         workspaceTestFixture.logFolderStructure("after snapshot");
         workspaceTestFixture.logResourceContent(String.format("snapshot %s", snapshotId), workspaceStructure.getSnapshotUrn(snapshotId));
@@ -115,7 +120,10 @@ public class SnapshotServiceTest extends TestBase {
         // and a snapshot
         String name = "name-" + UUID.randomUUID();
         String environmentKey = "DEV";
-        SnapshotId snapshotId = snapshotService.createSnapshot(environmentKey, name);
+        SnapshotId snapshotId = snapshotService.createSnapshot(SnapshotDescriptorDTO.builder()
+                .environmentKey(environmentKey)
+                .name(name)
+                .build());
 
         // when I delete the snapshot
 
@@ -141,6 +149,10 @@ public class SnapshotServiceTest extends TestBase {
                         Environment.builder()
                                 .key("DEV")
                                 .label("Develop environment")
+                                .build(),
+                        Environment.builder()
+                                .key("INT")
+                                .label("Integration environment")
                                 .build())
                 )
                 .systemComponents(List.of(
@@ -150,9 +162,12 @@ public class SnapshotServiceTest extends TestBase {
                                 .label("Mongo DB")
                                 .build())
                 )
-                .settings(Map.of("" +
+                .settings(Map.of(
                         "DEV", Map.of(
                             "PRODUCTS", Map.of(
+                                    "some_key", "some_value")),
+                        "INT", Map.of(
+                                "PRODUCTS", Map.of(
                                     "some_key", "some_value"))))
                 .build());
     }
@@ -165,7 +180,10 @@ public class SnapshotServiceTest extends TestBase {
 
         // when I take multiple snapshots
         List<SnapshotId> snapshotIds = IntStream.range(0, 2)
-                .mapToObj(i -> snapshotService.createSnapshot("DEV", "name"))
+                .mapToObj(i -> snapshotService.createSnapshot(SnapshotDescriptorDTO.builder()
+                        .environmentKey("DEV")
+                        .name("name")
+                        .build()))
                 .collect(Collectors.toList());
 
         // I can list the snapshots
@@ -173,5 +191,24 @@ public class SnapshotServiceTest extends TestBase {
 
     }
 
+    @Test
+    public void testUpload() {
+        // given a system description
+        createdummySystemDescription();
+        SystemDescriptionDTO systemDescriptionDTO = systemDescriptionService.getSystemDescription();
 
+        // given a snapshot from the INT environment
+        String name = "name-" + UUID.randomUUID();
+        String environmentKey = "INT";
+        SnapshotId snapshotId = snapshotService.createSnapshot(SnapshotDescriptorDTO.builder()
+                .environmentKey(environmentKey)
+                .name(name)
+                .build());
+
+        // then I can upload it to the DEV environment
+        ExecutionId executionId = snapshotService.upload(snapshotId, "DEV");
+        waitUntilExecutionFinished(executionId);
+
+
+    }
 }

@@ -13,6 +13,7 @@
         <module>fabric-frontend</module>
         <module>fabric-backend-mongo</module>
         <module>fabric-backend-elastic</module>
+        <module>fabric-backend-jdbc</module>
         <module>fabric-backend-core</module>
         <module>fabric-server-pe</module>
     </modules>
@@ -38,6 +39,11 @@
             <dependency>
                 <groupId>io.storydoc.fabric</groupId>
                 <artifactId>fabric-backend-elastic</artifactId>
+                <version>0.1.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>io.storydoc.fabric</groupId>
+                <artifactId>fabric-backend-jdbc</artifactId>
                 <version>0.1.0-SNAPSHOT</version>
             </dependency>
             <dependency>

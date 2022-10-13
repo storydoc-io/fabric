@@ -70,7 +70,8 @@
     ],
     "semicolon": {
       "options": [
-        "always"
+        "never",
+        "ignore-interfaces"
       ]
     },
     "space-before-function-paren": {

@@ -36,7 +36,6 @@
             <groupId>io.storydoc.fabric</groupId>
             <artifactId>fabric-frontend</artifactId>
         </dependency>
-
     </dependencies>
 
     <build>

@@ -18,5 +18,7 @@ public class UploadSnapshotComponentCommandParams extends CommandParams {
         return recordCount;
     }
 
-
+    public SnapshotComponentSummary getSnapshotComponentSummary() {
+        return snapshotComponentSummary;
+    }
 }

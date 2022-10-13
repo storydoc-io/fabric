@@ -3,13 +3,12 @@ package io.storydoc.fabric.elastic;
 import io.storydoc.fabric.connection.app.ConnectionTestRequestDTO;
 import io.storydoc.fabric.connection.app.ConnectionTestResponseDTO;
 import io.storydoc.fabric.connection.domain.ConnectionHandler;
-import io.storydoc.fabric.console.app.ConsoleRequestDTO;
-import io.storydoc.fabric.console.app.ConsoleResponseItemDTO;
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorDTO;
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorItemDTO;
 import io.storydoc.fabric.console.app.describe.ConsoleInputType;
 import io.storydoc.fabric.console.app.describe.ConsoleOutputType;
-import io.storydoc.fabric.console.app.snippet.SnippetDTO;
+import io.storydoc.fabric.console.app.query.ConsoleRequestDTO;
+import io.storydoc.fabric.console.app.query.ConsoleResponseItemDTO;
 import io.storydoc.fabric.console.domain.ConsoleHandler;
 import io.storydoc.fabric.elastic.settings.ElasticSettings;
 import lombok.SneakyThrows;
@@ -94,9 +93,5 @@ public class ElasticConsoleService extends ElasticServiceBase implements Connect
         }
     }
 
-    @Override
-    public List<SnippetDTO> getSnippets() {
-        return null;
-    }
 
 }

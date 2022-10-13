@@ -1,9 +1,9 @@
 import {NgModule} from "@angular/core";
 
-import {CoreModule} from "../core.module";
+import {CoreModule} from '../core.module';
 
 import {PopupMenuComponent} from './popup-menu/popup-menu.component';
-import {ModalComponent} from './modal/modal.component'
+import {ModalComponent} from './modal/modal.component';
 import {Layout1ColComponent} from "./styleguide/layout-1col/layout-1col.component";
 import {BackButtonComponent} from "./styleguide/back-button/back-button.component";
 import {PanelComponent} from "./styleguide/panel/panel.component";
@@ -18,6 +18,8 @@ import {ModalFooterComponent} from './styleguide/modal-footer/modal-footer.compo
 import {HTTP_INTERCEPTORS} from "@angular/common/http";
 import {HttpErrorInterceptor} from "./connection-status/http-error.interceptor";
 import {ConnectionStatusComponent} from './connection-status/connection-status.component';
+import {CommandProgressComponent} from './styleguide/command-progress/command-progress.component';
+import {StatusComponent} from './styleguide/status/status.component';
 
 @NgModule({
     declarations: [
@@ -35,6 +37,8 @@ import {ConnectionStatusComponent} from './connection-status/connection-status.c
         ModalHeaderComponent,
         ModalFooterComponent,
         ConnectionStatusComponent,
+        CommandProgressComponent,
+        StatusComponent,
     ],
     providers: [
         {
@@ -59,7 +63,8 @@ import {ConnectionStatusComponent} from './connection-status/connection-status.c
         ActionButtonsComponent,
         SideBarComponent,
         ModalHeaderComponent,
-        ModalFooterComponent
+        ModalFooterComponent,
+        CommandProgressComponent
     ]
 })
 export class FabricCommonModule {

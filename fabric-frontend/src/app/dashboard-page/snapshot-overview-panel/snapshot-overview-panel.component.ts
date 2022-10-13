@@ -84,7 +84,7 @@ export class SnapshotOverviewPanelComponent extends HasConfirmationDialogMixin i
   }
 
   private confirmCreate(data: SnapshotDialogData) {
-    this.service.createSnapshot(data.environment, data.name)
+    // this.service.createSnapshot(data.environment, data.name)
   }
 
   // snapshot dialog

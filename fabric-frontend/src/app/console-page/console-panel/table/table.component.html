@@ -1,0 +1,19 @@
+<ng-container *ngIf="rows && columns">
+
+    <table class="table table-bordered table-striped">
+        <thead>
+        <tr>
+            <th *ngFor="let column of columns">
+                {{column.name}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let row of rows">
+            <td *ngFor="let column of columns; let idx = index">
+                {{row.values[idx]}}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</ng-container>

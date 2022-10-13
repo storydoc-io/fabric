@@ -65,6 +65,9 @@
                             {{stackTraceOutput}}
                         </div>
                     </ng-container>
+                    <ng-container *ngIf="tableOutput">
+                        <app-table [rows]="tableOutput" [columns]="tableDescription"></app-table>
+                    </ng-container>
                 </div>
             </app-panel>
         </div>

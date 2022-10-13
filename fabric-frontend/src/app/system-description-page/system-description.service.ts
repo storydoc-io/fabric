@@ -1,21 +1,21 @@
 import {Injectable, OnDestroy} from '@angular/core';
-import {BehaviorSubject, Subscription} from "rxjs";
-import {distinctUntilChanged, map} from "rxjs/operators";
-import {logChangesToObservable} from "@fabric/common";
-import {ConnectionTestResponseDto, EnvironmentDto, StructureDto, SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from "@fabric/models";
-import {ConnectionControllerService, MetaModelControllerService, SystemDescriptionControllerService} from "@fabric/services";
-import {SettingsDialogData, SettingsDialogSpec} from "./settings-panel/settings-dialog/settings-dialog.component";
-import {MongoMetaModelService} from "./meta-model-panel/mongo-metamodel-panel/mongo-metamodel.service";
+import {BehaviorSubject, Subscription} from 'rxjs';
+import {distinctUntilChanged, map} from 'rxjs/operators';
+import {logChangesToObservable} from '@fabric/common';
+import {ConnectionTestResponseDto, EnvironmentDto, StructureDto, SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from '@fabric/models';
+import {ConnectionControllerService, MetaModelControllerService, SystemDescriptionControllerService} from '@fabric/services';
+import {SettingsDialogData} from './settings-panel/settings-dialog/settings-dialog.component';
+import {MongoMetaModelService} from './meta-model-panel/mongo-metamodel-panel/mongo-metamodel.service';
 
 
 export interface Setting {
-    key: string,
+    key: string
     value: string
 }
 
 export interface SettingRow {
-    systemComponentKey: string,
-    environmentKey : string,
+    systemComponentKey: string
+    environmentKey : string
     settings: Setting[]
 }
 

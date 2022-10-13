@@ -46,7 +46,6 @@ public class SnippetStorageImpl extends StorageBase implements SnippetStorage {
             return objectMapper.readValue(workspaceQueryService.getInputStream(workspaceStructure.getSnippetsUrn(systemType)), new TypeReference<List<Snippet>>() {
             });
         } catch(Exception e) {
-            e.printStackTrace();
             return new ArrayList<>();
         }
     }

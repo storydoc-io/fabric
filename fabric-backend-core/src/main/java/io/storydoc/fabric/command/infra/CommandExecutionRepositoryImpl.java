@@ -1,7 +1,7 @@
 package io.storydoc.fabric.command.infra;
 
-import io.storydoc.fabric.command.domain.ExecutionContext;
-import io.storydoc.fabric.command.domain.ExecutionContextRepository;
+import io.storydoc.fabric.command.domain.Command;
+import io.storydoc.fabric.command.domain.CommandExecutionRepository;
 import io.storydoc.fabric.command.domain.ExecutionId;
 import org.springframework.stereotype.Component;
 
@@ -9,16 +9,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class CommandExecutionRepositoryImpl implements ExecutionContextRepository {
+public class CommandExecutionRepositoryImpl implements CommandExecutionRepository {
 
-    private Map<ExecutionId, ExecutionContext> contexts = new HashMap<>();
+    private final Map<ExecutionId, Command<?>> contexts = new HashMap<>();
 
-    public void save(ExecutionId executionId , ExecutionContext context) {
-        contexts.put(executionId, context);
+    @Override
+    public void save(ExecutionId executionId, Command<?> command) {
+        contexts.put(executionId, command);
     }
 
     @Override
-    public ExecutionContext get(ExecutionId executionId) {
+    public Command<?> get(ExecutionId executionId) {
         return contexts.get(executionId);
     }
+
 }

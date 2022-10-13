@@ -3,7 +3,7 @@ import {ConsoleService} from "../console.service";
 import {FormArray, FormControl, FormGroup} from "@angular/forms";
 import {DataSourceSelection} from "../data-source-selection-panel/data-source-selection-panel.component";
 import {faPlay, faTimes} from '@fortawesome/free-solid-svg-icons';
-import {ConsoleDescriptorDto, SnippetDto} from "@fabric/models";
+import {Column, ConsoleDescriptorDto, Row, SnippetDto} from "@fabric/models";
 import {HistoryItem} from "./history-panel/history-panel.component";
 import {SnippetDialogData, SnippetDialogSpec} from "./snippet-dialog/snippet-dialog.component";
 import {ModalService} from "../../common/modal/modal-service";
@@ -68,6 +68,8 @@ export class ConsolePanelComponent implements OnChanges {
     ).then((response) => {
       this.jsonOutput = null
       this.stackTraceOutput = null
+      this.tableOutput = null
+      this.tableDescription = null
       switch (response.consoleOutputType) {
         case 'JSON': {
           this.jsonOutput = JSON.parse(response.content)
@@ -76,6 +78,10 @@ export class ConsolePanelComponent implements OnChanges {
         case 'STACKTRACE': {
           this.stackTraceOutput = response.content
           break
+        }
+        case 'TABULAR' : {
+          this.tableOutput = response.tabularData
+          this.tableDescription = response.tabularDataDescription
         }
       }
       if(response.consoleOutputType != 'STACKTRACE') {
@@ -191,5 +197,7 @@ export class ConsolePanelComponent implements OnChanges {
 
   jsonOutput: string
   stackTraceOutput: string
+  tableOutput: Row[]
+  tableDescription: Column[]
 
 }

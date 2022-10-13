@@ -2,7 +2,7 @@ package io.storydoc.fabric.command.app;
 
 import io.storydoc.fabric.command.domain.Command;
 import io.storydoc.fabric.command.domain.CommandExecutionEngine;
-import io.storydoc.fabric.command.domain.ExecutionContext;
+import io.storydoc.fabric.command.domain.CommandExecutionRepository;
 import io.storydoc.fabric.command.domain.ExecutionId;
 import io.storydoc.fabric.infra.UUIDGenerator;
 import org.springframework.stereotype.Service;
@@ -16,28 +16,34 @@ public class CommandService {
 
     private final CommandExecutionEngine commandExecutionEngine;
 
-    public CommandService(UUIDGenerator uuidGenerator, CommandExecutionEngine commandExecutionEngine) {
+    private final CommandExecutionRepository commandExecutionRepository;
+
+
+    public CommandService(UUIDGenerator uuidGenerator, CommandExecutionEngine commandExecutionEngine, CommandExecutionRepository commandExecutionRepository) {
         this.uuidGenerator = uuidGenerator;
         this.commandExecutionEngine = commandExecutionEngine;
+        this.commandExecutionRepository = commandExecutionRepository;
     }
 
     public ExecutionId run(Command command) {
         ExecutionId executionId = ExecutionId.fromString(uuidGenerator.generateID(ExecutionId.CATEGORY));
+        commandExecutionRepository.save(executionId, command);
         commandExecutionEngine.runCommand(executionId, command);
         return executionId;
     }
 
     public ExecutionDTO getContextInfo(ExecutionId executionId) {
-        return toDto(commandExecutionEngine.getContext(executionId));
+        return toDto(commandExecutionRepository.get(executionId));
     }
 
-    private ExecutionDTO toDto(ExecutionContext context) {
+    private ExecutionDTO toDto(Command<?> command) {
         return ExecutionDTO.builder()
-                .label(context.getName())
-                .percentDone(context.getPercentDone())
-                .children(context.getChildren()==null || context.getChildren().size()==0
+                .label(command.getName())
+                .percentDone(command.getPercentDone())
+                .status(command.getStatus())
+                .children(command.getChildren()==null || command.getChildren().size()==0
                         ? null
-                        : context.getChildren().stream()
+                        : command.getChildren().stream()
                             .map(this::toDto)
                             .collect(Collectors.toList())
                 )

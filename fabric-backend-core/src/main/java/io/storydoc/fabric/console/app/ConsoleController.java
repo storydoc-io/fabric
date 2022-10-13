@@ -1,6 +1,8 @@
 package io.storydoc.fabric.console.app;
 
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorDTO;
+import io.storydoc.fabric.console.app.query.ConsoleRequestDTO;
+import io.storydoc.fabric.console.app.query.ConsoleResponseItemDTO;
 import io.storydoc.fabric.console.app.snippet.SnippetDTO;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;

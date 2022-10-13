@@ -17,7 +17,7 @@ export class DummyPageComponent implements OnInit {
 
     executionId: ExecutionId
 
-    info
+    command
 
     ngOnInit(): void {
         this.route.paramMap.subscribe((params) => {
@@ -29,7 +29,7 @@ export class DummyPageComponent implements OnInit {
     i = 0
     refresh() {
         this.commandControllerService.getExecutionInfoUsingGet({ id : this.executionId.id}).subscribe((dto) => {
-            this.info = dto
+            this.command = dto
             console.log('setting dto', dto)
             this.i++
             if (this.i < 200) {

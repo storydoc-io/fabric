@@ -18,9 +18,12 @@
                     <div style="border: 1px solid rgb(206, 212, 218); overflow: hidden">
                         <div style="padding: 0.375rem 2.25rem 0.375rem 0.75rem; max-height: 200px; overflow-y: auto;">
                             <tree-root id="structure" [nodes]="treeNodes" [options]="options" class="reverse" #tree
-                                       (select)="onSelect($event)"
-                                       (deselect)="ondeSelect($event)"
                             ></tree-root>
+                            <!--
+                                                                   (select)="onSelect($event)"
+                                                                   (deselect)="ondeSelect($event)"
+                            ></tree-root>
+                                                                   -->
                         </div>
                     </div>
                 </div>

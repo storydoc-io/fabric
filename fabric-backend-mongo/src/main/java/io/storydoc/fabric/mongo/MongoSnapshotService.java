@@ -1,6 +1,7 @@
 package io.storydoc.fabric.mongo;
 
 import com.mongodb.client.*;
+import io.storydoc.fabric.command.domain.ProgressMonitor;
 import io.storydoc.fabric.connection.app.ConnectionTestRequestDTO;
 import io.storydoc.fabric.connection.app.ConnectionTestResponseDTO;
 import io.storydoc.fabric.connection.domain.ConnectionHandler;
@@ -13,6 +14,7 @@ import io.storydoc.fabric.mongo.snapshot.CollectionSnapshot;
 import io.storydoc.fabric.mongo.snapshot.MongoSnapshot;
 import io.storydoc.fabric.navigation.domain.NavigationModelStorage;
 import io.storydoc.fabric.snapshot.domain.*;
+import io.storydoc.fabric.snapshot.infra.jsonmodel.Snapshot;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
 import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
 import io.storydoc.fabric.systemdescription.app.systemtype.SettingDescriptorDTO;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Component
@@ -121,7 +124,7 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
     }
 
     public MongoNavigationModel getNavigationModel(String systemComponentKey) {
-            return navigationModelStorage.loadNavigationModel(systemComponentKey, inputStream-> objectMapper.readValue(inputStream, MongoNavigationModel.class));
+        return navigationModelStorage.loadNavigationModel(systemComponentKey, inputStream -> objectMapper.readValue(inputStream, MongoNavigationModel.class));
     }
 
 
@@ -206,4 +209,29 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
                 .attributes(Map.of("name", collection))
                 .build();
     }
+
+    // upload
+
+    @Override
+    public void upload(Snapshot snapshot, String environmentKey, String componentKey, ProgressMonitor progressMonitor) {
+
+
+        int recordCount = 50;
+
+        progressMonitor.setPercentDone(0);
+        for (int i = 0; i < recordCount; i++) {
+            sleep(300);
+            progressMonitor.setPercentDone(100 * (i + 1) / recordCount);
+        }
+
+
+    }
+
+    private void sleep(int amount) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(amount);
+        } catch (InterruptedException e) {
+        }
+    }
+
 }

@@ -2,5 +2,7 @@ package io.storydoc.fabric.console.app.describe;
 
 public enum ConsoleOutputType {
     JSON,
-    STACKTRACE
+    STACKTRACE,
+    TABULAR,
+    MESSAGE
 }

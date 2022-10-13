@@ -14,4 +14,11 @@ public class UploadSnapshotCommandParams extends CommandParams {
         this.environmentKey = environmentKey;
     }
 
+    public Snapshot getSnapShot() {
+        return snapShot;
+    }
+
+    public String getEnvironmentKey() {
+        return environmentKey;
+    }
 }

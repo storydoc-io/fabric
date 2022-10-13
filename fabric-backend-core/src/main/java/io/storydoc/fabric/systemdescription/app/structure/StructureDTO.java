@@ -1,5 +1,6 @@
 package io.storydoc.fabric.systemdescription.app.structure;
 
+import io.storydoc.fabric.metamodel.infra.MetaModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +13,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class StructureDTO {
+public class StructureDTO extends MetaModel {
 
     private String systemType;
     private String structureType;

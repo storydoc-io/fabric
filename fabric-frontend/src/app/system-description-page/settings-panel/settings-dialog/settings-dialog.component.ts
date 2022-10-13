@@ -71,6 +71,8 @@ export class SettingsDialogComponent implements OnInit {
             this.configureSettingsControlForSystemType(this.specWrapper.getSystemType(this.spec.data.systemComponentKey))
             if (this.spec.mode==='EDIT'){
                 this.formGroup.setValue(this.spec.data)
+            } else {
+                this.systemComponentKeyControl().setValue(this.spec.data.systemComponentKey)
             }
             this.formGroup.markAsPristine()
             this.formGroup.markAsUntouched()

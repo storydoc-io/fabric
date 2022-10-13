@@ -1,0 +1,26 @@
+<ng-container *ngIf="items">
+    <div *ngFor="let item of items" [style]="itemWrapperStyle(item)">
+        {{item.command.label}}
+        <ng-container *ngIf="isComposite(item) as subCommands">
+            <div class="progress">
+                <div *ngFor="let subCommand of subCommands" role="progressbar"
+                     [ngClass]="commandClasses(subCommand)"
+                     [attr.aria-valuenow]="subCommandPercent(subCommand, subCommands)" aria-valuemin="0" aria-valuemax="100"
+                     [style]="commandProgressBarStyle(subCommand, subCommands)">
+                </div>
+            </div>
+
+        </ng-container>
+        <ng-container *ngIf="!isComposite(item)">
+            <div class="progress">
+                <div role="progressbar"
+                     [ngClass]="itemClasses(item)"
+                     [attr.aria-valuenow]="item.command.percentDone" aria-valuemin="0" aria-valuemax="100"
+                     [style]="itemProgressBarStyle(item)">
+                    {{item.command.percentDone}}%
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</ng-container>
+

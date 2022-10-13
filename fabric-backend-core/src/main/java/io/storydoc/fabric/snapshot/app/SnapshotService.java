@@ -2,6 +2,7 @@ package io.storydoc.fabric.snapshot.app;
 
 import io.storydoc.fabric.command.domain.ExecutionId;
 import io.storydoc.fabric.infra.IDGenerator;
+import io.storydoc.fabric.snapshot.app.descriptor.SnapshotDescriptorDTO;
 import io.storydoc.fabric.snapshot.app.result.SnapshotComponentDTO;
 import io.storydoc.fabric.snapshot.app.result.SnapshotDTO;
 import io.storydoc.fabric.snapshot.app.result.SnapshotSummaryDTO;
@@ -29,9 +30,9 @@ public class SnapshotService {
         this.idGenerator = idGenerator;
     }
 
-    public SnapshotId createSnapshot(String environmentKey, String name) {
+    public SnapshotId createSnapshot(SnapshotDescriptorDTO snapshotDescriptor) {
         SnapshotId snapshotId = SnapshotId.fromString(idGenerator.generateID(SnapshotId.CATEGORY));
-        snapshotCommandRunner.runSnapshotCommand(environmentKey, snapshotId, name);
+        snapshotCommandRunner.runSnapshotCommand(snapshotId, snapshotDescriptor);
         return snapshotId;
     }
 

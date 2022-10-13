@@ -11,6 +11,7 @@ import { map, filter } from 'rxjs/operators';
 
 import { ExecutionId } from '../models/execution-id';
 import { SnapshotDto } from '../models/snapshot-dto';
+import { SnapshotDescriptorDto } from '../models/snapshot-descriptor-dto';
 import { SnapshotId } from '../models/snapshot-id';
 import { SnapshotSummaryDto } from '../models/snapshot-summary-dto';
 
@@ -150,25 +151,15 @@ export class SnapshotControllerService extends BaseService {
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
    * To access only the response body, use `createUsingPost()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
   createUsingPost$Response(params?: {
-
-    /**
-     * environment
-     */
-    environment?: string;
-
-    /**
-     * name
-     */
-    name?: string;
+    body?: SnapshotDescriptorDto
   }): Observable<StrictHttpResponse<SnapshotId>> {
 
     const rb = new RequestBuilder(this.rootUrl, SnapshotControllerService.CreateUsingPostPath, 'post');
     if (params) {
-      rb.query('environment', params.environment, {"style":"form"});
-      rb.query('name', params.name, {"style":"form"});
+      rb.body(params.body, 'application/json');
     }
 
     return this.http.request(rb.build({
@@ -190,19 +181,10 @@ export class SnapshotControllerService extends BaseService {
    * This method provides access to only to the response body.
    * To access the full response (for headers, for example), `createUsingPost$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
   createUsingPost(params?: {
-
-    /**
-     * environment
-     */
-    environment?: string;
-
-    /**
-     * name
-     */
-    name?: string;
+    body?: SnapshotDescriptorDto
   }): Observable<SnapshotId> {
 
     return this.createUsingPost$Response(params).pipe(

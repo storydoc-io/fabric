@@ -581,28 +581,15 @@
         ],
         "summary": "create",
         "operationId": "createUsingPOST",
-        "parameters": [
-          {
-            "name": "environment",
-            "in": "query",
-            "description": "environment",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "name",
-            "in": "query",
-            "description": "name",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SnapshotDescriptorDTO"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -963,6 +950,15 @@
           }
         }
       },
+      "Column": {
+        "title": "Column",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
       "ConnectionTestRequestDTO": {
         "title": "ConnectionTestRequestDTO",
         "type": "object",
@@ -1043,6 +1039,30 @@
           }
         }
       },
+      "ConsoleResponseDescriptionDTO": {
+        "title": "ConsoleResponseDescriptionDTO",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConsoleResponseDescriptionDTO"
+            }
+          },
+          "responseDescriptionType": {
+            "type": "string"
+          },
+          "systemType": {
+            "type": "string"
+          }
+        }
+      },
       "ConsoleResponseItemDTO": {
         "title": "ConsoleResponseItemDTO",
         "type": "object",
@@ -1051,14 +1071,31 @@
             "type": "string",
             "enum": [
               "JSON",
-              "STACKTRACE"
+              "MESSAGE",
+              "STACKTRACE",
+              "TABULAR"
             ]
           },
           "content": {
             "type": "string"
           },
+          "description": {
+            "$ref": "#/components/schemas/ConsoleResponseDescriptionDTO"
+          },
           "systemType": {
             "type": "string"
+          },
+          "tabularData": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Row"
+            }
+          },
+          "tabularDataDescription": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Column"
+            }
           }
         }
       },
@@ -1095,7 +1132,11 @@
             "type": "string",
             "enum": [
               "DONE",
-              "RUNNING"
+              "ERROR",
+              "PAUSED",
+              "READY",
+              "RUNNING",
+              "UNRESPONSIVE"
             ]
           }
         }
@@ -1236,6 +1277,18 @@
           }
         }
       },
+      "Row": {
+        "title": "Row",
+        "type": "object",
+        "properties": {
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "SettingDescriptorDTO": {
         "title": "SettingDescriptorDTO",
         "type": "object",
@@ -1281,6 +1334,51 @@
           },
           "snapshotId": {
             "$ref": "#/components/schemas/SnapshotId"
+          }
+        }
+      },
+      "SnapshotDescriptorDTO": {
+        "title": "SnapshotDescriptorDTO",
+        "type": "object",
+        "properties": {
+          "componentDescriptors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SnapshotDescriptorItemDTO"
+            }
+          },
+          "environmentKey": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "SnapshotDescriptorItemDTO": {
+        "title": "SnapshotDescriptorItemDTO",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SnapshotDescriptorItemDTO"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "itemType": {
+            "type": "string"
+          },
+          "systemType": {
+            "type": "string"
           }
         }
       },
