@@ -18,6 +18,7 @@
     ],
     "paths": {
       "@fabric/common": ["src/app/common/index.ts"],
+      "@fabric/component": ["src/app/component/index.ts"],
       "@fabric/models": ["src/app/api/models.ts"],
       "@fabric/services": ["src/app/api/services.ts"]
     }

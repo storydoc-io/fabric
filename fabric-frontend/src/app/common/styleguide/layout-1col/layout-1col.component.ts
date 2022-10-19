@@ -1,4 +1,5 @@
 import {Component, Input, TemplateRef} from '@angular/core';
+import {SideBarService} from "../side-bar/side-bar.service";
 
 @Component({
   selector: 'app-layout-1col',
@@ -6,6 +7,8 @@ import {Component, Input, TemplateRef} from '@angular/core';
   styleUrls: ['./layout-1col.component.scss']
 })
 export class Layout1ColComponent {
+
+  constructor(private sideBarService: SideBarService) {}
 
   @Input()
   sidebar: TemplateRef<any>
@@ -18,5 +21,9 @@ export class Layout1ColComponent {
 
   @Input()
   middle: TemplateRef<any>
+
+  sideBarCollapsed(): boolean {
+    return this.sideBarService.collapsed
+  }
 
 }

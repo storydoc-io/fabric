@@ -30,11 +30,6 @@
 
                     <ul class="nav nav-tabs">
                         <li class="nav-item">
-                            <a class="nav-link" [class.active]="tabState==='NAVIGATE'" (click)="selectTab('NAVIGATE')" href="javascript:void(0);">
-                                Navigation
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link" [class.active]="tabState==='SNIPPETS'" (click)="selectTab('SNIPPETS')" href="javascript:void(0);">
                                 Snippets
                             </a>
@@ -56,9 +51,6 @@
                         >
                         </app-history-panel>
                     </ng-container>
-                    <ng-container *ngIf="tabState==='NAVIGATE'">
-                        <app-navigation-panel [items]="navItems" (selected)="navItemSelected($event)"></app-navigation-panel>
-                    </ng-container>
                 </div>
             </app-panel>
         </div>
@@ -73,8 +65,8 @@
                             {{stackTraceOutput}}
                         </div>
                     </ng-container>
-                    <ng-container *ngIf="tableOutput">
-                        <app-table [rows]="tableOutput" [columns]="tableDescription"></app-table>
+                    <ng-container *ngIf="tabularResponse">
+                        <app-table [tabular]="tabularResponse" (onRowSelect)="selectTableRow($event)"></app-table>
                     </ng-container>
                 </div>
             </app-panel>

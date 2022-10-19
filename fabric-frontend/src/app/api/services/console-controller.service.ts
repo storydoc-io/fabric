@@ -12,7 +12,8 @@ import { map, filter } from 'rxjs/operators';
 import { ConsoleDescriptorDto } from '../models/console-descriptor-dto';
 import { ConsoleRequestDto } from '../models/console-request-dto';
 import { ConsoleResponseItemDto } from '../models/console-response-item-dto';
-import { MetaNavItem } from '../models/meta-nav-item';
+import { NavItem } from '../models/nav-item';
+import { NavigationRequest } from '../models/navigation-request';
 import { SnippetDto } from '../models/snippet-dto';
 
 
@@ -93,31 +94,27 @@ export class ConsoleControllerService extends BaseService {
   }
 
   /**
-   * Path part for operation getMetaNavUsingGet
+   * Path part for operation getNavigationUsingPost
    */
-  static readonly GetMetaNavUsingGetPath = '/api/console/metanav';
+  static readonly GetNavigationUsingPostPath = '/api/console/navigation';
 
   /**
-   * getMetaNav.
+   * getNavigation.
    *
    *
    *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getMetaNavUsingGet()` instead.
+   * To access only the response body, use `getNavigationUsingPost()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getMetaNavUsingGet$Response(params?: {
+  getNavigationUsingPost$Response(params?: {
+    body?: NavigationRequest
+  }): Observable<StrictHttpResponse<Array<NavItem>>> {
 
-    /**
-     * systemComponentKey
-     */
-    systemComponentKey?: string;
-  }): Observable<StrictHttpResponse<Array<MetaNavItem>>> {
-
-    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.GetMetaNavUsingGetPath, 'get');
+    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.GetNavigationUsingPostPath, 'post');
     if (params) {
-      rb.query('systemComponentKey', params.systemComponentKey, {"style":"form"});
+      rb.body(params.body, 'application/json');
     }
 
     return this.http.request(rb.build({
@@ -126,31 +123,27 @@ export class ConsoleControllerService extends BaseService {
     })).pipe(
       filter((r: any) => r instanceof HttpResponse),
       map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<Array<MetaNavItem>>;
+        return r as StrictHttpResponse<Array<NavItem>>;
       })
     );
   }
 
   /**
-   * getMetaNav.
+   * getNavigation.
    *
    *
    *
    * This method provides access to only to the response body.
-   * To access the full response (for headers, for example), `getMetaNavUsingGet$Response()` instead.
+   * To access the full response (for headers, for example), `getNavigationUsingPost$Response()` instead.
    *
-   * This method doesn't expect any request body.
+   * This method sends `application/json` and handles request body of type `application/json`.
    */
-  getMetaNavUsingGet(params?: {
+  getNavigationUsingPost(params?: {
+    body?: NavigationRequest
+  }): Observable<Array<NavItem>> {
 
-    /**
-     * systemComponentKey
-     */
-    systemComponentKey?: string;
-  }): Observable<Array<MetaNavItem>> {
-
-    return this.getMetaNavUsingGet$Response(params).pipe(
-      map((r: StrictHttpResponse<Array<MetaNavItem>>) => r.body as Array<MetaNavItem>)
+    return this.getNavigationUsingPost$Response(params).pipe(
+      map((r: StrictHttpResponse<Array<NavItem>>) => r.body as Array<NavItem>)
     );
   }
 

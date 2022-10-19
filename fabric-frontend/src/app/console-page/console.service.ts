@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {ConsoleControllerService} from "@fabric/services";
-import {ConsoleDescriptorDto, ConsoleResponseItemDto, MetaNavItem, SnippetDto} from "@fabric/models";
+import {ConsoleDescriptorDto, ConsoleResponseItemDto, NavItem, SnippetDto} from "@fabric/models";
 
 @Injectable()
 export class ConsoleService {
@@ -13,12 +13,13 @@ export class ConsoleService {
             .toPromise()
     }
 
-    runRequest(environmentKey: string, systemComponentKey: string, attributes): Promise<ConsoleResponseItemDto> {
+    runRequest(environmentKey: string, systemComponentKey: string, attributes, navItem: NavItem): Promise<ConsoleResponseItemDto> {
         return this.consoleControllerService.runRequestUsingPost({
             body: {
                 environmentKey,
                 systemComponentKey,
-                attributes
+                attributes,
+                navItem
             }
         }).toPromise()
     }
@@ -38,7 +39,9 @@ export class ConsoleService {
 
     }
 
-    loadNavItems(systemComponentKey: string): Promise<MetaNavItem[]>  {
-        return this.consoleControllerService.getMetaNavUsingGet({systemComponentKey}).toPromise()
+    loadNavItems(systemComponentKey: string): Promise<NavItem[]>  {
+        return this.consoleControllerService.getNavigationUsingPost({body: {
+            systemComponentKey,
+        }}).toPromise()
     }
 }

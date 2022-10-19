@@ -1,7 +1,8 @@
 package io.storydoc.fabric.console.app;
 
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorDTO;
-import io.storydoc.fabric.console.app.metanav.MetaNavItem;
+import io.storydoc.fabric.console.app.navigation.NavItem;
+import io.storydoc.fabric.console.app.navigation.NavigationRequest;
 import io.storydoc.fabric.console.app.query.ConsoleRequestDTO;
 import io.storydoc.fabric.console.app.query.ConsoleResponseItemDTO;
 import io.storydoc.fabric.console.app.snippet.SnippetDTO;
@@ -73,8 +74,8 @@ public class ConsoleService {
         );
     }
 
-    public List<MetaNavItem> getMetaNav(String systemComponentKey) {
-        SystemComponentDTO systemComponentDTO = getSystemComponentDTO(systemComponentKey);
-        return getHandler(systemComponentDTO).getMetaNav(systemComponentKey);
+    public List<NavItem> getNavigation(NavigationRequest navigationRequest) {
+        SystemComponentDTO systemComponentDTO = getSystemComponentDTO(navigationRequest.getSystemComponentKey());
+        return getHandler(systemComponentDTO).getNavigation(navigationRequest);
     }
 }

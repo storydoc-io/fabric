@@ -1,31 +1,28 @@
 package io.storydoc.fabric.jdbc.metadata;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @JsonPropertyOrder({ "name", "columns", "primaryKey" })
-public class TableMetaData implements Serializable {
+public class TableMetaData  {
 
-	private static final long serialVersionUID = 1L;
-
-	private Map<String, ColumnMetaData> columns = new HashMap<>();
+	private Map<String, ColumnMetaData> columns;
 
 	private String name;
 
 	private PKMetaData primaryKey;
 
-	protected TableMetaData() {
-	}
-
-	public TableMetaData(String name) {
-		this.name = name;
-	}
+	private List<FKMetaData> foreignKeys;
 
 	public void add(ColumnMetaData columnMetaData) {
 		columns.put(columnMetaData.getName(), columnMetaData);
@@ -33,27 +30,6 @@ public class TableMetaData implements Serializable {
 
 	public ColumnMetaData getColumn(String columnName) {
 		return columns.get(columnName);
-	}
-
-	public Map<String, ColumnMetaData> getColumns() {
-		return columns;
-	}
-
-	@JsonIgnore
-	public List<ColumnMetaData> getColumnsInOrder() {
-		return columns.values().stream().sorted(ColumnMetaData.COMPARE_BY_POSITION).collect(Collectors.toList());
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public PKMetaData getPrimaryKey() {
-		return primaryKey;
-	}
-
-	public void setPrimaryKey(PKMetaData pkMetaData) {
-        primaryKey = pkMetaData;
 	}
 
 }

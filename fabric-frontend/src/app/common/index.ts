@@ -4,3 +4,4 @@ export {HasConfirmationDialogMixin} from './confirmation-dialog/has-confirmation
 export {BreadcrumbComponent, BreadcrumbItem} from './styleguide/breadcrumb/breadcrumb.component'
 export {ActionSpec, ActionsSpec, ActionButtonsComponent} from './styleguide/action-buttons/action-buttons.component'
 export {ModalHeaderComponent} from './styleguide/modal-header/modal-header.component'
+export {ModalService} from './modal/modal-service'

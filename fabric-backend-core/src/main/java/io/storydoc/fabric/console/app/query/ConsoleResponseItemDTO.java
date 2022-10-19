@@ -1,6 +1,7 @@
 package io.storydoc.fabric.console.app.query;
 
 import io.storydoc.fabric.console.app.describe.ConsoleOutputType;
+import io.storydoc.fabric.console.app.navigation.NavItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,6 @@ public class ConsoleResponseItemDTO {
     private ConsoleOutputType consoleOutputType;
     private ConsoleResponseDescriptionDTO description;
     private String content;
-    private List<Row> tabularData;
-    private List<Column> tabularDataDescription;
+    private TabularResponse tabular;
+    private List<NavItem> navItems;
 }

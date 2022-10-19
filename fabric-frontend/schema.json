@@ -177,25 +177,22 @@
         }
       }
     },
-    "/api/console/metanav": {
-      "get": {
+    "/api/console/navigation": {
+      "post": {
         "tags": [
           "console-controller"
         ],
-        "summary": "getMetaNav",
-        "operationId": "getMetaNavUsingGET",
-        "parameters": [
-          {
-            "name": "systemComponentKey",
-            "in": "query",
-            "description": "systemComponentKey",
-            "required": false,
-            "style": "form",
-            "schema": {
-              "type": "string"
+        "summary": "getNavigation",
+        "operationId": "getNavigationUsingPOST",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NavigationRequest"
+              }
             }
           }
-        ],
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -204,11 +201,14 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/MetaNavItem"
+                    "$ref": "#/components/schemas/NavItem"
                   }
                 }
               }
             }
+          },
+          "201": {
+            "description": "Created"
           },
           "401": {
             "description": "Unauthorized"
@@ -1079,6 +1079,9 @@
           "environmentKey": {
             "type": "string"
           },
+          "navItem": {
+            "$ref": "#/components/schemas/NavItem"
+          },
           "systemComponentKey": {
             "type": "string"
           }
@@ -1127,20 +1130,17 @@
           "description": {
             "$ref": "#/components/schemas/ConsoleResponseDescriptionDTO"
           },
+          "navItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NavItem"
+            }
+          },
           "systemType": {
             "type": "string"
           },
-          "tabularData": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Row"
-            }
-          },
-          "tabularDataDescription": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Column"
-            }
+          "tabular": {
+            "$ref": "#/components/schemas/TabularResponse"
           }
         }
       },
@@ -1261,24 +1261,6 @@
           }
         }
       },
-      "MetaNavItem": {
-        "title": "MetaNavItem",
-        "type": "object",
-        "properties": {
-          "attributes": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "label": {
-            "type": "string"
-          }
-        }
-      },
       "MongoMetaModel": {
         "title": "MongoMetaModel",
         "type": "object",
@@ -1312,6 +1294,39 @@
             "items": {
               "$ref": "#/components/schemas/CollectionSnapshot"
             }
+          }
+        }
+      },
+      "NavItem": {
+        "title": "NavItem",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "NavigationRequest": {
+        "title": "NavigationRequest",
+        "type": "object",
+        "properties": {
+          "navItem": {
+            "$ref": "#/components/schemas/NavItem"
+          },
+          "systemComponentKey": {
+            "type": "string"
           }
         }
       },
@@ -1561,6 +1576,33 @@
             }
           },
           "systemType": {
+            "type": "string"
+          }
+        }
+      },
+      "TabularResponse": {
+        "title": "TabularResponse",
+        "type": "object",
+        "properties": {
+          "columns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Column"
+            }
+          },
+          "pkColumns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Column"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Row"
+            }
+          },
+          "tableName": {
             "type": "string"
           }
         }

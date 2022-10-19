@@ -1,5 +1,6 @@
 package io.storydoc.fabric.console.app.query;
 
+import io.storydoc.fabric.console.app.navigation.NavItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,5 +17,5 @@ public class ConsoleRequestDTO {
     private String environmentKey;
     private String systemComponentKey;
     private Map<String, String> attributes;
-
+    private NavItem navItem;
 }

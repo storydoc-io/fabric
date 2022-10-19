@@ -1,19 +1,14 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-md-2">
-            <app-connection-status></app-connection-status>
-            <ng-container *ngTemplateOutlet="sidebar"></ng-container>
+<div [class.sidenav-collapsed]="sideBarCollapsed()" [class.sidenav]="!sideBarCollapsed()" >
+    <ng-container *ngTemplateOutlet="sidebar"></ng-container>
+</div>
+<div [class.main]="!sideBarCollapsed()" [class.main-full-screen]="sideBarCollapsed()">
+    <div class="container-fluid">
+        <div class="row">
+            <ng-container *ngTemplateOutlet="title"></ng-container>
+            <ng-container *ngTemplateOutlet="breadcrumb"></ng-container>
         </div>
-        <div class="col-md-10">
-            <div class="container-fluid">
-                <div class="row">
-                    <ng-container *ngTemplateOutlet="title"></ng-container>
-                    <ng-container *ngTemplateOutlet="breadcrumb"></ng-container>
-                </div>
-                <div class="row">
-                    <ng-container *ngTemplateOutlet="middle"></ng-container>
-                </div>
-            </div>
+        <div class="row">
+            <ng-container *ngTemplateOutlet="middle"></ng-container>
         </div>
     </div>
 </div>

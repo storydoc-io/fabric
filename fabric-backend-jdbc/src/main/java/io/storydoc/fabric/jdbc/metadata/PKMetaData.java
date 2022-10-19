@@ -4,9 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PKMetaData implements Serializable {
-
-	private static final long serialVersionUID = 1L;
+public class PKMetaData {
 
 	private List<ColumnMetaData> columns = new ArrayList<>();
 

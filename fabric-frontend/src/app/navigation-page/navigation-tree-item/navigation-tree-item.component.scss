@@ -1,0 +1,31 @@
+.item-container {
+  position: relative;
+  padding: 10px;
+  border: 1px solid steelblue;
+  border-radius: 10px;
+}
+
+.title-section {
+}
+
+.table-section {
+  padding-top: 10px;
+}
+
+.navigation-section {
+}
+
+.navigation-select {
+  width: 150px;
+  padding: 0px;
+  display: inline;
+}
+
+.children-container {
+  position: absolute;
+  left: 100px;
+}
+
+.child-container {
+  padding-top: 10px;
+}

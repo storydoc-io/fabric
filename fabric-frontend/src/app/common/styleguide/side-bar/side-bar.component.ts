@@ -9,7 +9,7 @@ export interface ActionSpec {
   route: string[]
 }
 
-type PageId = 'settings' | 'dashboard' | 'console'
+type PageId = 'settings' | 'dashboard' | 'console' | 'navigation'
 
 @Component({
   selector: 'app-side-bar',
@@ -33,6 +33,11 @@ export class SideBarComponent implements OnInit {
       id : 'console',
       label: 'Console',
       route: ['fe', 'console']
+    },
+    {
+      id : 'navigation',
+      label: 'Navigator',
+      route: ['fe', 'navigation']
     },
   ]
 

@@ -7,7 +7,10 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class DBMetaDataBuilder {
 
@@ -26,39 +29,78 @@ public class DBMetaDataBuilder {
 
 	@SneakyThrows
 	private DBMetaData todDBMetaData(String schema, DatabaseMetaData jdbcMetaData) {
-		DBMetaData dbMetaData = new DBMetaData();
-		dbMetaData.setSchemaName(schema);
 
-		List<String> tableNames = new ArrayList<>();
 		ResultSet rs = jdbcMetaData.getTables(null, schema, "%", null);
+		List<String> tableNames = getTableNames(rs);
+		List<TableMetaData> tableMetaDataList = tableNames.stream()
+				.map(tableName -> buildtTable(jdbcMetaData, tableName))
+				.collect(Collectors.toList());
+
+		return DBMetaData.builder()
+				.schemaName(schema)
+				.tables(tableMetaDataList)
+				.build();
+	}
+
+	private List<String> getTableNames(ResultSet rs) throws SQLException {
+		List<String> tableNames = new ArrayList<>();
 		while (rs.next()) {
 			tableNames.add(rs.getString(3));
 		}
-		for (String tableName : tableNames) {
-			dbMetaData.add(buildtTable(jdbcMetaData, tableName));
-		}
-		return dbMetaData;
+		return tableNames;
 	}
 
 	private TableMetaData buildtTable(DatabaseMetaData jdbcMetaData, String tableName) {
 		try {
-			TableMetaData tableMetaData = new TableMetaData(tableName);
-			buildColumns(jdbcMetaData, tableName, tableMetaData);
+			TableMetaData tableMetaData = TableMetaData.builder()
+					.columns(buildColumns(jdbcMetaData, tableName))
+					.build();
 			tableMetaData.setPrimaryKey(buildPK(jdbcMetaData, tableName, tableMetaData));
+			tableMetaData.setForeignKeys(buildFKs(jdbcMetaData, tableName));
 			return tableMetaData;
 		} catch (SQLException e) {
 			throw new RuntimeException("could not get table metadata" + tableName, e);
 		}
 	}
 
-	private void buildColumns(DatabaseMetaData jdbcMetaData, String tableName, TableMetaData tableMetaData) throws SQLException {
-		ResultSet columns = jdbcMetaData.getColumns(null, null, tableName, null);
-		while (columns.next()) {
-			String columnName = columns.getString("COLUMN_NAME");
-			int ordinalPosition = columns.getInt("ORDINAL_POSITION");
-			String datatype = columns.getString("DATA_TYPE");
-			tableMetaData.add(new ColumnMetaData(columnName, datatype, ordinalPosition));
+	private Map<String, ColumnMetaData> buildColumns(DatabaseMetaData jdbcMetaData, String tableName) throws SQLException {
+		ResultSet jdbcColumns = jdbcMetaData.getColumns(null, null, tableName, null);
+		Map<String, ColumnMetaData> columns = new HashMap<>();
+		while (jdbcColumns.next()) {
+			String columnName = jdbcColumns.getString("COLUMN_NAME");
+			int ordinalPosition = jdbcColumns.getInt("ORDINAL_POSITION");
+			String datatype = jdbcColumns.getString("DATA_TYPE");
+			columns.put(columnName, ColumnMetaData.builder()
+					.name(columnName)
+					.ordinalPosition(ordinalPosition)
+					.type(datatype)
+					.build());
 		}
+		return columns;
+	}
+
+	private List<FKMetaData> buildFKs(DatabaseMetaData jdbcMetaData, String tableName) throws SQLException {
+		ResultSet rs = jdbcMetaData.getImportedKeys(null, null, tableName);
+		Map<String, FKMetaData> fkByName = new HashMap<>();
+		while (rs.next()) {
+			String fkName = rs.getString("FK_NAME");
+			String pkName = rs.getString("PK_NAME");
+			String pkTableName = rs.getString("PKTABLE_NAME");
+			FKMetaData fkMetaData = fkByName.computeIfAbsent(fkName, s -> FKMetaData.builder()
+				.fkName(fkName)
+				.pkName(pkName)
+				.pkTableName(pkTableName)
+				.columns(new ArrayList<>())
+				.build()
+			);
+			String fkColumnName  = rs.getString("FKCOLUMN_NAME");
+			String pkColumnName = rs.getString("PKCOLUMN_NAME");
+			fkMetaData.getColumns().add(FKColumnMetaData.builder()
+				.fkColumnName(fkColumnName)
+				.pkColumnName(pkColumnName)
+				.build());
+		}
+		return new ArrayList<>(fkByName.values());
 	}
 
 	private PKMetaData buildPK(DatabaseMetaData jdbcMetaData, String tableName, TableMetaData tableMetaData) throws SQLException {

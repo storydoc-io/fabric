@@ -10,16 +10,11 @@ import io.storydoc.fabric.snapshot.app.result.SnapshotSummaryDTO;
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionDTO;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
-import io.storydoc.fabric.systemdescription.domain.SystemDescriptionStorage;
-import io.storydoc.fabric.systemdescription.infra.jsonmodel.Environment;
-import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemComponent;
-import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemDescription;
 import io.storydoc.fabric.workspace.WorkspaceTestFixture;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,7 +31,7 @@ public class SnapshotServiceTest extends TestBase {
     SystemDescriptionService systemDescriptionService;
 
     @Autowired
-    SystemDescriptionStorage systemDescriptionStorage;
+    DummySystemDescriptionData dummySystemDescriptionData;
 
     @Autowired
     WorkspaceStructure workspaceStructure;
@@ -61,7 +56,7 @@ public class SnapshotServiceTest extends TestBase {
     @Test
     public void create_snapshot() {
         // given an system description
-        createdummySystemDescription();
+        dummySystemDescriptionData.createdummySystemDescription();
         SystemDescriptionDTO systemDescriptionDTO = systemDescriptionService.getSystemDescription();
 
         // when I create a snapshot
@@ -114,7 +109,7 @@ public class SnapshotServiceTest extends TestBase {
     @Test
     public void delete_snapshot() {
         // given an system description
-        createdummySystemDescription();
+        dummySystemDescriptionData.createdummySystemDescription();
         SystemDescriptionDTO systemDescriptionDTO = systemDescriptionService.getSystemDescription();
 
         // and a snapshot
@@ -143,39 +138,10 @@ public class SnapshotServiceTest extends TestBase {
 
     }
 
-    private void createdummySystemDescription() {
-        systemDescriptionStorage.saveSystemDescription(SystemDescription.builder()
-                .environments(List.of(
-                        Environment.builder()
-                                .key("DEV")
-                                .label("Develop environment")
-                                .build(),
-                        Environment.builder()
-                                .key("INT")
-                                .label("Integration environment")
-                                .build())
-                )
-                .systemComponents(List.of(
-                        SystemComponent.builder()
-                                .key("PRODUCTS")
-                                .systemType("MONGO")
-                                .label("Mongo DB")
-                                .build())
-                )
-                .settings(Map.of(
-                        "DEV", Map.of(
-                            "PRODUCTS", Map.of(
-                                    "some_key", "some_value")),
-                        "INT", Map.of(
-                                "PRODUCTS", Map.of(
-                                    "some_key", "some_value"))))
-                .build());
-    }
-
     @Test
     public void list_snapshots() {
         // given a system description
-        createdummySystemDescription();
+        dummySystemDescriptionData.createdummySystemDescription();
         SystemDescriptionDTO systemDescriptionDTO = systemDescriptionService.getSystemDescription();
 
         // when I take multiple snapshots
@@ -194,7 +160,7 @@ public class SnapshotServiceTest extends TestBase {
     @Test
     public void testUpload() {
         // given a system description
-        createdummySystemDescription();
+        dummySystemDescriptionData.createdummySystemDescription();
         SystemDescriptionDTO systemDescriptionDTO = systemDescriptionService.getSystemDescription();
 
         // given a snapshot from the INT environment

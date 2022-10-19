@@ -1,0 +1,25 @@
+<app-layout-1col
+        [sidebar]="sidebar"
+        [title]="title"
+        [breadcrumb]="breadcrumb"
+        [middle]="middle"
+>
+</app-layout-1col>
+
+<ng-template #sidebar>
+    <app-side-bar [active]="'navigation'"></app-side-bar>
+</ng-template>
+
+<ng-template #title>
+    <app-title text="Navigation"></app-title>
+</ng-template>
+
+<ng-template #breadcrumb>
+    <app-breadcrumb [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+</ng-template>
+
+<ng-template #middle>
+    <app-data-source-selection-panel (selected)="selectDataSource($event)"></app-data-source-selection-panel>
+    <app-navigation-panel *ngIf="selectedDataSource" [dataSource]="selectedDataSource"></app-navigation-panel>
+
+</ng-template>

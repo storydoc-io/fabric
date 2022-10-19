@@ -64,7 +64,7 @@ import {StatusComponent} from './styleguide/status/status.component';
         SideBarComponent,
         ModalHeaderComponent,
         ModalFooterComponent,
-        CommandProgressComponent
+        CommandProgressComponent,
     ]
 })
 export class FabricCommonModule {

@@ -1,36 +1,23 @@
 package io.storydoc.fabric.jdbc.metadata;
 
+import io.storydoc.fabric.metamodel.infra.MetaModel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class DBMetaData  {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class DBMetaData extends MetaModel {
 
 	private String schemaName;
 
 	private List<TableMetaData> tables = new ArrayList<>();
 
-	public String getSchemaName() {
-		return schemaName;
-	}
-
-	public void setSchemaName(String schemaName) {
-		this.schemaName = schemaName;
-	}
-
-	public void add(TableMetaData tableMetaData) {
-		tables.add(tableMetaData);
-	}
-
-	public TableMetaData get(String tableName) {
-		return tables.stream()
-				.filter(tableMetaData -> tableName.equals(tableMetaData.getName()))
-				.findFirst()
-				.orElse(null);
-	}
-
-
-	public List<TableMetaData> getTables() {
-		return tables;
-	}
 
 }

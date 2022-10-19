@@ -8,6 +8,8 @@ import {FabricCommonModule} from './common/common.module';
 import {SystemDescriptionModule} from './system-description-page/system-description.module';
 import {ConsolePageModule} from './console-page/console-page.module';
 import {DashboardModule} from "./dashboard-page/dashboard.module";
+import {NavigationModule} from "./navigation-page/navigation.module"
+import {ComponentModule} from "./component/component.module";
 
 @NgModule({
   declarations: [
@@ -17,9 +19,11 @@ import {DashboardModule} from "./dashboard-page/dashboard.module";
     CoreModule,
     AppRoutingModule,
     FabricCommonModule,
+    ComponentModule,
     SystemDescriptionModule,
     ConsolePageModule,
-    DashboardModule
+    DashboardModule,
+    NavigationModule
   ],
   providers: [],
   bootstrap: [AppComponent]

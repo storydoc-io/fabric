@@ -1,9 +1,11 @@
 <ng-container *ngIf="historyItems">
     <div class="list-group">
-        <a class="list-group-item list-group-item-action list-group-item-light" *ngFor="let item of historyItems"
+        <a class="mydivouter list-group-item list-group-item-action list-group-item-light" *ngFor="let item of historyItems"
            (click)="select(item)" href="javascript:void(0);">
             {{asOneLine(item)}}
-            <app-action-buttons [spec]="actions(item)"></app-action-buttons>
+            <div class="mybuttonoverlap">
+                <app-action-buttons [spec]="actions(item)"></app-action-buttons>
+            </div>
         </a>
     </div>
 </ng-container>
