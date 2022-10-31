@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {SystemDescriptionService} from "../../system-description-page/system-description.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
-import {faBolt} from '@fortawesome/free-solid-svg-icons';
+import {faBolt, faTimes} from '@fortawesome/free-solid-svg-icons';
 
 export interface DataSourceSelection {
     environmentKey: string,
@@ -20,9 +20,10 @@ export class DataSourceSelectionPanelComponent implements OnInit {
 
     systemDescription$ = this.systemDescriptionService.systemDescription$;
 
-    collapsed: boolean = false
+    connected: boolean = false;
 
     faBolt = faBolt
+    faTimes = faTimes
 
     ngOnInit(): void {
     }
@@ -35,20 +36,23 @@ export class DataSourceSelectionPanelComponent implements OnInit {
         systemComponentKey: new FormControl(null, [Validators.required]),
     })
 
-    onEnvironmentChange() {
+    get environmentKeyControl(): FormControl {
+        return <FormControl> this.formGroup.get('environmentKey')
+    }
 
+    get systemComponentKeyControl(): FormControl {
+        return <FormControl> this.formGroup.get('systemComponentKey')
     }
 
     connect() {
         this.selected.emit(this.formGroup.value)
-        this.collapse()
+        this.connected = true
     }
 
-    collapse() {
-        this.collapsed = true
+    disconnect() {
+        this.selected.emit(null)
+        this.connected = false
+        this.formGroup.setValue({ environmentKey: null, systemComponentKey : null })
     }
 
-    expand() {
-        this.collapsed = false
-    }
 }

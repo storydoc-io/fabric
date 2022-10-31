@@ -1,5 +1,13 @@
-<app-panel>
-    <h4>Environments</h4>
+<h4>Environments</h4>
+
+<div *ngIf="systemDescription.environments.length == 0" class="intro-container" >
+    <app-intro [title]="'No environments defined yet.'" >
+        <p>Add <a href="javascript:void(0);" (click)="addEnvironment(systemDescription)" > first environment.</a></p>
+        <p>An environment names an instance of the system used for a specific purpose, e.g. DEV, QA, Production</p>
+    </app-intro>
+</div>
+
+<app-panel *ngIf="systemDescription.environments.length > 0">
     <table class="table table-sm table-striped table-bordered">
         <thead>
         <tr>

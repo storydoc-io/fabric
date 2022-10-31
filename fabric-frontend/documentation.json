@@ -44,12 +44,12 @@
         },
         {
             "name": "ActionSpec",
-            "id": "interface-ActionSpec-7a50318a97ef40c99ded6a70bd430f7c9ee3ffc3398ce4e297a5d771232bc49770e5bd99222ef2ec54078a1b60b328f2bc7127d0772bede258a1a90074fd41de-1",
+            "id": "interface-ActionSpec-ce15300ec621e3dfe221c66e047ce519da61a59a6e2598eeb786ed2a986155469c1543a10cf610f4c5a01f6721e77bd040ca4b918007111ee411526fbe8a09c7-1",
             "file": "src/app/common/styleguide/side-bar/side-bar.component.ts",
             "deprecated": false,
             "deprecationMessage": "",
             "type": "interface",
-            "sourceCode": "import {Component, Input, OnInit} from '@angular/core';\nimport {Router} from \"@angular/router\";\nimport {SideBarService} from \"./side-bar.service\";\nimport {faBars, faTimes} from '@fortawesome/free-solid-svg-icons';\n\nexport interface ActionSpec {\n  label: string\n  id : PageId\n  route: string[]\n}\n\ntype PageId = 'settings' | 'dashboard' | 'console' | 'navigation'\n\n@Component({\n  selector: 'app-side-bar',\n  templateUrl: './side-bar.component.html',\n  styleUrls: ['./side-bar.component.scss']\n})\nexport class SideBarComponent implements OnInit {\n\n  actions: ActionSpec[] = [\n    {\n      id : 'settings',\n      label: 'Settings',\n      route: ['fe', 'systemdescription']\n    },\n    {\n      id : 'dashboard',\n      label: 'Snapshots',\n      route: ['fe', 'dashboard']\n    },\n    {\n      id : 'console',\n      label: 'Console',\n      route: ['fe', 'console']\n    },\n    {\n      id : 'navigation',\n      label: 'Navigator',\n      route: ['fe', 'navigation']\n    },\n  ]\n\n  @Input()\n  active: PageId;\n\n  navigateTo(route:string[]) {\n    this.router.navigate(route )\n  }\n\n  constructor(private router: Router, private service: SideBarService) { }\n\n  ngOnInit(): void {\n  }\n\n  toggleCollapse() {\n    this.service.toggleState()\n  }\n\n  collapsed(): boolean {\n    return this.service.collapsed;\n  }\n\n  icon() {\n    return this.collapsed() ? faBars : faTimes\n  }\n\n}\n",
+            "sourceCode": "import {Component, Input} from '@angular/core';\nimport {Router} from \"@angular/router\";\nimport {SideBarService} from \"./side-bar.service\";\n\nexport interface ActionSpec {\n  label: string\n  id : PageId\n  route: string[]\n}\n\ntype PageId = 'settings' | 'dashboard' | 'console' | 'navigation'\n\n@Component({\n  selector: 'app-side-bar',\n  templateUrl: './side-bar.component.html',\n  styleUrls: ['./side-bar.component.scss']\n})\nexport class SideBarComponent {\n\n  constructor(private router: Router, private sideBarService: SideBarService) { }\n\n  @Input()\n  active: PageId;\n\n  actions: ActionSpec[] = [\n    {\n      id : 'settings',\n      label: 'Settings',\n      route: ['fe', 'systemdescription']\n    },\n    {\n      id : 'dashboard',\n      label: 'Snapshots',\n      route: ['fe', 'dashboard']\n    },\n    {\n      id : 'console',\n      label: 'Console',\n      route: ['fe', 'console']\n    },\n    {\n      id : 'navigation',\n      label: 'Navigator',\n      route: ['fe', 'navigation']\n    },\n  ]\n\n  navigateTo(route:string[]) {\n    this.sideBarService.collapse()\n    this.router.navigate(route )\n  }\n\n  toggleCollapse() {\n    this.sideBarService.toggleState()\n  }\n\n  collapsed(): boolean {\n    return this.sideBarService.collapsed;\n  }\n\n}\n",
             "properties": [
                 {
                     "name": "id",
@@ -58,7 +58,7 @@
                     "type": "PageId",
                     "optional": false,
                     "description": "",
-                    "line": 8
+                    "line": 7
                 },
                 {
                     "name": "label",
@@ -67,7 +67,7 @@
                     "type": "string",
                     "optional": false,
                     "description": "",
-                    "line": 7
+                    "line": 6
                 },
                 {
                     "name": "route",
@@ -76,7 +76,7 @@
                     "type": "string[]",
                     "optional": false,
                     "description": "",
-                    "line": 9
+                    "line": 8
                 }
             ],
             "indexSignatures": [],
@@ -321,6 +321,38 @@
                     "optional": true,
                     "description": "",
                     "line": 7
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 165,
+            "methods": []
+        },
+        {
+            "name": "ConnectionStatus",
+            "id": "interface-ConnectionStatus-0ba8a36910ee61d1987d01b338da163c75c70ce2d332b8be67083016004c84ddc4bed48fd7b3ee3932692c1f9ce730a159323154df010481934449bf9b4d2a8e",
+            "file": "src/app/common/styleguide/status/status.component.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "import {Component, Input} from '@angular/core';\nimport {faArrowUp, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';\n\nexport interface ConnectionStatus {\n  status: 'Calling' | 'OK' | 'Problem'\n  msg: string\n}\n\n@Component({\n  selector: 'app-status',\n  templateUrl: './status.component.html',\n  styleUrls: ['./status.component.scss']\n})\nexport class StatusComponent {\n\n  faExclamationTriangle = faExclamationTriangle\n  faArrowUp = faArrowUp\n\n  constructor() { }\n\n  @Input()\n  status: ConnectionStatus\n\n\n}\n",
+            "properties": [
+                {
+                    "name": "msg",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 6
+                },
+                {
+                    "name": "status",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "\"Calling\" | \"OK\" | \"Problem\"",
+                    "optional": false,
+                    "description": "",
+                    "line": 5
                 }
             ],
             "indexSignatures": [],
@@ -649,7 +681,7 @@
         {
             "name": "DataSourceSelection",
             "id": "interface-DataSourceSelection-23d5db79c1a4c6734c2a28ae8ac7f1d736c047000a682ca0c549320ef5a260b807f621e4392866b685830dfea023b6d5326da30c98a075ae974bbb81938d02b2",
-            "file": "src/app/common/data-source-selection-panel/data-source-selection-panel.component.ts",
+            "file": "src/app/component/data-source-selection-panel/data-source-selection-panel.component.ts",
             "deprecated": false,
             "deprecationMessage": "",
             "type": "interface",
@@ -1421,31 +1453,99 @@
             "methods": []
         },
         {
-            "name": "NavTreeItemDto",
-            "id": "interface-NavTreeItemDto-0eb926ad8fb13c9ff76b293b3a5b931be2d6e05fabfa21c8272ac25e0958b2c08c7498e41b17b82aaf056ec75ec0144b7fd5e6045e2469ff4114cb73a4032fd6",
-            "file": "src/app/navigation-page/navigation-tree/navigation-tree.component.ts",
+            "name": "NavItemSpec",
+            "id": "interface-NavItemSpec-d3fefdf22f5ea882323b420c7ea9c33368d8341b5acacd5bf8b90c757024beb69d5e0ca86b3012036e82de8e547fbd2870993716c7e4c27988cd67922fd9bc13",
+            "file": "src/app/common/styleguide/nav/nav.component.ts",
             "deprecated": false,
             "deprecationMessage": "",
             "type": "interface",
-            "sourceCode": "import {Component, OnInit} from '@angular/core';\nimport {Row} from \"@fabric/models\";\n\nexport interface NavTreeItemDto {\n\n    query: string\n    rows: Row[]\n\n}\n\n@Component({\n  selector: 'app-navigation-tree',\n  templateUrl: './navigation-tree.component.html',\n  styleUrls: ['./navigation-tree.component.scss']\n})\nexport class NavigationTreeComponent implements OnInit {\n\n  constructor() { }\n\n  ngOnInit(): void {\n  }\n\n}\n",
+            "sourceCode": "import {Component, Input} from '@angular/core';\n\n\nexport interface NavItemSpec {\n  label: string\n  select: () => void\n}\n\n@Component({\n  selector: 'app-nav',\n  templateUrl: './nav.component.html',\n  styleUrls: ['./nav.component.scss']\n})\nexport class NavComponent {\n\n  constructor() { }\n\n  active: NavItemSpec\n\n  @Input()\n  actions: NavItemSpec[]\n\n  doSelect(action: NavItemSpec) {\n    action.select()\n  }\n\n}\n",
             "properties": [
                 {
-                    "name": "query",
+                    "name": "label",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "string",
                     "optional": false,
                     "description": "",
+                    "line": 5
+                },
+                {
+                    "name": "select",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "function",
+                    "optional": false,
+                    "description": "",
                     "line": 6
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 165,
+            "methods": []
+        },
+        {
+            "name": "NavTreeItemDto",
+            "id": "interface-NavTreeItemDto-ce1977ba3438b86dcaa4cf0a588756dc717d30dd8ae9612e187208d096124db5ef693e3910af803b0a2188c22c13bfc4e933ba6be35fb07a82d4d75810f39926",
+            "file": "src/app/navigation-page/navigation-tree/navigation-tree.component.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "import {Component, Input, OnInit} from '@angular/core';\nimport {NavItem, Row} from \"@fabric/models\";\n\nexport interface NavTreeItemDto {\n    root: boolean\n    navItems: NavItem[]\n    label?: string\n    rows?: Row[]\n    columns?: string[]\n    children?: NavTreeItemDto[]\n}\n\n@Component({\n  selector: 'app-navigation-tree',\n  templateUrl: './navigation-tree.component.html',\n  styleUrls: ['./navigation-tree.component.scss']\n})\nexport class NavigationTreeComponent implements OnInit {\n\n  constructor() { }\n\n  ngOnInit(): void {\n  }\n\n  @Input()\n  tree: NavTreeItemDto\n\n}\n",
+            "properties": [
+                {
+                    "name": "children",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NavTreeItemDto[]",
+                    "optional": true,
+                    "description": "",
+                    "line": 10
+                },
+                {
+                    "name": "columns",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string[]",
+                    "optional": true,
+                    "description": "",
+                    "line": 9
+                },
+                {
+                    "name": "label",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 7
+                },
+                {
+                    "name": "navItems",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NavItem[]",
+                    "optional": false,
+                    "description": "",
+                    "line": 6
+                },
+                {
+                    "name": "root",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "boolean",
+                    "optional": false,
+                    "description": "",
+                    "line": 5
                 },
                 {
                     "name": "rows",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "Row[]",
-                    "optional": false,
+                    "optional": true,
                     "description": "",
-                    "line": 7
+                    "line": 8
                 }
             ],
             "indexSignatures": [],
@@ -3317,18 +3417,18 @@
         },
         {
             "name": "ConnectionStatusService",
-            "id": "injectable-ConnectionStatusService-aca15a6eed61ad12b1ee79a137ae65c33cfdb698e7fbd8e2e9761c614142fb5fbbc8ef550020c5816663096037dfedcdbb7f706fd18250711b2b976e8704f9ec",
+            "id": "injectable-ConnectionStatusService-dceda0925d9c15d831726bfef1e6a31e38c3ec29e6e3e188008997655c8456cf280b6856d98367b765ada7aa14555868b3617ddc294234836978872a2665e9dc",
             "file": "src/app/common/connection-status/connection-status.service.ts",
             "properties": [
                 {
-                    "name": "status",
-                    "defaultValue": "'OK'",
+                    "name": "status$",
+                    "defaultValue": "new BehaviorSubject<ConnectionStatus>({ status: 'OK', msg: null} )",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "type": "string",
+                    "type": "",
                     "optional": false,
                     "description": "",
-                    "line": 8
+                    "line": 10
                 }
             ],
             "methods": [
@@ -3337,7 +3437,7 @@
                     "args": [
                         {
                             "name": "status",
-                            "type": "string",
+                            "type": "ConnectionStatus",
                             "deprecated": false,
                             "deprecationMessage": ""
                         }
@@ -3345,13 +3445,13 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 12,
+                    "line": 14,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
                         {
                             "name": "status",
-                            "type": "string",
+                            "type": "ConnectionStatus",
                             "deprecated": false,
                             "deprecationMessage": "",
                             "tagName": {
@@ -3365,14 +3465,14 @@
             "deprecationMessage": "",
             "description": "",
             "rawdescription": "\n",
-            "sourceCode": "import {Injectable} from '@angular/core';\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class ConnectionStatusService {\n\n  status: string = 'OK'\n\n  constructor() { }\n\n  setStatus(status: string ) {\n    this.status = status\n  }\n}\n",
+            "sourceCode": "import {Injectable} from '@angular/core';\nimport {ConnectionStatus} from \"../styleguide/status/status.component\";\nimport {BehaviorSubject} from \"rxjs\";\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class ConnectionStatusService {\n\n  status$ = new BehaviorSubject<ConnectionStatus>({ status: 'OK', msg: null} )\n\n  constructor() { }\n\n  setStatus(status: ConnectionStatus) {\n    this.status$.next(status)\n  }\n}\n",
             "constructorObj": {
                 "name": "constructor",
                 "description": "",
                 "deprecated": false,
                 "deprecationMessage": "",
                 "args": [],
-                "line": 8
+                "line": 10
             },
             "type": "injectable"
         },
@@ -5299,9 +5399,33 @@
         },
         {
             "name": "NavigationService",
-            "id": "injectable-NavigationService-498d8f372f66b16a94e7751b708dabaa8247e2def04921bb0ce352f8f6d1d8e9ca1b434090977e7c165650b0ab59e5894b5e6d120a00dcb3f4de15f7a4d995a5",
+            "id": "injectable-NavigationService-5dad18e5887fd8e5c29232e84b41bf8d337f500713b1dc900db724908c1d40f83ab1a2923af0621d5283ed25613bd6818d1fb4f5824d151df52b334d3c4d5526",
             "file": "src/app/navigation-page/navigation.service.ts",
-            "properties": [],
+            "properties": [
+                {
+                    "name": "tree",
+                    "defaultValue": "new BehaviorSubject<NavTreeItemDto>(null)",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 15,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "tree$",
+                    "defaultValue": "this.tree.pipe(\n      distinctUntilChanged(),\n  )",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 17
+                }
+            ],
             "methods": [
                 {
                     "name": "loadNavItems",
@@ -5311,18 +5435,33 @@
                             "type": "string",
                             "deprecated": false,
                             "deprecationMessage": ""
+                        },
+                        {
+                            "name": "navItem",
+                            "type": "NavItem",
+                            "deprecated": false,
+                            "deprecationMessage": ""
                         }
                     ],
                     "optional": false,
-                    "returnType": "Promise<NavItem[]>",
+                    "returnType": "any",
                     "typeParameters": [],
-                    "line": 12,
+                    "line": 21,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
                         {
                             "name": "systemComponentKey",
                             "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        },
+                        {
+                            "name": "navItem",
+                            "type": "NavItem",
                             "deprecated": false,
                             "deprecationMessage": "",
                             "tagName": {
@@ -5336,7 +5475,7 @@
             "deprecationMessage": "",
             "description": "",
             "rawdescription": "\n",
-            "sourceCode": "import {Injectable} from '@angular/core';\nimport {NavItem} from \"@fabric/models\";\nimport {ConsoleControllerService} from \"@fabric/services\";\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class NavigationService {\n\n  constructor(private consoleControllerService : ConsoleControllerService) { }\n\n  loadNavItems(systemComponentKey: string): Promise<NavItem[]>  {\n    return this.consoleControllerService.getNavigationUsingPost({body: {\n        systemComponentKey,\n      }}).toPromise()\n  }\n}\n",
+            "sourceCode": "import {Injectable} from '@angular/core';\nimport {NavItem} from \"@fabric/models\";\nimport {ConsoleControllerService} from \"@fabric/services\";\nimport {BehaviorSubject} from \"rxjs\";\nimport {distinctUntilChanged} from \"rxjs/operators\";\nimport {NavTreeItemDto} from \"./navigation-tree/navigation-tree.component\";\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class NavigationService {\n\n  constructor(private consoleControllerService : ConsoleControllerService) { }\n\n  private tree = new BehaviorSubject<NavTreeItemDto>(null)\n\n  tree$ = this.tree.pipe(\n      distinctUntilChanged(),\n  )\n\n  loadNavItems(systemComponentKey: string, navItem: NavItem) {\n    return this.consoleControllerService.getNavigationUsingPost({body: {\n        systemComponentKey,\n      }}).subscribe(navItems => {\n        if (!navItem) {\n          this.tree.next({\n            root: true,\n            navItems,\n            children: [\n              {\n                label: 'test',\n                root: false,\n                columns: ['AAAAAAAAAAAAAAAAA', 'BBBBBBBBBBBBBBBB', 'CCCCCCCCCCCCCCCCCCCC'],\n                rows: [],\n                navItems: navItems\n              }\n            ]\n          })\n        }\n    })\n  }\n}\n",
             "constructorObj": {
                 "name": "constructor",
                 "description": "",
@@ -5350,7 +5489,7 @@
                         "deprecationMessage": ""
                     }
                 ],
-                "line": 8,
+                "line": 11,
                 "jsdoctags": [
                     {
                         "name": "consoleControllerService",
@@ -5367,12 +5506,12 @@
         },
         {
             "name": "SideBarService",
-            "id": "injectable-SideBarService-236bfa986f043e3b922047cc187b982e7cb612280880966d5f0bcfcd87d19c0f0d6156470cb6effc84d7a6817d01bc01bf3461af24514d46c68e818c1b257585",
+            "id": "injectable-SideBarService-3175de731f62cd9281336de830cd5fc413e03f30780a62556ff21d423215892f10b230ac8ff8cd413cfd1b930009a727fb50d3f65e126949255d68eea513b804",
             "file": "src/app/common/styleguide/side-bar/side-bar.service.ts",
             "properties": [
                 {
                     "name": "collapsed",
-                    "defaultValue": "false",
+                    "defaultValue": "true",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "boolean",
@@ -5382,6 +5521,16 @@
                 }
             ],
             "methods": [
+                {
+                    "name": "collapse",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 16,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
                 {
                     "name": "toggleState",
                     "args": [],
@@ -5397,7 +5546,7 @@
             "deprecationMessage": "",
             "description": "",
             "rawdescription": "\n",
-            "sourceCode": "import {Injectable} from '@angular/core';\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class SideBarService {\n\n  constructor() { }\n\n  collapsed: boolean = false\n\n  toggleState() {\n    this.collapsed = !this.collapsed\n  }\n\n}\n",
+            "sourceCode": "import {Injectable} from '@angular/core';\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class SideBarService {\n\n  constructor() { }\n\n  collapsed: boolean = true\n\n  toggleState() {\n    this.collapsed = !this.collapsed\n  }\n\n  collapse() {\n    this.collapsed = true\n  }\n\n}\n",
             "constructorObj": {
                 "name": "constructor",
                 "description": "",
@@ -7297,7 +7446,7 @@
     "interceptors": [
         {
             "name": "HttpErrorInterceptor",
-            "id": "injectable-HttpErrorInterceptor-d4aa605019d99a4ace412fb635eaeb13802036aafab55db68100c1835a11dedc64e7e6de6ce4227eb740e79336b0ac4c38ce8ed0263d2cd69d9f83d4b3d42958",
+            "id": "injectable-HttpErrorInterceptor-be759a325a416e2e59949e89476ddff2e7e782220f28dea8df855398a1ecc063d24eec0721f20e8af414e961908326a6d291a340a0e02faa2d8e89a6d9112357",
             "file": "src/app/common/connection-status/http-error.interceptor.ts",
             "properties": [],
             "methods": [
@@ -7349,7 +7498,7 @@
             "deprecationMessage": "",
             "description": "",
             "rawdescription": "\n",
-            "sourceCode": "import {Injectable} from '@angular/core';\nimport {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';\nimport {Observable, throwError} from 'rxjs';\nimport {catchError, tap} from \"rxjs/operators\";\nimport {ConnectionStatusService} from \"./connection-status.service\";\n\n@Injectable()\nexport class HttpErrorInterceptor implements HttpInterceptor {\n\n    constructor(private service: ConnectionStatusService) {\n    }\n\n\n    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {\n        return next.handle(request)\n            .pipe(\n                tap( () => this.service.setStatus('OK')),\n                catchError((error: HttpErrorResponse) => {\n                    let errorMsg = '';\n                    if (error.error instanceof ErrorEvent) {\n                        console.log('this is client side error');\n                        errorMsg = `Error: ${error.error.message}`;\n                        this.service.setStatus('ERROR (client)')\n                    } else {\n                        console.log('this is server side error');\n                        errorMsg = `Error Code: ${error.status},  Message: ${error.message}`;\n                        this.service.setStatus('ERROR (server)')\n                    }\n                    console.log(errorMsg);\n                    return throwError(errorMsg);\n                })\n            )\n    }\n\n}\n",
+            "sourceCode": "import {Injectable} from '@angular/core';\nimport {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';\nimport {Observable, throwError} from 'rxjs';\nimport {catchError, tap} from \"rxjs/operators\";\nimport {ConnectionStatusService} from \"./connection-status.service\";\n\n@Injectable()\nexport class HttpErrorInterceptor implements HttpInterceptor {\n\n    constructor(private service: ConnectionStatusService) {\n    }\n\n\n    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {\n        this.service.setStatus({ status: 'Calling', msg: null})\n        return next.handle(request)\n            .pipe(\n                tap( () => this.service.setStatus({ status: 'OK', msg: null})),\n                catchError((error: HttpErrorResponse) => {\n                    let errorMsg = '';\n                    if (error.error instanceof ErrorEvent) {\n                        console.log('this is client side error');\n                        errorMsg = `Error: ${error.error.message}`;\n                        this.service.setStatus({ status:'Problem', msg: errorMsg})\n                    } else {\n                        console.log('this is server side error');\n                        errorMsg = `Error Code: ${error.status},  Message: ${error.message}`;\n                        this.service.setStatus({ status: 'Problem', msg: errorMsg})\n                    }\n                    console.log(errorMsg);\n                    return throwError(errorMsg);\n                })\n            )\n    }\n\n}\n",
             "constructorObj": {
                 "name": "constructor",
                 "description": "",
@@ -10293,7 +10442,7 @@
         },
         {
             "name": "ConnectionStatusComponent",
-            "id": "component-ConnectionStatusComponent-436f329e5f2e55b440d411e47ea37f5fc7135da597c1208bb2d3a14088c8cd576021491e29d4ba6601248c43bf962bca9ee846ff1f473d9df9c1db522ed5aca9",
+            "id": "component-ConnectionStatusComponent-a2ff566c4cc5033338b716680fab6dd191740c3ec7358e7cab5334031a4cd957c4196d96c25125b623a22247860994136886129d3cde0ff981c126d0ace605ba",
             "file": "src/app/common/connection-status/connection-status.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -10311,7 +10460,18 @@
             "viewProviders": [],
             "inputsClass": [],
             "outputsClass": [],
-            "propertiesClass": [],
+            "propertiesClass": [
+                {
+                    "name": "status$",
+                    "defaultValue": "this.service.status$",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 16
+                }
+            ],
             "methodsClass": [
                 {
                     "name": "ngOnInit",
@@ -10331,7 +10491,7 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, OnInit} from '@angular/core';\nimport {ConnectionStatusService} from \"./connection-status.service\";\n\n@Component({\n  selector: 'app-connection-status',\n  templateUrl: './connection-status.component.html',\n  styleUrls: ['./connection-status.component.scss']\n})\nexport class ConnectionStatusComponent implements OnInit {\n\n  constructor(private service: ConnectionStatusService) { }\n\n  ngOnInit(): void {\n  }\n\n  get status(): string {\n    return this.service.status\n  }\n\n}\n",
+            "sourceCode": "import {Component, OnInit} from '@angular/core';\nimport {ConnectionStatusService} from \"./connection-status.service\";\n\n@Component({\n  selector: 'app-connection-status',\n  templateUrl: './connection-status.component.html',\n  styleUrls: ['./connection-status.component.scss']\n})\nexport class ConnectionStatusComponent implements OnInit {\n\n  constructor(private service: ConnectionStatusService) { }\n\n  ngOnInit(): void {\n  }\n\n  status$ = this.service.status$\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
@@ -10369,22 +10529,11 @@
             "implements": [
                 "OnInit"
             ],
-            "accessors": {
-                "status": {
-                    "name": "status",
-                    "getSignature": {
-                        "name": "status",
-                        "type": "string",
-                        "returnType": "string",
-                        "line": 16
-                    }
-                }
-            },
-            "templateData": "<app-status [status]=\"status\"></app-status>\n"
+            "templateData": "<ng-container *ngIf=\"status$ | async as status\">\n    <app-status [status]=\"status\"></app-status>\n</ng-container>\n"
         },
         {
             "name": "ConsolePageComponent",
-            "id": "component-ConsolePageComponent-c1cc1b77f8c616b3d70af8c2a5112b2b0e90bc38500fe487c5e473f9a917a1e62a4895877daf4862eb67a238d88aedbaee5db445f8c35138f38cced5c88eebf4",
+            "id": "component-ConsolePageComponent-71a6e209f0803cefb1c354b49e5289e6f8c13ea67c7ea3595703cad3812955a5cf453a79ff344d2d117d3d32ec7f253c59b812a96b0fb3224c163f272ec61748",
             "file": "src/app/console-page/console-page.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -10411,7 +10560,7 @@
                     "type": "BreadcrumbItem[]",
                     "optional": false,
                     "description": "",
-                    "line": 11
+                    "line": 12
                 },
                 {
                     "name": "selectedDataSource",
@@ -10420,7 +10569,7 @@
                     "type": "DataSourceSelection",
                     "optional": false,
                     "description": "",
-                    "line": 26
+                    "line": 27
                 }
             ],
             "methodsClass": [
@@ -10430,7 +10579,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 23,
+                    "line": 24,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -10447,7 +10596,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 28,
+                    "line": 29,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -10470,7 +10619,7 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, OnInit} from '@angular/core';\nimport {BreadcrumbItem, DataSourceSelection} from \"@fabric/common\";\n\n@Component({\n  selector: 'app-console-page',\n  templateUrl: './console-page.component.html',\n  styleUrls: ['./console-page.component.scss']\n})\nexport class ConsolePageComponent implements OnInit {\n\n  breadcrumbs: BreadcrumbItem[] = [\n    {\n      label: 'Home',\n      route: '/'\n    },\n    {\n      label: 'Console'\n    }\n  ]\n\n  constructor() { }\n\n  ngOnInit(): void {\n  }\n\n  selectedDataSource: DataSourceSelection\n\n  selectDataSource(dataSource: DataSourceSelection) {\n    this.selectedDataSource = dataSource\n  }\n\n}\n",
+            "sourceCode": "import {Component, OnInit} from '@angular/core';\nimport {BreadcrumbItem} from \"@fabric/common\";\nimport {DataSourceSelection} from \"@fabric/component\";\n\n@Component({\n  selector: 'app-console-page',\n  templateUrl: './console-page.component.html',\n  styleUrls: ['./console-page.component.scss']\n})\nexport class ConsolePageComponent implements OnInit {\n\n  breadcrumbs: BreadcrumbItem[] = [\n    {\n      label: 'Home',\n      route: '/'\n    },\n    {\n      label: 'Console'\n    }\n  ]\n\n  constructor() { }\n\n  ngOnInit(): void {\n  }\n\n  selectedDataSource: DataSourceSelection\n\n  selectDataSource(dataSource: DataSourceSelection) {\n    this.selectedDataSource = dataSource\n  }\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
@@ -10485,7 +10634,7 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "args": [],
-                "line": 19
+                "line": 20
             },
             "implements": [
                 "OnInit"
@@ -10494,7 +10643,7 @@
         },
         {
             "name": "ConsolePanelComponent",
-            "id": "component-ConsolePanelComponent-aa295777f22bb1be1f75c931479cc573676c352056f8cfa420a0826c4a98dbdc6c81f6bba59f347c1f75bfd7013f0d413dccadfc4bbe427c9f7b06e32fbfc030",
+            "id": "component-ConsolePanelComponent-2db6d6d64ce17c94d2afe0639ceec6776373e0f53aab63f89f22c8fb7e8759fea97fd15f929dfe4b64030ba418d96a0d5c453005e4558103d83b28e34adeb101",
             "file": "src/app/console-page/console-panel/console-panel.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -10519,7 +10668,7 @@
                     "name": "dataSource",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "line": 27,
+                    "line": 28,
                     "type": "DataSourceSelection",
                     "decorators": []
                 }
@@ -10533,7 +10682,7 @@
                     "type": "NavItem",
                     "optional": false,
                     "description": "",
-                    "line": 112
+                    "line": 113
                 },
                 {
                     "name": "descriptor",
@@ -10542,7 +10691,7 @@
                     "type": "ConsoleDescriptorDto",
                     "optional": false,
                     "description": "",
-                    "line": 36
+                    "line": 37
                 },
                 {
                     "name": "faPlay",
@@ -10552,7 +10701,7 @@
                     "type": "",
                     "optional": false,
                     "description": "",
-                    "line": 20
+                    "line": 21
                 },
                 {
                     "name": "faTimes",
@@ -10562,7 +10711,7 @@
                     "type": "",
                     "optional": false,
                     "description": "",
-                    "line": 21
+                    "line": 22
                 },
                 {
                     "name": "formGroup",
@@ -10572,7 +10721,7 @@
                     "type": "FormGroup",
                     "optional": false,
                     "description": "",
-                    "line": 40
+                    "line": 41
                 },
                 {
                     "name": "historyItems",
@@ -10582,7 +10731,7 @@
                     "type": "HistoryItem[]",
                     "optional": false,
                     "description": "",
-                    "line": 131
+                    "line": 132
                 },
                 {
                     "name": "jsonOutput",
@@ -10591,7 +10740,7 @@
                     "type": "string",
                     "optional": false,
                     "description": "",
-                    "line": 220
+                    "line": 221
                 },
                 {
                     "name": "navItems",
@@ -10600,7 +10749,7 @@
                     "type": "NavItem[]",
                     "optional": false,
                     "description": "",
-                    "line": 111
+                    "line": 112
                 },
                 {
                     "name": "snippetDialogSpec",
@@ -10609,7 +10758,7 @@
                     "type": "SnippetDialogSpec",
                     "optional": false,
                     "description": "",
-                    "line": 205
+                    "line": 206
                 },
                 {
                     "name": "snippets",
@@ -10618,7 +10767,7 @@
                     "type": "SnippetDto[]",
                     "optional": false,
                     "description": "",
-                    "line": 175
+                    "line": 176
                 },
                 {
                     "name": "stackTraceOutput",
@@ -10627,7 +10776,7 @@
                     "type": "string",
                     "optional": false,
                     "description": "",
-                    "line": 221
+                    "line": 222
                 },
                 {
                     "name": "tabState",
@@ -10637,7 +10786,7 @@
                     "type": "TabState",
                     "optional": false,
                     "description": "",
-                    "line": 103
+                    "line": 104
                 },
                 {
                     "name": "tabularResponse",
@@ -10646,7 +10795,7 @@
                     "type": "TabularResponse",
                     "optional": false,
                     "description": "",
-                    "line": 222
+                    "line": 223
                 }
             ],
             "methodsClass": [
@@ -10663,7 +10812,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 133,
+                    "line": 134,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -10700,7 +10849,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 188,
+                    "line": 189,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -10733,7 +10882,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 93,
+                    "line": 94,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -10743,7 +10892,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 212,
+                    "line": 213,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -10763,7 +10912,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 150,
+                    "line": 151,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -10791,7 +10940,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 139,
+                    "line": 140,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -10812,7 +10961,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 60,
+                    "line": 61,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -10829,7 +10978,7 @@
                     "optional": false,
                     "returnType": "FormControl",
                     "typeParameters": [],
-                    "line": 48,
+                    "line": 49,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -10850,7 +10999,7 @@
                     "optional": false,
                     "returnType": "string",
                     "typeParameters": [],
-                    "line": 146,
+                    "line": 147,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -10867,7 +11016,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 52,
+                    "line": 53,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -10898,7 +11047,7 @@
                     "optional": false,
                     "returnType": "{}",
                     "typeParameters": [],
-                    "line": 114,
+                    "line": 115,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -10929,7 +11078,7 @@
                     "optional": false,
                     "returnType": "{}",
                     "typeParameters": [],
-                    "line": 177,
+                    "line": 178,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -10960,7 +11109,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 118,
+                    "line": 119,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -10988,7 +11137,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 29,
+                    "line": 30,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -11016,7 +11165,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 207,
+                    "line": 208,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -11047,7 +11196,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 164,
+                    "line": 165,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -11075,7 +11224,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 105,
+                    "line": 106,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -11103,7 +11252,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 224,
+                    "line": 225,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -11124,7 +11273,7 @@
                     "optional": false,
                     "returnType": "string",
                     "typeParameters": [],
-                    "line": 201,
+                    "line": 202,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -11141,7 +11290,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 181,
+                    "line": 182,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -11164,7 +11313,7 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';\nimport {FormArray, FormControl, FormGroup} from \"@angular/forms\";\nimport {faPlay, faTimes} from '@fortawesome/free-solid-svg-icons';\nimport {DataSourceSelection, ModalService} from \"@fabric/common\";\nimport {ConsoleDescriptorDto, NavItem, Row, SnippetDto, TabularResponse} from \"@fabric/models\";\nimport {ConsoleService} from \"../console.service\";\nimport {HistoryItem} from \"./history-panel/history-panel.component\";\nimport {SnippetDialogData, SnippetDialogSpec} from \"./snippet-dialog/snippet-dialog.component\";\n\ntype TabState = 'HISTORY' | 'SNIPPETS'\n\n@Component({\n    selector: 'app-console-panel',\n    templateUrl: './console-panel.component.html',\n    styleUrls: ['./console-panel.component.scss'],\n    providers: [ConsoleService]\n})\nexport class ConsolePanelComponent implements OnChanges {\n\n    faPlay = faPlay\n    faTimes = faTimes\n\n    constructor(private modalService: ModalService, private service: ConsoleService) {\n    }\n\n    @Input()\n    dataSource: DataSourceSelection\n\n    ngOnChanges(changes: SimpleChanges) {\n        let systemComponentKey = this.dataSource.systemComponentKey;\n        this.service.loadNavItems(systemComponentKey).then(navItems => this.initNavItems(navItems))\n        this.service.loadDescriptor(systemComponentKey).then(descriptor => this.initForm(descriptor))\n        this.service.loadSnippets(systemComponentKey).then(snippets => this.initSnippets(snippets))\n    }\n\n    descriptor: ConsoleDescriptorDto\n\n    // input query\n\n    formGroup: FormGroup = new FormGroup({\n        fields: new FormArray([])\n    })\n\n    get fieldsControl(): FormArray {\n        return <FormArray>this.formGroup.get('fields')\n    }\n\n    fieldControl(i: number): FormControl {\n        return <FormControl>this.fieldsControl.controls[i]\n    }\n\n    private initForm(descriptorDto: ConsoleDescriptorDto) {\n        this.descriptor = descriptorDto\n        this.fieldsControl.controls = []\n        this.descriptor.items.forEach(item =>\n            this.fieldsControl.push(new FormControl(null))\n        )\n    }\n\n    doQuery() {\n        let attributes = {}\n        this.fieldsControl.value.forEach((fieldValue, i) => {\n            attributes[this.descriptor.items[i].name] = fieldValue\n        })\n        this.service.runRequest(\n            this.dataSource.environmentKey,\n            this.dataSource.systemComponentKey,\n            attributes,\n            this.currentNavItem\n        ).then((response) => {\n            this.jsonOutput = null\n            this.stackTraceOutput = null\n            this.tabularResponse = null\n            switch (response.consoleOutputType) {\n                case 'JSON': {\n                    this.jsonOutput = JSON.parse(response.content)\n                    break\n                }\n                case 'STACKTRACE': {\n                    this.stackTraceOutput = response.content\n                    break\n                }\n                case 'TABULAR' : {\n                    this.tabularResponse = response.tabular\n                }\n            }\n            if (response.consoleOutputType != 'STACKTRACE') {\n                this.addHistoryItem(attributes)\n            }\n        })\n    }\n\n    clear() {\n        this.descriptor.items.forEach((descriptorItem, index) => {\n                this.fieldControl(index).setValue(null)\n            }\n        )\n\n    }\n\n    // tabs history/snippet\n\n    tabState: TabState = 'SNIPPETS'\n\n    selectTab(tabState: TabState) {\n        this.tabState = tabState\n    }\n\n    // navitems\n\n    navItems: NavItem[]\n    currentNavItem: NavItem\n\n    private initNavItems(navItems: NavItem[]) {\n        return this.navItems = navItems;\n    }\n\n    navItemSelected(navItem: NavItem) {\n        this.currentNavItem = navItem\n        this.descriptor.items.forEach((descriptorItem, index) => {\n                let value = navItem.attributes[descriptorItem.name]\n                this.fieldControl(index).setValue(value)\n            }\n        )\n        this.doQuery()\n    }\n\n\n    // history\n\n    historyItems: HistoryItem[] = []\n\n    private addHistoryItem(attributes: {}) {\n        this.historyItems.push({\n            attributes\n        })\n    }\n\n    deleteHistoryItem(item: HistoryItem) {\n        const index = this.historyItems.indexOf(item, 0);\n        if (index > -1) {\n            this.historyItems.splice(index, 1);\n        }\n    }\n\n    historyCount(): string {\n        return this.historyItems.length == 0 ? '' : `(${this.historyItems.length})`\n    }\n\n    convertHistoryItemToSnippet(historyItem: HistoryItem) {\n        this.openSnippetDialog({\n            descriptor: this.descriptor,\n            data: {\n                attributes: historyItem.attributes\n            },\n            cancel: () => this.closeSnippetDialog(),\n            confirm: (data) => {\n                this.addSnippet(this.descriptor, data);\n                this.closeSnippetDialog()\n            }\n        })\n    }\n\n    selectHistoryItem(historyItem: HistoryItem) {\n        this.descriptor.items.forEach((descriptorItem, index) => {\n                let value = historyItem.attributes[descriptorItem.name]\n                this.fieldControl(index).setValue(value)\n            }\n        )\n    }\n\n\n    // snippets\n\n    snippets: SnippetDto[]\n\n    private initSnippets(snippets: SnippetDto[]) {\n        return this.snippets = snippets;\n    }\n\n    snippetSelected(snippet: SnippetDto) {\n        this.descriptor.items.forEach((item, index) => {\n            let value = snippet.attributes[item.name]\n            this.fieldControl(index).setValue(value)\n        })\n    }\n\n    private addSnippet(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {\n        let attributes = {}\n        descriptor.items.forEach((item, index) => {\n            attributes[item.name] = data.fields[index]\n        })\n        this.service.addSnippet(data.title, this.dataSource.systemComponentKey, attributes)\n            .then((snippets) => {\n                this.snippets = snippets\n            })\n    }\n\n    // snippet dialog\n\n    snippetDialogId(): string {\n        return 'snippet-dialog-id'\n    }\n\n    snippetDialogSpec: SnippetDialogSpec;\n\n    private openSnippetDialog(spec: SnippetDialogSpec) {\n        this.snippetDialogSpec = spec\n        this.modalService.open(this.snippetDialogId())\n    }\n\n    private closeSnippetDialog() {\n        this.snippetDialogSpec = null\n        this.modalService.close(this.snippetDialogId())\n    }\n\n\n    // output\n\n    jsonOutput: string\n    stackTraceOutput: string\n    tabularResponse: TabularResponse\n\n    selectTableRow(row: Row) {\n        console.log('selected: ', row)\n    }\n\n\n}\n",
+            "sourceCode": "import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';\nimport {FormArray, FormControl, FormGroup} from \"@angular/forms\";\nimport {faPlay, faTimes} from '@fortawesome/free-solid-svg-icons';\nimport {ModalService} from \"@fabric/common\";\nimport {DataSourceSelection} from \"@fabric/component\";\nimport {ConsoleDescriptorDto, NavItem, Row, SnippetDto, TabularResponse} from \"@fabric/models\";\nimport {ConsoleService} from \"../console.service\";\nimport {HistoryItem} from \"./history-panel/history-panel.component\";\nimport {SnippetDialogData, SnippetDialogSpec} from \"./snippet-dialog/snippet-dialog.component\";\n\ntype TabState = 'HISTORY' | 'SNIPPETS'\n\n@Component({\n    selector: 'app-console-panel',\n    templateUrl: './console-panel.component.html',\n    styleUrls: ['./console-panel.component.scss'],\n    providers: [ConsoleService]\n})\nexport class ConsolePanelComponent implements OnChanges {\n\n    faPlay = faPlay\n    faTimes = faTimes\n\n    constructor(private modalService: ModalService, private service: ConsoleService) {\n    }\n\n    @Input()\n    dataSource: DataSourceSelection\n\n    ngOnChanges(changes: SimpleChanges) {\n        let systemComponentKey = this.dataSource.systemComponentKey;\n        this.service.loadNavItems(systemComponentKey).then(navItems => this.initNavItems(navItems))\n        this.service.loadDescriptor(systemComponentKey).then(descriptor => this.initForm(descriptor))\n        this.service.loadSnippets(systemComponentKey).then(snippets => this.initSnippets(snippets))\n    }\n\n    descriptor: ConsoleDescriptorDto\n\n    // input query\n\n    formGroup: FormGroup = new FormGroup({\n        fields: new FormArray([])\n    })\n\n    get fieldsControl(): FormArray {\n        return <FormArray>this.formGroup.get('fields')\n    }\n\n    fieldControl(i: number): FormControl {\n        return <FormControl>this.fieldsControl.controls[i]\n    }\n\n    private initForm(descriptorDto: ConsoleDescriptorDto) {\n        this.descriptor = descriptorDto\n        this.fieldsControl.controls = []\n        this.descriptor.items.forEach(item =>\n            this.fieldsControl.push(new FormControl(null))\n        )\n    }\n\n    doQuery() {\n        let attributes = {}\n        this.fieldsControl.value.forEach((fieldValue, i) => {\n            attributes[this.descriptor.items[i].name] = fieldValue\n        })\n        this.service.runRequest(\n            this.dataSource.environmentKey,\n            this.dataSource.systemComponentKey,\n            attributes,\n            this.currentNavItem\n        ).then((response) => {\n            this.jsonOutput = null\n            this.stackTraceOutput = null\n            this.tabularResponse = null\n            switch (response.consoleOutputType) {\n                case 'JSON': {\n                    this.jsonOutput = JSON.parse(response.content)\n                    break\n                }\n                case 'STACKTRACE': {\n                    this.stackTraceOutput = response.content\n                    break\n                }\n                case 'TABULAR' : {\n                    this.tabularResponse = response.tabular\n                }\n            }\n            if (response.consoleOutputType != 'STACKTRACE') {\n                this.addHistoryItem(attributes)\n            }\n        })\n    }\n\n    clear() {\n        this.descriptor.items.forEach((descriptorItem, index) => {\n                this.fieldControl(index).setValue(null)\n            }\n        )\n\n    }\n\n    // tabs history/snippet\n\n    tabState: TabState = 'SNIPPETS'\n\n    selectTab(tabState: TabState) {\n        this.tabState = tabState\n    }\n\n    // navitems\n\n    navItems: NavItem[]\n    currentNavItem: NavItem\n\n    private initNavItems(navItems: NavItem[]) {\n        return this.navItems = navItems;\n    }\n\n    navItemSelected(navItem: NavItem) {\n        this.currentNavItem = navItem\n        this.descriptor.items.forEach((descriptorItem, index) => {\n                let value = navItem.attributes[descriptorItem.name]\n                this.fieldControl(index).setValue(value)\n            }\n        )\n        this.doQuery()\n    }\n\n\n    // history\n\n    historyItems: HistoryItem[] = []\n\n    private addHistoryItem(attributes: {}) {\n        this.historyItems.push({\n            attributes\n        })\n    }\n\n    deleteHistoryItem(item: HistoryItem) {\n        const index = this.historyItems.indexOf(item, 0);\n        if (index > -1) {\n            this.historyItems.splice(index, 1);\n        }\n    }\n\n    historyCount(): string {\n        return this.historyItems.length == 0 ? '' : `(${this.historyItems.length})`\n    }\n\n    convertHistoryItemToSnippet(historyItem: HistoryItem) {\n        this.openSnippetDialog({\n            descriptor: this.descriptor,\n            data: {\n                attributes: historyItem.attributes\n            },\n            cancel: () => this.closeSnippetDialog(),\n            confirm: (data) => {\n                this.addSnippet(this.descriptor, data);\n                this.closeSnippetDialog()\n            }\n        })\n    }\n\n    selectHistoryItem(historyItem: HistoryItem) {\n        this.descriptor.items.forEach((descriptorItem, index) => {\n                let value = historyItem.attributes[descriptorItem.name]\n                this.fieldControl(index).setValue(value)\n            }\n        )\n    }\n\n\n    // snippets\n\n    snippets: SnippetDto[]\n\n    private initSnippets(snippets: SnippetDto[]) {\n        return this.snippets = snippets;\n    }\n\n    snippetSelected(snippet: SnippetDto) {\n        this.descriptor.items.forEach((item, index) => {\n            let value = snippet.attributes[item.name]\n            this.fieldControl(index).setValue(value)\n        })\n    }\n\n    private addSnippet(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {\n        let attributes = {}\n        descriptor.items.forEach((item, index) => {\n            attributes[item.name] = data.fields[index]\n        })\n        this.service.addSnippet(data.title, this.dataSource.systemComponentKey, attributes)\n            .then((snippets) => {\n                this.snippets = snippets\n            })\n    }\n\n    // snippet dialog\n\n    snippetDialogId(): string {\n        return 'snippet-dialog-id'\n    }\n\n    snippetDialogSpec: SnippetDialogSpec;\n\n    private openSnippetDialog(spec: SnippetDialogSpec) {\n        this.snippetDialogSpec = spec\n        this.modalService.open(this.snippetDialogId())\n    }\n\n    private closeSnippetDialog() {\n        this.snippetDialogSpec = null\n        this.modalService.close(this.snippetDialogId())\n    }\n\n\n    // output\n\n    jsonOutput: string\n    stackTraceOutput: string\n    tabularResponse: TabularResponse\n\n    selectTableRow(row: Row) {\n        console.log('selected: ', row)\n    }\n\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
@@ -11192,7 +11341,7 @@
                         "deprecationMessage": ""
                     }
                 ],
-                "line": 21,
+                "line": 22,
                 "jsdoctags": [
                     {
                         "name": "modalService",
@@ -11224,7 +11373,7 @@
                         "name": "fieldsControl",
                         "type": "",
                         "returnType": "FormArray",
-                        "line": 44
+                        "line": 45
                     }
                 }
             },
@@ -11306,7 +11455,7 @@
         {
             "name": "DataSourceSelectionPanelComponent",
             "id": "component-DataSourceSelectionPanelComponent-23d5db79c1a4c6734c2a28ae8ac7f1d736c047000a682ca0c549320ef5a260b807f621e4392866b685830dfea023b6d5326da30c98a075ae974bbb81938d02b2",
-            "file": "src/app/common/data-source-selection-panel/data-source-selection-panel.component.ts",
+            "file": "src/app/component/data-source-selection-panel/data-source-selection-panel.component.ts",
             "encapsulation": [],
             "entryComponents": [],
             "inputs": [],
@@ -12449,7 +12598,7 @@
         },
         {
             "name": "Layout1ColComponent",
-            "id": "component-Layout1ColComponent-1e97cb6186752080d079e69b40809f3025b5975707369e6e26ef966f4b9ad12cbaa4ea77312572839dd18ce4a94a43830d9c8e4c69cd34dda0bde2e1f06248bf",
+            "id": "component-Layout1ColComponent-e87a2dc8a7d78e68eb898dd0cc630dbb1f663dc490eecfff34047430c9710ecbe8ad1b47919ee55704a8d075e11153efaeff246a0c00afa0094d506c211fe933",
             "file": "src/app/common/styleguide/layout-1col/layout-1col.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -12470,7 +12619,7 @@
                     "name": "breadcrumb",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "line": 17,
+                    "line": 19,
                     "type": "TemplateRef<any>",
                     "decorators": []
                 },
@@ -12478,7 +12627,7 @@
                     "name": "middle",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "line": 23,
+                    "line": 25,
                     "type": "TemplateRef<any>",
                     "decorators": []
                 },
@@ -12486,7 +12635,7 @@
                     "name": "sidebar",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "line": 14,
+                    "line": 16,
                     "type": "TemplateRef<any>",
                     "decorators": []
                 },
@@ -12494,7 +12643,7 @@
                     "name": "title",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "line": 20,
+                    "line": 22,
                     "type": "TemplateRef<any>",
                     "decorators": []
                 }
@@ -12503,12 +12652,42 @@
             "propertiesClass": [],
             "methodsClass": [
                 {
+                    "name": "icon",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "any",
+                    "typeParameters": [],
+                    "line": 35,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "opnSideBar",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 31,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
                     "name": "sideBarCollapsed",
                     "args": [],
                     "optional": false,
                     "returnType": "boolean",
                     "typeParameters": [],
-                    "line": 25,
+                    "line": 27,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "toggleSideBar",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 39,
                     "deprecated": false,
                     "deprecationMessage": ""
                 }
@@ -12520,11 +12699,11 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, Input, TemplateRef} from '@angular/core';\nimport {SideBarService} from \"../side-bar/side-bar.service\";\n\n@Component({\n  selector: 'app-layout-1col',\n  templateUrl: './layout-1col.component.html',\n  styleUrls: ['./layout-1col.component.scss']\n})\nexport class Layout1ColComponent {\n\n  constructor(private sideBarService: SideBarService) {}\n\n  @Input()\n  sidebar: TemplateRef<any>\n\n  @Input()\n  breadcrumb: TemplateRef<any>\n\n  @Input()\n  title: TemplateRef<any>\n\n  @Input()\n  middle: TemplateRef<any>\n\n  sideBarCollapsed(): boolean {\n    return this.sideBarService.collapsed\n  }\n\n}\n",
+            "sourceCode": "import {Component, Input, TemplateRef} from '@angular/core';\nimport {SideBarService} from \"../side-bar/side-bar.service\";\nimport {faBars} from '@fortawesome/free-solid-svg-icons';\n\n@Component({\n    selector: 'app-layout-1col',\n    templateUrl: './layout-1col.component.html',\n    styleUrls: ['./layout-1col.component.scss']\n})\nexport class Layout1ColComponent {\n\n    constructor(private sideBarService: SideBarService) {\n    }\n\n    @Input()\n    sidebar: TemplateRef<any>\n\n    @Input()\n    breadcrumb: TemplateRef<any>\n\n    @Input()\n    title: TemplateRef<any>\n\n    @Input()\n    middle: TemplateRef<any>\n\n    sideBarCollapsed(): boolean {\n        return this.sideBarService.collapsed\n    }\n\n    opnSideBar() {\n        this.sideBarService.toggleState()\n    }\n\n    icon() {\n        return faBars\n    }\n\n    toggleSideBar() {\n      this.sideBarService.toggleState()\n\n    }\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
-                    "data": "@import '../../variables';\n\n.backdrop {\n  background-color: $storybook-secondary-100;\n  min-height: 100vh;\n}\n\n.sidenav {\n  height: 100%;\n  width: 160px;\n  position: fixed;\n  z-index: 1;\n  top: 0;\n  left: 0;\n  overflow-x: hidden;\n  padding-top: 20px;\n}\n\n.sidenav-collapsed {\n  height: 100%;\n  width: 20px;\n  position: fixed;\n  z-index: 1;\n  top: 0;\n  left: 0;\n  overflow-x: hidden;\n  padding-top: 20px;\n}\n\n.main {\n  margin-left: 160px;\n  padding: 0px 10px;\n}\n\n.main-full-screen {\n  margin-left: 20px;\n  padding: 0px 10px;\n}\n\n",
+                    "data": "@import '../../variables';\n\n.backdrop {\n  background-color: $storybook-secondary-100;\n  min-height: 100vh;\n}\n\n.sidebar-container {\n  z-index: 98;\n  position: absolute;\n  top: 126px;\n  bottom: 0;\n  box-shadow: 0 2.7px 9px rgba(0,0,0,.13),0 9.4px 24px rgba(0,0,0,.09),0 21.8px 43px rgba(0,0,0,.08);\n}\n\n.outside-sidebar-container {\n  z-index: 97;\n  position: absolute;\n  top: 126px;\n  bottom: 0;\n  background-color: black;\n  opacity: 5%;\n  width: 100%;\n}\n\n\n.page-nav-bar {\n  box-shadow: 0 .7px 1.4px rgba(0,0,0,.07),0 1.9px 4px rgba(0,0,0,.05),0 4.5px 10px rgba(0,0,0,.05);\n}",
                     "styleUrl": "./layout-1col.component.scss"
                 }
             ],
@@ -12542,7 +12721,7 @@
                         "deprecationMessage": ""
                     }
                 ],
-                "line": 9,
+                "line": 10,
                 "jsdoctags": [
                     {
                         "name": "sideBarService",
@@ -12555,7 +12734,7 @@
                     }
                 ]
             },
-            "templateData": "<div [class.sidenav-collapsed]=\"sideBarCollapsed()\" [class.sidenav]=\"!sideBarCollapsed()\" >\n    <ng-container *ngTemplateOutlet=\"sidebar\"></ng-container>\n</div>\n<div [class.main]=\"!sideBarCollapsed()\" [class.main-full-screen]=\"sideBarCollapsed()\">\n    <div class=\"container-fluid\">\n        <div class=\"row\">\n            <ng-container *ngTemplateOutlet=\"title\"></ng-container>\n            <ng-container *ngTemplateOutlet=\"breadcrumb\"></ng-container>\n        </div>\n        <div class=\"row\">\n            <ng-container *ngTemplateOutlet=\"middle\"></ng-container>\n        </div>\n    </div>\n</div>\n\n\n"
+            "templateData": "<nav class=\"navbar navbar-dark bg-dark\">\n    <div class=\"container-fluid\">\n        <a class=\"navbar-brand\" href=\"#\">Storydoc.io | Fabric</a>\n    </div>\n</nav>\n\n<nav class=\"navbar navbar-expand-lg navbar-light bg-light page-nav-bar\">\n    <div class=\"d-flex flex-grow-1\">\n        <span class=\"navbar-brand\"></span>\n        <div class=\"navbar-brand \" >\n            <div style=\"cursor: pointer;\" (click)=\"toggleSideBar()\">\n                <fa-icon [icon]=\"icon()\"></fa-icon>\n            </div>\n        </div>\n        <div class=\"navbar-brand\">\n            <ng-container *ngTemplateOutlet=\"title\"></ng-container>\n        </div>\n    </div>\n    <div class=\"collapse navbar-collapse flex-grow-1 text-right\">\n        <ul class=\"navbar-nav ms-auto flex-nowrap\">\n            <li class=\"nav-item\">\n                <app-connection-status></app-connection-status>\n            </li>\n        </ul>\n    </div>\n</nav>\n<div class=\"text-white bg-light sidebar-container\">\n    <ng-container *ngTemplateOutlet=\"sidebar\"></ng-container>\n</div>\n<div *ngIf=\"!sideBarCollapsed()\" class=\"outside-sidebar-container\" (click)=\"toggleSideBar()\"></div>\n<div [class.main]=\"!sideBarCollapsed()\" [class.main-full-screen]=\"sideBarCollapsed()\">\n    <div class=\"container-fluid\">\n        <div class=\"row\">\n            <ng-container *ngTemplateOutlet=\"middle\"></ng-container>\n        </div>\n    </div>\n</div>\n\n\n"
         },
         {
             "name": "MetaModelDialogComponent",
@@ -13808,8 +13987,104 @@
             "templateData": "<app-panel>\n    <ng-container *ngIf=\"mongoNavigationModels$ | async as mongoNavigationModels\">\n        <ng-container *ngIf=\"mongoNavigationModels.get(componentKey) as mongoNavigationModel\">\n            <ul class=\"list-group\">\n                <li *ngFor=\"let root of  mongoNavigationModel.roots\" class=\"list-group-item \"\n                    [class.active]=\"root === selectedCollection\" (click)=\"selectCollection(root)\">\n                    {{root.collectionName}}\n                </li>\n            </ul>\n            <ng-container *ngIf=\"mongoSnapshot\">\n                <ng-container *ngIf=\"selectedCollection\">\n                    <ng-container *ngIf=\"documentSelection==null\">\n                      <ul *ngIf=\"pagedSelectedCollection.needsPager()\" class=\"pagination\">\n                        <li class=\"page-item\"><a class=\"page-link\" (click)=\"pagedSelectedCollection.toFirstPage()\">First</a></li>\n                        <li class=\"page-item\"><a class=\"page-link\" (click)=\"pagedSelectedCollection.toPreviousPage()\">Previous</a></li>\n                        <li class=\"page-item\"><a class=\"page-link\">{{(pagedSelectedCollection.pageNr + 1)}}/{{(pagedSelectedCollection.lastPageNr + 1)}}</a></li>\n                        <li class=\"page-item\"><a class=\"page-link\"\n                                                 (click)=\"pagedSelectedCollection.toNextPage()\">Next</a></li>\n                        <li class=\"page-item\"><a class=\"page-link\"\n                                                 (click)=\"pagedSelectedCollection.toLastPage()\">Last</a></li>\n                      </ul>\n                        <ul class=\"list-group\">\n                            <li class=\"list-group-item \"\n                                *ngFor=\"let document of pagedSelectedCollection.currentPage; let docIdx = index\"\n                                (click)=\"selectDocument(docIdx)\">\n                                {{document}}\n                            </li>\n                        </ul>\n                    </ng-container>\n                    <ng-container *ngIf=\"documentSelection!=null\">\n                        <pre>{{selectedDocument() | json}}</pre>\n                    </ng-container>\n                </ng-container>\n            </ng-container>\n        </ng-container>\n    </ng-container>\n</app-panel>\n"
         },
         {
+            "name": "NavComponent",
+            "id": "component-NavComponent-d3fefdf22f5ea882323b420c7ea9c33368d8341b5acacd5bf8b90c757024beb69d5e0ca86b3012036e82de8e547fbd2870993716c7e4c27988cd67922fd9bc13",
+            "file": "src/app/common/styleguide/nav/nav.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-nav",
+            "styleUrls": [
+                "./nav.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./nav.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "actions",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 21,
+                    "type": "NavItemSpec[]",
+                    "decorators": []
+                }
+            ],
+            "outputsClass": [],
+            "propertiesClass": [
+                {
+                    "name": "active",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NavItemSpec",
+                    "optional": false,
+                    "description": "",
+                    "line": 18
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "doSelect",
+                    "args": [
+                        {
+                            "name": "action",
+                            "type": "NavItemSpec",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 23,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "action",
+                            "type": "NavItemSpec",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import {Component, Input} from '@angular/core';\n\n\nexport interface NavItemSpec {\n  label: string\n  select: () => void\n}\n\n@Component({\n  selector: 'app-nav',\n  templateUrl: './nav.component.html',\n  styleUrls: ['./nav.component.scss']\n})\nexport class NavComponent {\n\n  constructor() { }\n\n  active: NavItemSpec\n\n  @Input()\n  actions: NavItemSpec[]\n\n  doSelect(action: NavItemSpec) {\n    action.select()\n  }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": "",
+                    "styleUrl": "./nav.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [],
+                "line": 14
+            },
+            "templateData": "<ul *ngIf=\"actions\" class=\"nav flex-column\">\n    <li *ngFor=\"let action of actions\" class=\"nav-item\">\n        <a href=\"javascript:void(0);\" class=\"nav-link\" [class.active]=\"action===active\"\n           (click)=\"doSelect(action)\">\n            {{action.label}}\n        </a>\n    </li>\n</ul>\n"
+        },
+        {
             "name": "NavigationPageComponent",
-            "id": "component-NavigationPageComponent-32e53deb72fa334d37fab281856c0070847b3928fa6f6fb202926813b3876975e88b96b8d9da8070e8addab9c06eb3edbb5871456a9e8771f879aba6f5d77ef7",
+            "id": "component-NavigationPageComponent-1bd9aefcf499c87d07c14cc148facd8346e56a95c1e8127a136f46412d38110df00b7845097fdcd8c04308f315e6e32e24eef82f948404d739e29e195278bcda",
             "file": "src/app/navigation-page/navigation-page.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -13836,7 +14111,7 @@
                     "type": "BreadcrumbItem[]",
                     "optional": false,
                     "description": "",
-                    "line": 11
+                    "line": 12
                 },
                 {
                     "name": "selectedDataSource",
@@ -13845,7 +14120,7 @@
                     "type": "DataSourceSelection",
                     "optional": false,
                     "description": "",
-                    "line": 29
+                    "line": 30
                 }
             ],
             "methodsClass": [
@@ -13855,7 +14130,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 24,
+                    "line": 25,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -13872,7 +14147,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 31,
+                    "line": 32,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -13895,7 +14170,7 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, OnInit} from '@angular/core';\nimport {BreadcrumbItem, DataSourceSelection} from \"@fabric/common\";\n\n@Component({\n  selector: 'app-navigation-page',\n  templateUrl: './navigation-page.component.html',\n  styleUrls: ['./navigation-page.component.scss']\n})\nexport class NavigationPageComponent implements OnInit {\n\n  breadcrumbs: BreadcrumbItem[] = [\n    {\n      label: 'Home',\n      route: '/'\n    },\n    {\n      label: 'Navigator'\n    }\n  ]\n\n\n  constructor() { }\n\n  ngOnInit(): void {\n  }\n\n  // datasource selection\n\n  selectedDataSource: DataSourceSelection\n\n  selectDataSource(dataSource: DataSourceSelection) {\n    this.selectedDataSource = dataSource\n  }\n\n\n\n}\n",
+            "sourceCode": "import {Component, OnInit} from '@angular/core';\nimport {BreadcrumbItem} from \"@fabric/common\";\nimport {DataSourceSelection} from \"@fabric/component\";\n\n@Component({\n  selector: 'app-navigation-page',\n  templateUrl: './navigation-page.component.html',\n  styleUrls: ['./navigation-page.component.scss']\n})\nexport class NavigationPageComponent implements OnInit {\n\n  breadcrumbs: BreadcrumbItem[] = [\n    {\n      label: 'Home',\n      route: '/'\n    },\n    {\n      label: 'Navigator'\n    }\n  ]\n\n\n  constructor() { }\n\n  ngOnInit(): void {\n  }\n\n  // datasource selection\n\n  selectedDataSource: DataSourceSelection\n\n  selectDataSource(dataSource: DataSourceSelection) {\n    this.selectedDataSource = dataSource\n  }\n\n\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
@@ -13910,7 +14185,7 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "args": [],
-                "line": 19
+                "line": 20
             },
             "implements": [
                 "OnInit"
@@ -13919,7 +14194,7 @@
         },
         {
             "name": "NavigationPanelComponent",
-            "id": "component-NavigationPanelComponent-f36cd7f67d7fab92ce40e4a747415004eade53a5cf1cebe665e7a45626f700d00003adcb65137888c840c1da9f26e7af0008140dfdff864191e483bec724e171",
+            "id": "component-NavigationPanelComponent-5247f3af58038a5664c699019bc595880663a72894314f0048149f1b2db6350fede92e536e0adf29c8fd26437b94ddcfae9e09105cdba703f29236a34c11f7a5",
             "file": "src/app/navigation-page/navigation-panel/navigation-panel.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -13954,7 +14229,7 @@
                     "type": "NavItem",
                     "optional": false,
                     "description": "",
-                    "line": 29
+                    "line": 31
                 },
                 {
                     "name": "navItems",
@@ -13963,7 +14238,17 @@
                     "type": "NavItem[]",
                     "optional": false,
                     "description": "",
-                    "line": 28
+                    "line": 30
+                },
+                {
+                    "name": "tree$",
+                    "defaultValue": "this.service.tree$",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 26
                 }
             ],
             "methodsClass": [
@@ -13980,7 +14265,7 @@
                     "optional": false,
                     "returnType": "{}",
                     "typeParameters": [],
-                    "line": 31,
+                    "line": 33,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -14011,7 +14296,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 35,
+                    "line": 37,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -14072,7 +14357,7 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, Input, OnInit, SimpleChanges} from '@angular/core';\nimport {DataSourceSelection} from \"@fabric/common\";\nimport {NavItem} from \"@fabric/models\";\nimport {NavigationService} from \"../navigation.service\";\n\n@Component({\n  selector: 'app-navigation-panel',\n  templateUrl: './navigation-panel.component.html',\n  styleUrls: ['./navigation-panel.component.scss']\n})\nexport class NavigationPanelComponent implements OnInit {\n\n  constructor(private service: NavigationService) { }\n\n  ngOnInit(): void {\n  }\n\n  @Input()\n  dataSource: DataSourceSelection\n\n  ngOnChanges(changes: SimpleChanges) {\n    let systemComponentKey = this.dataSource.systemComponentKey;\n    this.service.loadNavItems(systemComponentKey).then(navItems => this.initNavItems(navItems))\n  }\n\n  // navitems\n\n  navItems: NavItem[]\n  currentNavItem: NavItem\n\n  private initNavItems(navItems: NavItem[]) {\n    return this.navItems = navItems;\n  }\n\n  navItemSelected(navItem: NavItem) {\n    this.currentNavItem = navItem\n\n  }\n\n}\n",
+            "sourceCode": "import {Component, Input, OnInit, SimpleChanges} from '@angular/core';\nimport {DataSourceSelection} from \"@fabric/component\";\nimport {NavItem} from \"@fabric/models\";\nimport {NavigationService} from \"../navigation.service\";\n\n@Component({\n  selector: 'app-navigation-panel',\n  templateUrl: './navigation-panel.component.html',\n  styleUrls: ['./navigation-panel.component.scss']\n})\nexport class NavigationPanelComponent implements OnInit {\n\n  constructor(private service: NavigationService) { }\n\n  ngOnInit(): void {\n  }\n\n  @Input()\n  dataSource: DataSourceSelection\n\n  ngOnChanges(changes: SimpleChanges) {\n    let systemComponentKey = this.dataSource.systemComponentKey;\n    this.service.loadNavItems(systemComponentKey, null)\n  }\n\n  tree$ = this.service.tree$\n\n  // navitems\n\n  navItems: NavItem[]\n  currentNavItem: NavItem\n\n  private initNavItems(navItems: NavItem[]) {\n    return this.navItems = navItems;\n  }\n\n  navItemSelected(navItem: NavItem) {\n    this.currentNavItem = navItem\n\n  }\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
@@ -14110,7 +14395,7 @@
             "implements": [
                 "OnInit"
             ],
-            "templateData": "<div class=\"container-fluid\">\n    <div class=\"row\">\n        <div class=\"col-md-12\">\n            <app-panel>\n                <div style=\"min-height: 80vh; max-height: 80vh; overflow: auto\">\n                </div>\n            </app-panel>\n        </div>\n    </div>\n\n</div>\n"
+            "templateData": "<div class=\"container-fluid\">\n    <div class=\"row\">\n        <div class=\"col-md-12\">\n            <app-panel>\n                <div style=\"min-height: 80vh; max-height: 80vh; overflow: auto\">\n                    <ng-container *ngIf=\"tree$ | async as tree\">\n                        <app-navigation-tree [tree]=\"tree\" ></app-navigation-tree>\n                    </ng-container>\n                </div>\n            </app-panel>\n        </div>\n    </div>\n\n</div>\n"
         },
         {
             "name": "NavigationSelectionPanelComponent",
@@ -14222,7 +14507,7 @@
         },
         {
             "name": "NavigationTreeComponent",
-            "id": "component-NavigationTreeComponent-0eb926ad8fb13c9ff76b293b3a5b931be2d6e05fabfa21c8272ac25e0958b2c08c7498e41b17b82aaf056ec75ec0144b7fd5e6045e2469ff4114cb73a4032fd6",
+            "id": "component-NavigationTreeComponent-ce1977ba3438b86dcaa4cf0a588756dc717d30dd8ae9612e187208d096124db5ef693e3910af803b0a2188c22c13bfc4e933ba6be35fb07a82d4d75810f39926",
             "file": "src/app/navigation-page/navigation-tree/navigation-tree.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -14238,7 +14523,16 @@
                 "./navigation-tree.component.html"
             ],
             "viewProviders": [],
-            "inputsClass": [],
+            "inputsClass": [
+                {
+                    "name": "tree",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 26,
+                    "type": "NavTreeItemDto",
+                    "decorators": []
+                }
+            ],
             "outputsClass": [],
             "propertiesClass": [],
             "methodsClass": [
@@ -14248,7 +14542,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 20,
+                    "line": 22,
                     "deprecated": false,
                     "deprecationMessage": ""
                 }
@@ -14260,7 +14554,7 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, OnInit} from '@angular/core';\nimport {Row} from \"@fabric/models\";\n\nexport interface NavTreeItemDto {\n\n    query: string\n    rows: Row[]\n\n}\n\n@Component({\n  selector: 'app-navigation-tree',\n  templateUrl: './navigation-tree.component.html',\n  styleUrls: ['./navigation-tree.component.scss']\n})\nexport class NavigationTreeComponent implements OnInit {\n\n  constructor() { }\n\n  ngOnInit(): void {\n  }\n\n}\n",
+            "sourceCode": "import {Component, Input, OnInit} from '@angular/core';\nimport {NavItem, Row} from \"@fabric/models\";\n\nexport interface NavTreeItemDto {\n    root: boolean\n    navItems: NavItem[]\n    label?: string\n    rows?: Row[]\n    columns?: string[]\n    children?: NavTreeItemDto[]\n}\n\n@Component({\n  selector: 'app-navigation-tree',\n  templateUrl: './navigation-tree.component.html',\n  styleUrls: ['./navigation-tree.component.scss']\n})\nexport class NavigationTreeComponent implements OnInit {\n\n  constructor() { }\n\n  ngOnInit(): void {\n  }\n\n  @Input()\n  tree: NavTreeItemDto\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
@@ -14275,16 +14569,16 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "args": [],
-                "line": 16
+                "line": 18
             },
             "implements": [
                 "OnInit"
             ],
-            "templateData": "<p>navigation-tree works!</p>\n"
+            "templateData": "<app-navigation-tree-item [item]=\"tree\"></app-navigation-tree-item>\n\n"
         },
         {
             "name": "NavigationTreeItemComponent",
-            "id": "component-NavigationTreeItemComponent-6b9f188b90c8283873bd530f28cf1f2dde880e696180ee7e674516b15b1eed7dd7f3c48597dcd7d5f7c87dfd595f230757876e61eb66809a255b8d1cc9ae02f3",
+            "id": "component-NavigationTreeItemComponent-7c2013a82c62335f5b9e1dd84208d5647f5a919114a1e4f717177fc89ba3666c3249825ef8e4f89d32e33d540a7c495e6e2f4529e3693691e4c3b1715d1c9733",
             "file": "src/app/navigation-page/navigation-tree-item/navigation-tree-item.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -14300,9 +14594,47 @@
                 "./navigation-tree-item.component.html"
             ],
             "viewProviders": [],
-            "inputsClass": [],
-            "outputsClass": [],
-            "propertiesClass": [],
+            "inputsClass": [
+                {
+                    "name": "depth",
+                    "defaultValue": "0",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 24,
+                    "type": "number",
+                    "decorators": []
+                },
+                {
+                    "name": "item",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 18,
+                    "type": "NavTreeItemDto",
+                    "decorators": []
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "onNavSelect",
+                    "defaultValue": "new EventEmitter<NavItem>()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 21,
+                    "type": "EventEmitter"
+                }
+            ],
+            "propertiesClass": [
+                {
+                    "name": "selectIcon",
+                    "defaultValue": "faArrowRight",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 13
+                }
+            ],
             "methodsClass": [
                 {
                     "name": "ngOnInit",
@@ -14310,9 +14642,37 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 12,
+                    "line": 26,
                     "deprecated": false,
                     "deprecationMessage": ""
+                },
+                {
+                    "name": "selectNav",
+                    "args": [
+                        {
+                            "name": "item",
+                            "type": "NavItem",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 29,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "item",
+                            "type": "NavItem",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
                 }
             ],
             "deprecated": false,
@@ -14322,11 +14682,11 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import { Component, OnInit } from '@angular/core';\n\n@Component({\n  selector: 'app-navigation-tree-item',\n  templateUrl: './navigation-tree-item.component.html',\n  styleUrls: ['./navigation-tree-item.component.scss']\n})\nexport class NavigationTreeItemComponent implements OnInit {\n\n  constructor() { }\n\n  ngOnInit(): void {\n  }\n\n}\n",
+            "sourceCode": "import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';\nimport {NavTreeItemDto} from \"../navigation-tree/navigation-tree.component\";\nimport {faArrowRight} from \"@fortawesome/free-solid-svg-icons\";\nimport {NavItem} from \"@fabric/models\";\n\n@Component({\n  selector: 'app-navigation-tree-item',\n  templateUrl: './navigation-tree-item.component.html',\n  styleUrls: ['./navigation-tree-item.component.scss']\n})\nexport class NavigationTreeItemComponent implements OnInit {\n\n  selectIcon = faArrowRight\n\n  constructor() { }\n\n  @Input()\n  item: NavTreeItemDto\n\n  @Output()\n  onNavSelect = new EventEmitter<NavItem>()\n\n  @Input()\n  depth: number = 0\n\n  ngOnInit(): void {\n  }\n\n  selectNav(item: NavItem) {\n    console.log('selected: ', item)\n    this.onNavSelect.emit(item)\n  }\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
-                    "data": "",
+                    "data": ".item-container {\n  position: relative;\n}\n\n.table-container {\n  padding: 10px;\n  border: 1px solid steelblue;\n  border-radius: 10px;\n}\n\n.title-section {\n}\n\n.table-section {\n  padding-top: 10px;\n}\n\n.navigation-section {\n}\n\n.navigation-select {\n  width: 200px;\n  padding: 0px;\n  display: inline;\n}\n\n.children-container {\n  position: absolute;\n  left: 100px;\n}\n\n.child-container {\n  padding-top: 10px;\n}",
                     "styleUrl": "./navigation-tree-item.component.scss"
                 }
             ],
@@ -14337,12 +14697,12 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "args": [],
-                "line": 8
+                "line": 13
             },
             "implements": [
                 "OnInit"
             ],
-            "templateData": "<p>navigation-tree-item works!</p>\n"
+            "templateData": "<div class=\"item-container\">\n<ng-container *ngIf=\"item.root\">\n    <div class=\"navigation-section\">\n        <fa-icon [icon]=\"selectIcon\"></fa-icon>\n        &nbsp;\n        <select *ngIf=\"item.navItems\" [ngModel]=\"item.navItems\" class=\"form-select navigation-select\"  (ngModelChange)=\"selectNav($event)\">\n            <option>-- select --</option>\n            <option [ngValue]=\"navItem\" *ngFor=\"let navItem of item.navItems\">\n                {{navItem.label}}\n            </option>\n        </select>\n    </div>\n</ng-container>\n<ng-container *ngIf=\"!item.root\">\n    <div class=\"table-container\">\n        <div class=\"title-section\">\n            {{item.label}}\n        </div>\n        <div class=\"table-section\">\n            <table class=\"table table-bordered\">\n                <thead>\n                <tr>\n                    <th *ngFor=\"let column of item.columns\">{{column}}</th>\n                </tr>\n                </thead>\n                <tbody>\n                <tr *ngFor=\"let row of item.rows\">\n                    <td *ngFor=\"let value of row.values\">\n                        {{value}}\n                    </td>\n                </tr>\n                </tbody>\n            </table>\n        </div>\n        <div *ngIf=\"item.navItems\" class=\"navigation-section\">\n            <fa-icon [icon]=\"selectIcon\"></fa-icon>\n            <select class=\"form-select navigation-select\" *ngIf=\"item.navItems\">\n                <option *ngFor=\"let navItem of item.navItems\">\n                    {{navItem.label}}\n                </option>\n            </select>\n        </div>\n    </div>\n</ng-container>\n<ng-container *ngIf=\"item.children\">\n    <div class=\"children-container\">\n        <ng-container *ngFor=\"let child of item.children\">\n            <div class=\"child-container\">\n                <app-navigation-tree-item [item]=\"child\" [depth]=\"depth+1\"></app-navigation-tree-item>\n            </div>\n        </ng-container>\n    </div>\n</ng-container>\n</div>\n"
         },
         {
             "name": "PanelComponent",
@@ -15461,7 +15821,7 @@
         },
         {
             "name": "SideBarComponent",
-            "id": "component-SideBarComponent-7a50318a97ef40c99ded6a70bd430f7c9ee3ffc3398ce4e297a5d771232bc49770e5bd99222ef2ec54078a1b60b328f2bc7127d0772bede258a1a90074fd41de",
+            "id": "component-SideBarComponent-ce15300ec621e3dfe221c66e047ce519da61a59a6e2598eeb786ed2a986155469c1543a10cf610f4c5a01f6721e77bd040ca4b918007111ee411526fbe8a09c7",
             "file": "src/app/common/styleguide/side-bar/side-bar.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -15482,7 +15842,7 @@
                     "name": "active",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "line": 45,
+                    "line": 23,
                     "type": "PageId",
                     "decorators": []
                 }
@@ -15497,7 +15857,7 @@
                     "type": "ActionSpec[]",
                     "optional": false,
                     "description": "",
-                    "line": 21
+                    "line": 25
                 }
             ],
             "methodsClass": [
@@ -15507,17 +15867,7 @@
                     "optional": false,
                     "returnType": "boolean",
                     "typeParameters": [],
-                    "line": 60,
-                    "deprecated": false,
-                    "deprecationMessage": ""
-                },
-                {
-                    "name": "icon",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "any",
-                    "typeParameters": [],
-                    "line": 64,
+                    "line": 57,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -15534,7 +15884,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 47,
+                    "line": 48,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -15550,22 +15900,12 @@
                     ]
                 },
                 {
-                    "name": "ngOnInit",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 53,
-                    "deprecated": false,
-                    "deprecationMessage": ""
-                },
-                {
                     "name": "toggleCollapse",
                     "args": [],
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 56,
+                    "line": 53,
                     "deprecated": false,
                     "deprecationMessage": ""
                 }
@@ -15577,11 +15917,11 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, Input, OnInit} from '@angular/core';\nimport {Router} from \"@angular/router\";\nimport {SideBarService} from \"./side-bar.service\";\nimport {faBars, faTimes} from '@fortawesome/free-solid-svg-icons';\n\nexport interface ActionSpec {\n  label: string\n  id : PageId\n  route: string[]\n}\n\ntype PageId = 'settings' | 'dashboard' | 'console' | 'navigation'\n\n@Component({\n  selector: 'app-side-bar',\n  templateUrl: './side-bar.component.html',\n  styleUrls: ['./side-bar.component.scss']\n})\nexport class SideBarComponent implements OnInit {\n\n  actions: ActionSpec[] = [\n    {\n      id : 'settings',\n      label: 'Settings',\n      route: ['fe', 'systemdescription']\n    },\n    {\n      id : 'dashboard',\n      label: 'Snapshots',\n      route: ['fe', 'dashboard']\n    },\n    {\n      id : 'console',\n      label: 'Console',\n      route: ['fe', 'console']\n    },\n    {\n      id : 'navigation',\n      label: 'Navigator',\n      route: ['fe', 'navigation']\n    },\n  ]\n\n  @Input()\n  active: PageId;\n\n  navigateTo(route:string[]) {\n    this.router.navigate(route )\n  }\n\n  constructor(private router: Router, private service: SideBarService) { }\n\n  ngOnInit(): void {\n  }\n\n  toggleCollapse() {\n    this.service.toggleState()\n  }\n\n  collapsed(): boolean {\n    return this.service.collapsed;\n  }\n\n  icon() {\n    return this.collapsed() ? faBars : faTimes\n  }\n\n}\n",
+            "sourceCode": "import {Component, Input} from '@angular/core';\nimport {Router} from \"@angular/router\";\nimport {SideBarService} from \"./side-bar.service\";\n\nexport interface ActionSpec {\n  label: string\n  id : PageId\n  route: string[]\n}\n\ntype PageId = 'settings' | 'dashboard' | 'console' | 'navigation'\n\n@Component({\n  selector: 'app-side-bar',\n  templateUrl: './side-bar.component.html',\n  styleUrls: ['./side-bar.component.scss']\n})\nexport class SideBarComponent {\n\n  constructor(private router: Router, private sideBarService: SideBarService) { }\n\n  @Input()\n  active: PageId;\n\n  actions: ActionSpec[] = [\n    {\n      id : 'settings',\n      label: 'Settings',\n      route: ['fe', 'systemdescription']\n    },\n    {\n      id : 'dashboard',\n      label: 'Snapshots',\n      route: ['fe', 'dashboard']\n    },\n    {\n      id : 'console',\n      label: 'Console',\n      route: ['fe', 'console']\n    },\n    {\n      id : 'navigation',\n      label: 'Navigator',\n      route: ['fe', 'navigation']\n    },\n  ]\n\n  navigateTo(route:string[]) {\n    this.sideBarService.collapse()\n    this.router.navigate(route )\n  }\n\n  toggleCollapse() {\n    this.sideBarService.toggleState()\n  }\n\n  collapsed(): boolean {\n    return this.sideBarService.collapsed;\n  }\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
-                    "data": "",
+                    "data": ".sidebar {\n  width: 280px;\n}",
                     "styleUrl": "./side-bar.component.scss"
                 }
             ],
@@ -15599,13 +15939,13 @@
                         "deprecationMessage": ""
                     },
                     {
-                        "name": "service",
+                        "name": "sideBarService",
                         "type": "SideBarService",
                         "deprecated": false,
                         "deprecationMessage": ""
                     }
                 ],
-                "line": 49,
+                "line": 18,
                 "jsdoctags": [
                     {
                         "name": "router",
@@ -15617,7 +15957,7 @@
                         }
                     },
                     {
-                        "name": "service",
+                        "name": "sideBarService",
                         "type": "SideBarService",
                         "deprecated": false,
                         "deprecationMessage": "",
@@ -15627,10 +15967,7 @@
                     }
                 ]
             },
-            "implements": [
-                "OnInit"
-            ],
-            "templateData": "<div style=\"cursor: pointer;\" (click)=\"toggleCollapse()\">\n    <fa-icon [icon]=\"icon()\"></fa-icon>\n</div>\n<ng-container *ngIf=\"!collapsed()\">\n    <div class=\"d-flex flex-column flex-shrink-0 p-3 text-white bg-light\" style=\"width: 280px;\">\n        <a href=\"/\" class=\"d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none\">\n            <svg class=\"bi me-2\" width=\"40\" height=\"32\">\n                <use xlink:href=\"#bootstrap\"></use>\n            </svg>\n            <span class=\"fs-4\">Fabric</span>\n        </a>\n        <hr>\n        <ul class=\"nav nav-pills flex-column mb-auto\">\n            <li *ngFor=\"let action of actions\" class=\"nav-item\">\n                <a href=\"javascript:void(0);\" class=\"nav-link\" [class.active]=\"action.id==active\"\n                   (click)=\"navigateTo(action.route)\">\n                    <svg class=\"bi me-2\" width=\"16\" height=\"16\">\n                        <use xlink:href=\"#home\"></use>\n                    </svg>\n                    {{action.label}}\n                </a>\n            </li>\n        </ul>\n    </div>\n</ng-container>\n"
+            "templateData": "<ng-container *ngIf=\"!collapsed()\">\n    <div class=\"sidebar\">\n        <ul class=\"nav nav-pills flex-column\">\n            <li *ngFor=\"let action of actions\" class=\"nav-item\">\n                <a href=\"javascript:void(0);\" class=\"nav-link\" [class.active]=\"action.id==active\"\n                   (click)=\"navigateTo(action.route)\">\n                    {{action.label}}\n                </a>\n            </li>\n        </ul>\n    </div>\n</ng-container>\n"
         },
         {
             "name": "SnapshotDialogComponent",
@@ -17090,7 +17427,7 @@
         },
         {
             "name": "StatusComponent",
-            "id": "component-StatusComponent-a4f58c9ddcf0aea3dfd38110cac7ab8cbdcc5b2105a4a464d7cd203bebe8116426cd8cb23a961e36959c195db8ea6f483502ccf6f4494e6da88480df6e55008c",
+            "id": "component-StatusComponent-0ba8a36910ee61d1987d01b338da163c75c70ce2d332b8be67083016004c84ddc4bed48fd7b3ee3932692c1f9ce730a159323154df010481934449bf9b4d2a8e",
             "file": "src/app/common/styleguide/status/status.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -17111,13 +17448,34 @@
                     "name": "status",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "line": 13,
-                    "type": "string",
+                    "line": 22,
+                    "type": "ConnectionStatus",
                     "decorators": []
                 }
             ],
             "outputsClass": [],
-            "propertiesClass": [],
+            "propertiesClass": [
+                {
+                    "name": "faArrowUp",
+                    "defaultValue": "faArrowUp",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 17
+                },
+                {
+                    "name": "faExclamationTriangle",
+                    "defaultValue": "faExclamationTriangle",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 16
+                }
+            ],
             "methodsClass": [],
             "deprecated": false,
             "deprecationMessage": "",
@@ -17126,11 +17484,11 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, Input} from '@angular/core';\n\n@Component({\n  selector: 'app-status',\n  templateUrl: './status.component.html',\n  styleUrls: ['./status.component.scss']\n})\nexport class StatusComponent {\n\n  constructor() { }\n\n  @Input()\n  status: string\n\n}\n",
+            "sourceCode": "import {Component, Input} from '@angular/core';\nimport {faArrowUp, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';\n\nexport interface ConnectionStatus {\n  status: 'Calling' | 'OK' | 'Problem'\n  msg: string\n}\n\n@Component({\n  selector: 'app-status',\n  templateUrl: './status.component.html',\n  styleUrls: ['./status.component.scss']\n})\nexport class StatusComponent {\n\n  faExclamationTriangle = faExclamationTriangle\n  faArrowUp = faArrowUp\n\n  constructor() { }\n\n  @Input()\n  status: ConnectionStatus\n\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
-                    "data": "",
+                    "data": ".status-container {\n  padding-right: 30px;\n}\n\n.status-icon {\n  font-size: 20px;\n}\n\n.status-icon-problem {\n  color: darkorange;\n}\n\n.popover__title {\n  font-size: 24px;\n  line-height: 36px;\n  text-decoration: none;\n  color: rgb(228, 68, 68);\n  text-align: center;\n  padding: 15px 0;\n}\n\n.popover__wrapper {\n  position: relative;\n  display: inline-block;\n}\n\n.popover__content {\n  opacity: 0;\n  visibility: hidden;\n  position: absolute;\n  left: -150px;\n  transform: translate(0, 10px);\n  background-color: #bfbfbf;\n  padding: 1.5rem;\n  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);\n  width: auto;\n}\n.popover__content:before {\n  position: absolute;\n  z-index: -1;\n  content: \"\";\n  right: calc(50% - 10px);\n  top: -8px;\n  border-style: solid;\n  border-width: 0 10px 10px 10px;\n  border-color: transparent transparent #bfbfbf transparent;\n  transition-duration: 0.3s;\n  transition-property: transform;\n}\n.popover__wrapper:hover .popover__content {\n  z-index: 10;\n  opacity: 1;\n  visibility: visible;\n  transform: translate(0, -20px);\n  transition: all 0.5s cubic-bezier(0.75, -0.02, 0.2, 0.97);\n}\n.popover__message {\n  text-align: center;\n}\n",
                     "styleUrl": "./status.component.scss"
                 }
             ],
@@ -17141,9 +17499,9 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "args": [],
-                "line": 8
+                "line": 17
             },
-            "templateData": "<span>status: {{status}}</span>\n"
+            "templateData": "<div *ngIf=\"status.status==='Calling'\" class=\"status-container\">\n    <fa-icon class=\"status-icon\" [icon]=\"faArrowUp\" ></fa-icon>\n</div>\n<div *ngIf=\"status.status==='Problem'\" class=\"status-container\">\n    <div class=\"popover__wrapper\">\n        <fa-icon class=\"status-icon status-icon-problem\" [icon]=\"faExclamationTriangle\" ></fa-icon>\n        <div class=\"popover__content\">\n            <p class=\"popover__message\">Connection problem</p>\n            {{status.msg}}\n        </div>\n    </div>\n</div>\n"
         },
         {
             "name": "SystemComponentDialogComponent",
@@ -17998,7 +18356,7 @@
             "implements": [
                 "OnInit"
             ],
-            "templateData": "<app-layout-1col\n        [sidebar]=\"sidebar\"\n        [title]=\"title\"\n        [breadcrumb]=\"breadcrumb\"\n        [middle]=\"middle\"\n>\n</app-layout-1col>\n\n<ng-template #sidebar>\n    <app-side-bar [active]=\"'settings'\"></app-side-bar>\n</ng-template>\n\n<ng-template #title>\n    <div class=\"row\">\n        <h3>Settings</h3>\n    </div>\n</ng-template>\n\n\n<ng-template #breadcrumb>\n    <app-breadcrumb [breadcrumbs]=\"breadcrumbs\"></app-breadcrumb>\n</ng-template>\n\n\n<ng-template #middle>\n    <ng-container *ngIf=\"systemTypeDescriptors$ | async as systemTypeDescriptors\">\n        <div *ngIf=\"systemDescription$ | async as systemDescription\">\n            <div class=\"container-fluid\">\n                <div class=\"row\">\n                    <div class=\"col-md-2\">\n                        <ul class=\"nav nav-tabs flex-column\">\n                            <li class=\"nav-item\">\n                                <a class=\"nav-link\" [class.active]=\"selectedSystemDescriptionTab==='SYSTEM'\"\n                                   aria-current=\"page\"\n                                   (click)=\"selectSystemDescriptionTab('SYSTEM')\"\n                                   href=\"javascript:void(0);\">Datasources</a>\n                            </li>\n                            <li class=\"nav-item\">\n                                <a class=\"nav-link\" [class.active]=\"selectedSystemDescriptionTab==='ENVIRONMENTS'\"\n                                   (click)=\"selectSystemDescriptionTab('ENVIRONMENTS')\" href=\"javascript:void(0);\">Environments</a>\n                            </li>\n                        </ul>\n                    </div>\n                    <div class=\"col-md-10\">\n                        <ng-container [ngSwitch]=\"selectedSystemDescriptionTab\">\n                            <ng-container *ngSwitchCase=\"'ENVIRONMENTS'\">\n                                <app-environment-panel [systemDescription]=\"systemDescription\"></app-environment-panel>\n                            </ng-container>\n                            <ng-container *ngSwitchCase=\"'SYSTEM'\">\n                                <app-system-component-panel\n                                        [systemDescription]=\"systemDescription\"\n                                        [systemTypes]=\"systemTypeDescriptors\"\n                                        (selectionChanged)=\"systemComponentSelectionChanged($event)\"\n                                        [selection]=\"selectedSystemComponent\">\n                                </app-system-component-panel>\n                                <br>\n                                <ng-container *ngIf=\"selectedSystemComponent\">\n                                    <h4>{{selectedSystemComponent.label}} details</h4>\n                                    <ul class=\"nav nav-tabs\">\n                                        <li class=\"nav-item\">\n                                            <a class=\"nav-link\"\n                                               [class.active]=\"selectedDataSourceTab==='SETTINGS'\"\n                                               (click)=\"selectDataSourceTab('SETTINGS')\"\n                                               href=\"javascript:void(0);\">\n                                                Connection settings\n                                            </a>\n                                        </li>\n                                        <li class=\"nav-item\">\n                                            <a class=\"nav-link\"\n                                               [class.active]=\"selectedDataSourceTab==='METADATA'\"\n                                               (click)=\"selectDataSourceTab('METADATA')\"\n                                               href=\"javascript:void(0);\">\n                                                Metadata\n                                            </a>\n                                        </li>\n                                    </ul>\n                                    <ng-container [ngSwitch]=\"selectedDataSourceTab\">\n                                        <ng-container *ngSwitchCase=\"'SETTINGS'\">\n                                            <app-settings-panel\n                                                    [systemDescription]=\"systemDescription\"\n                                                    [systemTypes]=\"systemTypeDescriptors\"\n                                                    [systemComponent]=\"selectedSystemComponent\">\n                                            </app-settings-panel>\n                                        </ng-container>\n                                        <ng-container *ngSwitchCase=\"'METADATA'\">\n                                            <app-meta-model-panel\n                                                    [systemDescription]=\"systemDescription\"\n                                                    [systemComponent]=\"selectedSystemComponent\">\n                                            </app-meta-model-panel>\n                                        </ng-container>\n                                    </ng-container>\n                                </ng-container>\n                            </ng-container>\n                        </ng-container>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </ng-container>\n\n</ng-template>\n\n"
+            "templateData": "<app-layout-1col\n        [sidebar]=\"sidebar\"\n        [title]=\"title\"\n        [breadcrumb]=\"breadcrumb\"\n        [middle]=\"middle\"\n>\n</app-layout-1col>\n\n<ng-template #sidebar>\n    <app-side-bar [active]=\"'settings'\"></app-side-bar>\n</ng-template>\n\n<ng-template #title>\n    <div class=\"row\">\n        <h3>Settings</h3>\n    </div>\n</ng-template>\n\n\n<ng-template #breadcrumb>\n    <app-breadcrumb [breadcrumbs]=\"breadcrumbs\"></app-breadcrumb>\n</ng-template>\n\n\n<ng-template #middle>\n    <ng-container *ngIf=\"systemTypeDescriptors$ | async as systemTypeDescriptors\">\n        <div *ngIf=\"systemDescription$ | async as systemDescription\">\n            <div class=\"container-fluid\" style=\"border: 1px solid red;\" >\n                <div class=\"row\">\n                    <div class=\"col-md-2\">\n                        <ul class=\"nav nav-tabs flex-column\">\n                            <li class=\"nav-item\">\n                                <a class=\"nav-link\" [class.active]=\"selectedSystemDescriptionTab==='SYSTEM'\"\n                                   aria-current=\"page\"\n                                   (click)=\"selectSystemDescriptionTab('SYSTEM')\"\n                                   href=\"javascript:void(0);\">Datasources</a>\n                            </li>\n                            <li class=\"nav-item\">\n                                <a class=\"nav-link\" [class.active]=\"selectedSystemDescriptionTab==='ENVIRONMENTS'\"\n                                   (click)=\"selectSystemDescriptionTab('ENVIRONMENTS')\" href=\"javascript:void(0);\">Environments</a>\n                            </li>\n                        </ul>\n                    </div>\n                    <div class=\"col-md-10\">\n                        <ng-container [ngSwitch]=\"selectedSystemDescriptionTab\">\n                            <ng-container *ngSwitchCase=\"'ENVIRONMENTS'\">\n                                <app-environment-panel [systemDescription]=\"systemDescription\"></app-environment-panel>\n                            </ng-container>\n                            <ng-container *ngSwitchCase=\"'SYSTEM'\">\n                                <app-system-component-panel\n                                        [systemDescription]=\"systemDescription\"\n                                        [systemTypes]=\"systemTypeDescriptors\"\n                                        (selectionChanged)=\"systemComponentSelectionChanged($event)\"\n                                        [selection]=\"selectedSystemComponent\">\n                                </app-system-component-panel>\n                                <br>\n                                <ng-container *ngIf=\"selectedSystemComponent\">\n                                    <h4>{{selectedSystemComponent.label}} details</h4>\n                                    <ul class=\"nav nav-tabs\">\n                                        <li class=\"nav-item\">\n                                            <a class=\"nav-link\"\n                                               [class.active]=\"selectedDataSourceTab==='SETTINGS'\"\n                                               (click)=\"selectDataSourceTab('SETTINGS')\"\n                                               href=\"javascript:void(0);\">\n                                                Connection settings\n                                            </a>\n                                        </li>\n                                        <li class=\"nav-item\">\n                                            <a class=\"nav-link\"\n                                               [class.active]=\"selectedDataSourceTab==='METADATA'\"\n                                               (click)=\"selectDataSourceTab('METADATA')\"\n                                               href=\"javascript:void(0);\">\n                                                Metadata\n                                            </a>\n                                        </li>\n                                    </ul>\n                                    <ng-container [ngSwitch]=\"selectedDataSourceTab\">\n                                        <ng-container *ngSwitchCase=\"'SETTINGS'\">\n                                            <app-settings-panel\n                                                    [systemDescription]=\"systemDescription\"\n                                                    [systemTypes]=\"systemTypeDescriptors\"\n                                                    [systemComponent]=\"selectedSystemComponent\">\n                                            </app-settings-panel>\n                                        </ng-container>\n                                        <ng-container *ngSwitchCase=\"'METADATA'\">\n                                            <app-meta-model-panel\n                                                    [systemDescription]=\"systemDescription\"\n                                                    [systemComponent]=\"selectedSystemComponent\">\n                                            </app-meta-model-panel>\n                                        </ng-container>\n                                    </ng-container>\n                                </ng-container>\n                            </ng-container>\n                        </ng-container>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </ng-container>\n\n</ng-template>\n\n"
         },
         {
             "name": "TableComponent",
@@ -18187,7 +18545,7 @@
             "implements": [
                 "OnInit"
             ],
-            "templateData": "<div class=\"row\">\n    <div class=\"float-end\"><app-connection-status></app-connection-status></div>\n    <h3>{{text}}</h3>\n</div>\n"
+            "templateData": "<div class=\"row\">\n    <h3>{{text}}</h3>\n</div>\n"
         },
         {
             "name": "ValidationMessagesComponent",
@@ -18380,13 +18738,13 @@
         },
         {
             "name": "AppModule",
-            "id": "module-AppModule-85b621061cd71a5480d39229d5f6c92ff6ab61e9b72a9d67da1a0ecc8a0d067c2a4e3b26a22eee8a24ac073d7b18352c1ed174c0a69f82c5b16effb0c6408714",
+            "id": "module-AppModule-6725cecc48dba820d252abaa00ddc9fce0a31f18dccbe324f955116972b23b8e01398b889f363489d15a939e6534ee377baea342b556f7d05cd291da93687119",
             "description": "",
             "deprecationMessage": "",
             "deprecated": false,
             "file": "src/app/app.module.ts",
             "methods": [],
-            "sourceCode": "import {NgModule} from '@angular/core';\nimport {AppRoutingModule} from './app-routing.module';\nimport {AppComponent} from './app.component';\n\nimport {CoreModule} from './core.module';\nimport {FabricCommonModule} from './common/common.module';\n\nimport {SystemDescriptionModule} from './system-description-page/system-description.module';\nimport {ConsolePageModule} from './console-page/console-page.module';\nimport {DashboardModule} from \"./dashboard-page/dashboard.module\";\nimport {NavigationModule} from \"./navigation-page/navigation.module\"\n\n@NgModule({\n  declarations: [\n    AppComponent,\n  ],\n  imports: [\n    CoreModule,\n    AppRoutingModule,\n    FabricCommonModule,\n    SystemDescriptionModule,\n    ConsolePageModule,\n    DashboardModule,\n    NavigationModule\n  ],\n  providers: [],\n  bootstrap: [AppComponent]\n})\nexport class AppModule {\n}\n",
+            "sourceCode": "import {NgModule} from '@angular/core';\nimport {AppRoutingModule} from './app-routing.module';\nimport {AppComponent} from './app.component';\n\nimport {CoreModule} from './core.module';\nimport {FabricCommonModule} from './common/common.module';\n\nimport {SystemDescriptionModule} from './system-description-page/system-description.module';\nimport {ConsolePageModule} from './console-page/console-page.module';\nimport {DashboardModule} from \"./dashboard-page/dashboard.module\";\nimport {NavigationModule} from \"./navigation-page/navigation.module\"\nimport {ComponentModule} from \"./component/component.module\";\n\n@NgModule({\n  declarations: [\n    AppComponent,\n  ],\n  imports: [\n    CoreModule,\n    AppRoutingModule,\n    FabricCommonModule,\n    ComponentModule,\n    SystemDescriptionModule,\n    ConsolePageModule,\n    DashboardModule,\n    NavigationModule\n  ],\n  providers: [],\n  bootstrap: [AppComponent]\n})\nexport class AppModule {\n}\n",
             "children": [
                 {
                     "type": "providers",
@@ -18481,14 +18839,62 @@
             ]
         },
         {
+            "name": "ComponentModule",
+            "id": "module-ComponentModule-903d5b29b3d06bc11c18f438118dadc8887869acb0a25e1758ece19f33615468892d2ea5d1ebeac9027104a9fc1a0525c076bd10121dcdce5faed3cb722ed335",
+            "description": "",
+            "deprecationMessage": "",
+            "deprecated": false,
+            "file": "src/app/component/component.module.ts",
+            "methods": [],
+            "sourceCode": "import {NgModule} from \"@angular/core\";\n\nimport {CoreModule} from '../core.module';\n\nimport {DataSourceSelectionPanelComponent} from './data-source-selection-panel/data-source-selection-panel.component'\n\n@NgModule({\n    declarations: [\n        DataSourceSelectionPanelComponent\n    ],\n    providers: [\n    ],\n    imports: [\n        CoreModule,\n    ],\n    exports: [\n        DataSourceSelectionPanelComponent\n    ]\n})\nexport class ComponentModule {\n\n}\n",
+            "children": [
+                {
+                    "type": "providers",
+                    "elements": []
+                },
+                {
+                    "type": "declarations",
+                    "elements": [
+                        {
+                            "name": "DataSourceSelectionPanelComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "imports",
+                    "elements": [
+                        {
+                            "name": "CoreModule"
+                        }
+                    ]
+                },
+                {
+                    "type": "exports",
+                    "elements": [
+                        {
+                            "name": "DataSourceSelectionPanelComponent"
+                        }
+                    ]
+                },
+                {
+                    "type": "bootstrap",
+                    "elements": []
+                },
+                {
+                    "type": "classes",
+                    "elements": []
+                }
+            ]
+        },
+        {
             "name": "ConsolePageModule",
-            "id": "module-ConsolePageModule-5d5a621017f7211242b12cd171a2eb6b12718a9a769486783aed7439840990066d6f6712a786fcc9dee253bc840ebf64feddae39091c0f547885b0075ed853b2",
+            "id": "module-ConsolePageModule-661a728e6a486b3ff6ef8187dce5d67583918234aed4089be308fd825ebd3804919d90af3f57bb91201d8a461b25293409e2c8a066cda91d99711363700da264",
             "description": "",
             "deprecationMessage": "",
             "deprecated": false,
             "file": "src/app/console-page/console-page.module.ts",
             "methods": [],
-            "sourceCode": "import {NgModule} from \"@angular/core\";\nimport {CoreModule} from \"../core.module\";\nimport {FabricCommonModule} from \"../common/common.module\";\nimport {ConsolePageComponent} from \"./console-page.component\";\nimport {ConsolePanelComponent} from './console-panel/console-panel.component';\nimport {SnippetPanelComponent} from './console-panel/snippet-panel/snippet-panel.component';\nimport {HistoryPanelComponent} from './console-panel/history-panel/history-panel.component';\nimport {SnippetDialogComponent} from './console-panel/snippet-dialog/snippet-dialog.component';\nimport {TableComponent} from './console-panel/table/table.component';\n\n@NgModule({\n    declarations: [\n        ConsolePageComponent,\n        ConsolePanelComponent,\n        SnippetPanelComponent,\n        HistoryPanelComponent,\n        SnippetDialogComponent,\n        TableComponent,\n    ],\n    imports: [\n        CoreModule,\n        FabricCommonModule\n    ],\n    exports: [\n        ConsolePageComponent\n    ]\n})\nexport class ConsolePageModule { }\n",
+            "sourceCode": "import {NgModule} from \"@angular/core\";\nimport {CoreModule} from \"../core.module\";\nimport {FabricCommonModule} from \"../common/common.module\";\nimport {ConsolePageComponent} from \"./console-page.component\";\nimport {ConsolePanelComponent} from './console-panel/console-panel.component';\nimport {SnippetPanelComponent} from './console-panel/snippet-panel/snippet-panel.component';\nimport {HistoryPanelComponent} from './console-panel/history-panel/history-panel.component';\nimport {SnippetDialogComponent} from './console-panel/snippet-dialog/snippet-dialog.component';\nimport {TableComponent} from './console-panel/table/table.component';\nimport {ComponentModule} from \"../component/component.module\";\n\n@NgModule({\n    declarations: [\n        ConsolePageComponent,\n        ConsolePanelComponent,\n        SnippetPanelComponent,\n        HistoryPanelComponent,\n        SnippetDialogComponent,\n        TableComponent,\n    ],\n    imports: [\n        CoreModule,\n        FabricCommonModule,\n        ComponentModule\n    ],\n    exports: [\n        ConsolePageComponent\n    ]\n})\nexport class ConsolePageModule { }\n",
             "children": [
                 {
                     "type": "providers",
@@ -18667,13 +19073,13 @@
         },
         {
             "name": "FabricCommonModule",
-            "id": "module-FabricCommonModule-1b3b3bac800717c513ea8dd1c9d794c4b2e29c3fc374743f13f79e37e10e5601d42a30e2440e9c06211379065ef4bfe456dad9a87c403c09e35f0375d379dddc",
+            "id": "module-FabricCommonModule-2f19f028d3d416cc8a4700a81b91632348e274884e2cd4cedaa621e22beedcf5d612da83f432f14cc19673ccf57c1b56609f4444da6c7de0abaf84e4bc845ebd",
             "description": "",
             "deprecationMessage": "",
             "deprecated": false,
             "file": "src/app/common/common.module.ts",
             "methods": [],
-            "sourceCode": "import {NgModule} from \"@angular/core\";\n\nimport {CoreModule} from '../core.module';\n\nimport {PopupMenuComponent} from './popup-menu/popup-menu.component';\nimport {ModalComponent} from './modal/modal.component';\nimport {Layout1ColComponent} from \"./styleguide/layout-1col/layout-1col.component\";\nimport {BackButtonComponent} from \"./styleguide/back-button/back-button.component\";\nimport {PanelComponent} from \"./styleguide/panel/panel.component\";\nimport {ConfirmationDialogComponent} from \"./confirmation-dialog/confirmation-dialog.component\";\nimport {ValidationMessagesComponent} from './validation-messages/validation-messages.component';\nimport {TitleComponent} from './styleguide/title/title.component';\nimport {BreadcrumbComponent} from './styleguide/breadcrumb/breadcrumb.component';\nimport {ActionButtonsComponent} from './styleguide/action-buttons/action-buttons.component';\nimport {SideBarComponent} from './styleguide/side-bar/side-bar.component';\nimport {ModalHeaderComponent} from './styleguide/modal-header/modal-header.component';\nimport {ModalFooterComponent} from './styleguide/modal-footer/modal-footer.component';\nimport {HTTP_INTERCEPTORS} from \"@angular/common/http\";\nimport {HttpErrorInterceptor} from \"./connection-status/http-error.interceptor\";\nimport {ConnectionStatusComponent} from './connection-status/connection-status.component';\nimport {CommandProgressComponent} from './styleguide/command-progress/command-progress.component';\nimport {StatusComponent} from './styleguide/status/status.component';\nimport {DataSourceSelectionPanelComponent} from './data-source-selection-panel/data-source-selection-panel.component'\n\n@NgModule({\n    declarations: [\n        ModalComponent,\n        PopupMenuComponent,\n        Layout1ColComponent,\n        BackButtonComponent,\n        PanelComponent,\n        ConfirmationDialogComponent,\n        ValidationMessagesComponent,\n        TitleComponent,\n        BreadcrumbComponent,\n        ActionButtonsComponent,\n        SideBarComponent,\n        ModalHeaderComponent,\n        ModalFooterComponent,\n        ConnectionStatusComponent,\n        CommandProgressComponent,\n        StatusComponent,\n        DataSourceSelectionPanelComponent\n    ],\n    providers: [\n        {\n            provide: HTTP_INTERCEPTORS,\n            useClass: HttpErrorInterceptor,\n            multi: true\n        }\n    ],\n    imports: [\n        CoreModule,\n    ],\n    exports: [\n        ModalComponent,\n        PopupMenuComponent,\n        Layout1ColComponent,\n        BackButtonComponent,\n        PanelComponent,\n        ConfirmationDialogComponent,\n        ValidationMessagesComponent,\n        TitleComponent,\n        BreadcrumbComponent,\n        ActionButtonsComponent,\n        SideBarComponent,\n        ModalHeaderComponent,\n        ModalFooterComponent,\n        CommandProgressComponent,\n        DataSourceSelectionPanelComponent\n    ]\n})\nexport class FabricCommonModule {\n\n}\n",
+            "sourceCode": "import {NgModule} from \"@angular/core\";\n\nimport {CoreModule} from '../core.module';\n\nimport {PopupMenuComponent} from './popup-menu/popup-menu.component';\nimport {ModalComponent} from './modal/modal.component';\nimport {Layout1ColComponent} from \"./styleguide/layout-1col/layout-1col.component\";\nimport {BackButtonComponent} from \"./styleguide/back-button/back-button.component\";\nimport {PanelComponent} from \"./styleguide/panel/panel.component\";\nimport {ConfirmationDialogComponent} from \"./confirmation-dialog/confirmation-dialog.component\";\nimport {ValidationMessagesComponent} from './validation-messages/validation-messages.component';\nimport {TitleComponent} from './styleguide/title/title.component';\nimport {BreadcrumbComponent} from './styleguide/breadcrumb/breadcrumb.component';\nimport {ActionButtonsComponent} from './styleguide/action-buttons/action-buttons.component';\nimport {SideBarComponent} from './styleguide/side-bar/side-bar.component';\nimport {ModalHeaderComponent} from './styleguide/modal-header/modal-header.component';\nimport {ModalFooterComponent} from './styleguide/modal-footer/modal-footer.component';\nimport {HTTP_INTERCEPTORS} from \"@angular/common/http\";\nimport {HttpErrorInterceptor} from \"./connection-status/http-error.interceptor\";\nimport {ConnectionStatusComponent} from './connection-status/connection-status.component';\nimport {CommandProgressComponent} from './styleguide/command-progress/command-progress.component';\nimport {StatusComponent} from './styleguide/status/status.component';\nimport { NavComponent } from './styleguide/nav/nav.component';\n\n@NgModule({\n    declarations: [\n        ModalComponent,\n        PopupMenuComponent,\n        Layout1ColComponent,\n        BackButtonComponent,\n        PanelComponent,\n        ConfirmationDialogComponent,\n        ValidationMessagesComponent,\n        TitleComponent,\n        BreadcrumbComponent,\n        ActionButtonsComponent,\n        SideBarComponent,\n        ModalHeaderComponent,\n        ModalFooterComponent,\n        ConnectionStatusComponent,\n        CommandProgressComponent,\n        StatusComponent,\n        NavComponent,\n    ],\n    providers: [\n        {\n            provide: HTTP_INTERCEPTORS,\n            useClass: HttpErrorInterceptor,\n            multi: true\n        }\n    ],\n    imports: [\n        CoreModule,\n    ],\n    exports: [\n        ModalComponent,\n        PopupMenuComponent,\n        Layout1ColComponent,\n        BackButtonComponent,\n        PanelComponent,\n        ConfirmationDialogComponent,\n        ValidationMessagesComponent,\n        TitleComponent,\n        BreadcrumbComponent,\n        ActionButtonsComponent,\n        SideBarComponent,\n        ModalHeaderComponent,\n        ModalFooterComponent,\n        CommandProgressComponent,\n    ]\n})\nexport class FabricCommonModule {\n\n}\n",
             "children": [
                 {
                     "type": "providers",
@@ -18705,9 +19111,6 @@
                             "name": "ConnectionStatusComponent"
                         },
                         {
-                            "name": "DataSourceSelectionPanelComponent"
-                        },
-                        {
                             "name": "Layout1ColComponent"
                         },
                         {
@@ -18718,6 +19121,9 @@
                         },
                         {
                             "name": "ModalHeaderComponent"
+                        },
+                        {
+                            "name": "NavComponent"
                         },
                         {
                             "name": "PanelComponent"
@@ -18766,9 +19172,6 @@
                             "name": "ConfirmationDialogComponent"
                         },
                         {
-                            "name": "DataSourceSelectionPanelComponent"
-                        },
-                        {
                             "name": "Layout1ColComponent"
                         },
                         {
@@ -18809,13 +19212,13 @@
         },
         {
             "name": "NavigationModule",
-            "id": "module-NavigationModule-92255c8b0155b1a265faf1afeacdd16620c7b34f47d11f9021dde79365635177bf7174ba6f4569c6cd1b2fb3668163a91e9d5e147f5c7aa5daec640dea7f37e2",
+            "id": "module-NavigationModule-3557d794709de8eb682d45317349ee9cc6936d70d0d33c90c49970e0af3dcf7998265eace092d4fcdca5b43250860514e35d52e9308b179dcd545f564f29cc4a",
             "description": "",
             "deprecationMessage": "",
             "deprecated": false,
             "file": "src/app/navigation-page/navigation.module.ts",
             "methods": [],
-            "sourceCode": "import {NgModule} from \"@angular/core\";\nimport {CoreModule} from \"../core.module\";\nimport {FabricCommonModule} from \"../common/common.module\";\nimport {NavigationPageComponent} from \"./navigation-page.component\";\nimport {NavigationPanelComponent} from \"./navigation-panel/navigation-panel.component\";\nimport {NavigationSelectionPanelComponent} from './navigation-selection-panel/navigation-selection-panel.component';\nimport { NavigationTreeComponent } from './navigation-tree/navigation-tree.component';\nimport { NavigationTreeItemComponent } from './navigation-tree-item/navigation-tree-item.component';\n\n@NgModule({\n    declarations: [\n        NavigationPageComponent,\n        NavigationPanelComponent,\n        NavigationSelectionPanelComponent,\n        NavigationTreeComponent,\n        NavigationTreeItemComponent\n    ],\n    imports: [\n        CoreModule,\n        FabricCommonModule,\n    ],\n    exports: [\n        NavigationPageComponent\n    ]\n})\nexport class NavigationModule {}",
+            "sourceCode": "import {NgModule} from \"@angular/core\";\nimport {CoreModule} from \"../core.module\";\nimport {FabricCommonModule} from \"../common/common.module\";\nimport {NavigationPageComponent} from \"./navigation-page.component\";\nimport {NavigationPanelComponent} from \"./navigation-panel/navigation-panel.component\";\nimport {NavigationSelectionPanelComponent} from './navigation-selection-panel/navigation-selection-panel.component';\nimport {NavigationTreeComponent} from './navigation-tree/navigation-tree.component';\nimport {NavigationTreeItemComponent} from './navigation-tree-item/navigation-tree-item.component';\nimport {ComponentModule} from \"../component/component.module\";\nimport {FormsModule} from \"@angular/forms\";\n\n@NgModule({\n    declarations: [\n        NavigationPageComponent,\n        NavigationPanelComponent,\n        NavigationSelectionPanelComponent,\n        NavigationTreeComponent,\n        NavigationTreeItemComponent\n    ],\n    imports: [\n        CoreModule,\n        FabricCommonModule,\n        ComponentModule,\n        FormsModule\n    ],\n    exports: [\n        NavigationPageComponent\n    ]\n})\nexport class NavigationModule {}",
             "children": [
                 {
                     "type": "providers",
@@ -19005,6 +19408,26 @@
                 "defaultValue": "require.context('./', true, /\\.spec\\.ts$/)"
             },
             {
+                "name": "customersNode",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "<NavTreeItemDto>{\n    root: false,\n    label: \"CUSTOMERS\",\n    columns: listOfValues(5, \"column_\"),\n    rows: [\n        { values : listOfValues(5, \"row_1_\") },\n    ],\n}"
+            },
+            {
+                "name": "Default",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/styleguide/nav/nav.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "StatusComponentStory.bind({})"
+            },
+            {
                 "name": "DEFAULT_PAGE_SIZE",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -19045,6 +19468,16 @@
                 "defaultValue": "(args: NavigationTreeComponent) => ({\n    component: NavigationTreeComponent,\n    props: args,\n})"
             },
             {
+                "name": "ordersNode",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "NavTreeItemDto",
+                "defaultValue": "{\n    root: false,\n    label: \"ORDERS\",\n    columns: listOfValues(5, \"column_\"),\n    rows: [\n        { values : listOfValues(5, \"row_1_\") },\n        { values : listOfValues(5, \"row_2_\") },\n        { values : listOfValues(5, \"row_3_\") },\n        { values : listOfValues(5, \"row_4_\") },\n    ],\n    navItems : [\n        {\n            label: \"-- select table --\"\n        },\n        {\n            label: 'PRODUCTS'\n        },\n        {\n            label: 'CUSTOMERS'\n        },\n        {\n            label: 'ORDER_ITEMS'\n        },\n    ],\n    children: []\n\n}"
+            },
+            {
                 "name": "ParameterCodecInstance",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -19053,6 +19486,16 @@
                 "deprecationMessage": "",
                 "type": "",
                 "defaultValue": "new ParameterCodec()"
+            },
+            {
+                "name": "productsNode",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "<NavTreeItemDto>{\n    root: false,\n    label: \"PRODUCTS\",\n    columns: listOfValues(7, \"column_\"),\n    rows: [\n        { values : listOfValues(7, \"row_1_\") },\n    ],\n}"
             },
             {
                 "name": "require",
@@ -19074,6 +19517,36 @@
                 "defaultValue": "TableComponentStory.bind({})"
             },
             {
+                "name": "rootNode",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "NavTreeItemDto",
+                "defaultValue": "{\n    root: true,\n    navItems : [\n        {\n            label: \"-- select table --\"\n        },\n        {\n            label: 'BRANCHES'\n        },\n        {\n            label: 'CUSTOMERS'\n        },\n        {\n            label: 'ORDERS'\n        },\n        {\n            label: 'ORDER_ITEMS'\n        },\n        {\n            label: 'PRODUCTS'\n        },\n        {\n            label: 'STOCK'\n        },\n        {\n            label: 'STORES'\n        },\n        {\n            label: 'WAREHOUSES'\n        },\n    ]\n}"
+            },
+            {
+                "name": "RootNode",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "NavigationTreeComponentStory.bind({})"
+            },
+            {
+                "name": "SelectOrders",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "NavigationTreeComponentStory.bind({})"
+            },
+            {
                 "name": "showValidationMessages",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -19092,6 +19565,16 @@
                 "deprecationMessage": "",
                 "type": "Story<SnippetDialogComponent>",
                 "defaultValue": "(args: SnippetDialogComponent) => ({\n  component: SnippetDialogComponent,\n  props: args,\n})"
+            },
+            {
+                "name": "StatusComponentStory",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/styleguide/nav/nav.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story<NavComponent>",
+                "defaultValue": "(args: NavComponent) => ({\n    component: NavComponent,\n    props: args,\n\n})"
             },
             {
                 "name": "StatusComponentStory",
@@ -19185,6 +19668,50 @@
             }
         ],
         "functions": [
+            {
+                "name": "listOfValues",
+                "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "ctype": "miscellaneous",
+                "subtype": "function",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "description": "",
+                "args": [
+                    {
+                        "name": "count",
+                        "type": "number",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    },
+                    {
+                        "name": "prefix",
+                        "type": "string",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "returnType": "string[]",
+                "jsdoctags": [
+                    {
+                        "name": "count",
+                        "type": "number",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    },
+                    {
+                        "name": "prefix",
+                        "type": "string",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
             {
                 "name": "log",
                 "file": "src/app/common/logging.ts",
@@ -19489,6 +20016,110 @@
                     "type": "literal type"
                 }
             ],
+            "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts": [
+                {
+                    "name": "customersNode",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "<NavTreeItemDto>{\n    root: false,\n    label: \"CUSTOMERS\",\n    columns: listOfValues(5, \"column_\"),\n    rows: [\n        { values : listOfValues(5, \"row_1_\") },\n    ],\n}"
+                },
+                {
+                    "name": "NavigationTreeComponentStory",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story<NavigationTreeComponent>",
+                    "defaultValue": "(args: NavigationTreeComponent) => ({\n    component: NavigationTreeComponent,\n    props: args,\n})"
+                },
+                {
+                    "name": "ordersNode",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NavTreeItemDto",
+                    "defaultValue": "{\n    root: false,\n    label: \"ORDERS\",\n    columns: listOfValues(5, \"column_\"),\n    rows: [\n        { values : listOfValues(5, \"row_1_\") },\n        { values : listOfValues(5, \"row_2_\") },\n        { values : listOfValues(5, \"row_3_\") },\n        { values : listOfValues(5, \"row_4_\") },\n    ],\n    navItems : [\n        {\n            label: \"-- select table --\"\n        },\n        {\n            label: 'PRODUCTS'\n        },\n        {\n            label: 'CUSTOMERS'\n        },\n        {\n            label: 'ORDER_ITEMS'\n        },\n    ],\n    children: []\n\n}"
+                },
+                {
+                    "name": "productsNode",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "<NavTreeItemDto>{\n    root: false,\n    label: \"PRODUCTS\",\n    columns: listOfValues(7, \"column_\"),\n    rows: [\n        { values : listOfValues(7, \"row_1_\") },\n    ],\n}"
+                },
+                {
+                    "name": "rootNode",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NavTreeItemDto",
+                    "defaultValue": "{\n    root: true,\n    navItems : [\n        {\n            label: \"-- select table --\"\n        },\n        {\n            label: 'BRANCHES'\n        },\n        {\n            label: 'CUSTOMERS'\n        },\n        {\n            label: 'ORDERS'\n        },\n        {\n            label: 'ORDER_ITEMS'\n        },\n        {\n            label: 'PRODUCTS'\n        },\n        {\n            label: 'STOCK'\n        },\n        {\n            label: 'STORES'\n        },\n        {\n            label: 'WAREHOUSES'\n        },\n    ]\n}"
+                },
+                {
+                    "name": "RootNode",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "NavigationTreeComponentStory.bind({})"
+                },
+                {
+                    "name": "SelectOrders",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "NavigationTreeComponentStory.bind({})"
+                },
+                {
+                    "name": "WithChildren",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "NavigationTreeComponentStory.bind({})"
+                }
+            ],
+            "src/app/common/styleguide/nav/nav.stories.ts": [
+                {
+                    "name": "Default",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/common/styleguide/nav/nav.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "StatusComponentStory.bind({})"
+                },
+                {
+                    "name": "StatusComponentStory",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/common/styleguide/nav/nav.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story<NavComponent>",
+                    "defaultValue": "(args: NavComponent) => ({\n    component: NavComponent,\n    props: args,\n\n})"
+                }
+            ],
             "src/app/snapshot-page/mongo-snapshot/mongo-snapshot.component.ts": [
                 {
                     "name": "DEFAULT_PAGE_SIZE",
@@ -19523,28 +20154,6 @@
                     "deprecationMessage": "",
                     "type": "object",
                     "defaultValue": "{\n  production: false,\n  port: 4200\n}"
-                }
-            ],
-            "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts": [
-                {
-                    "name": "NavigationTreeComponentStory",
-                    "ctype": "miscellaneous",
-                    "subtype": "variable",
-                    "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "Story<NavigationTreeComponent>",
-                    "defaultValue": "(args: NavigationTreeComponent) => ({\n    component: NavigationTreeComponent,\n    props: args,\n})"
-                },
-                {
-                    "name": "WithChildren",
-                    "ctype": "miscellaneous",
-                    "subtype": "variable",
-                    "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "",
-                    "defaultValue": "NavigationTreeComponentStory.bind({})"
                 }
             ],
             "src/app/api/request-builder.ts": [
@@ -19605,6 +20214,52 @@
             ]
         },
         "groupedFunctions": {
+            "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts": [
+                {
+                    "name": "listOfValues",
+                    "file": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                    "ctype": "miscellaneous",
+                    "subtype": "function",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "description": "",
+                    "args": [
+                        {
+                            "name": "count",
+                            "type": "number",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "returnType": "string[]",
+                    "jsdoctags": [
+                        {
+                            "name": "count",
+                            "type": "number",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        },
+                        {
+                            "name": "prefix",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ],
             "src/app/common/logging.ts": [
                 {
                     "name": "log",
@@ -20413,7 +21068,7 @@
                 "linktype": "component",
                 "name": "ConnectionStatusComponent",
                 "coveragePercent": 0,
-                "coverageCount": "0/3",
+                "coverageCount": "0/4",
                 "status": "low"
             },
             {
@@ -20430,24 +21085,6 @@
                 "type": "interceptor",
                 "linktype": "interceptor",
                 "name": "HttpErrorInterceptor",
-                "coveragePercent": 0,
-                "coverageCount": "0/3",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/common/data-source-selection-panel/data-source-selection-panel.component.ts",
-                "type": "component",
-                "linktype": "component",
-                "name": "DataSourceSelectionPanelComponent",
-                "coveragePercent": 0,
-                "coverageCount": "0/12",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/common/data-source-selection-panel/data-source-selection-panel.component.ts",
-                "type": "interface",
-                "linktype": "interface",
-                "name": "DataSourceSelection",
                 "coveragePercent": 0,
                 "coverageCount": "0/3",
                 "status": "low"
@@ -20655,7 +21292,7 @@
                 "linktype": "component",
                 "name": "Layout1ColComponent",
                 "coveragePercent": 0,
-                "coverageCount": "0/7",
+                "coverageCount": "0/10",
                 "status": "low"
             },
             {
@@ -20677,6 +21314,44 @@
                 "status": "low"
             },
             {
+                "filePath": "src/app/common/styleguide/nav/nav.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "NavComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/5",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/styleguide/nav/nav.component.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "NavItemSpec",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/styleguide/nav/nav.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Default",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/styleguide/nav/nav.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "StatusComponentStory",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
                 "filePath": "src/app/common/styleguide/panel/panel.component.ts",
                 "type": "component",
                 "linktype": "component",
@@ -20691,7 +21366,7 @@
                 "linktype": "component",
                 "name": "SideBarComponent",
                 "coveragePercent": 0,
-                "coverageCount": "0/9",
+                "coverageCount": "0/7",
                 "status": "low"
             },
             {
@@ -20709,7 +21384,7 @@
                 "linktype": "injectable",
                 "name": "SideBarService",
                 "coveragePercent": 0,
-                "coverageCount": "0/4",
+                "coverageCount": "0/5",
                 "status": "low"
             },
             {
@@ -20717,6 +21392,15 @@
                 "type": "component",
                 "linktype": "component",
                 "name": "StatusComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/5",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/styleguide/status/status.component.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "ConnectionStatus",
                 "coveragePercent": 0,
                 "coverageCount": "0/3",
                 "status": "low"
@@ -20787,6 +21471,24 @@
                 "name": "unique",
                 "coveragePercent": 0,
                 "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/component/data-source-selection-panel/data-source-selection-panel.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "DataSourceSelectionPanelComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/12",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/component/data-source-selection-panel/data-source-selection-panel.component.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "DataSourceSelection",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
                 "status": "low"
             },
             {
@@ -21051,7 +21753,7 @@
                 "linktype": "component",
                 "name": "NavigationPanelComponent",
                 "coveragePercent": 0,
-                "coverageCount": "0/9",
+                "coverageCount": "0/10",
                 "status": "low"
             },
             {
@@ -21069,7 +21771,7 @@
                 "linktype": "component",
                 "name": "NavigationTreeItemComponent",
                 "coveragePercent": 0,
-                "coverageCount": "0/3",
+                "coverageCount": "0/8",
                 "status": "low"
             },
             {
@@ -21078,7 +21780,7 @@
                 "linktype": "component",
                 "name": "NavigationTreeComponent",
                 "coveragePercent": 0,
-                "coverageCount": "0/3",
+                "coverageCount": "0/4",
                 "status": "low"
             },
             {
@@ -21087,7 +21789,27 @@
                 "linktype": "interface",
                 "name": "NavTreeItemDto",
                 "coveragePercent": 0,
-                "coverageCount": "0/3",
+                "coverageCount": "0/7",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "type": "function",
+                "linktype": "miscellaneous",
+                "linksubtype": "function",
+                "name": "listOfValues",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "customersNode",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
                 "status": "low"
             },
             {
@@ -21096,6 +21818,56 @@
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
                 "name": "NavigationTreeComponentStory",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "ordersNode",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "productsNode",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "rootNode",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "RootNode",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/navigation-page/navigation-tree/navigation-tree.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "SelectOrders",
                 "coveragePercent": 0,
                 "coverageCount": "0/1",
                 "status": "low"
@@ -21116,7 +21888,7 @@
                 "linktype": "injectable",
                 "name": "NavigationService",
                 "coveragePercent": 0,
-                "coverageCount": "0/3",
+                "coverageCount": "0/5",
                 "status": "low"
             },
             {

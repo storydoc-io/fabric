@@ -20,6 +20,8 @@ import {HttpErrorInterceptor} from "./connection-status/http-error.interceptor";
 import {ConnectionStatusComponent} from './connection-status/connection-status.component';
 import {CommandProgressComponent} from './styleguide/command-progress/command-progress.component';
 import {StatusComponent} from './styleguide/status/status.component';
+import {NavComponent} from './styleguide/nav/nav.component';
+import {IntroComponent} from './styleguide/intro/intro.component';
 
 @NgModule({
     declarations: [
@@ -39,6 +41,8 @@ import {StatusComponent} from './styleguide/status/status.component';
         ConnectionStatusComponent,
         CommandProgressComponent,
         StatusComponent,
+        NavComponent,
+        IntroComponent,
     ],
     providers: [
         {
@@ -65,6 +69,8 @@ import {StatusComponent} from './styleguide/status/status.component';
         ModalHeaderComponent,
         ModalFooterComponent,
         CommandProgressComponent,
+        NavComponent,
+        IntroComponent,
     ]
 })
 export class FabricCommonModule {

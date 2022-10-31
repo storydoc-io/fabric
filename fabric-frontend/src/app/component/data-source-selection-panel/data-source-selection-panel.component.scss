@@ -1,0 +1,7 @@
+.connection-container .disconnect-button {
+  visibility: hidden;
+}
+
+.connection-container:hover .disconnect-button {
+  visibility: visible;
+}

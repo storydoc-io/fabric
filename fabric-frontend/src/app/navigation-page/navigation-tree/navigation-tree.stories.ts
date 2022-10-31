@@ -3,6 +3,7 @@ import {moduleMetadata} from "@storybook/angular";
 import {Meta, Story} from "@storybook/angular/types-6-0";
 import {NavigationTreeItemComponent} from "../navigation-tree-item/navigation-tree-item.component";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
+import {FormsModule} from "@angular/forms";
 
 export default {
     title: 'Fabric/Navigation/NavigationTree',
@@ -16,6 +17,7 @@ export default {
                 NavigationTreeItemComponent
             ],
             imports: [
+                FormsModule,
                 FontAwesomeModule,
             ]
         }),
@@ -32,25 +34,40 @@ function listOfValues(count: number, prefix: string): string[]{
     return [...Array(count).keys()].map(i => prefix + i)
 }
 
-let rootItems = [
-    {
-        label: 'ORDERS'
-    },
-    {
-        label: 'PRODUCTS'
-    },
-    {
-        label: 'STORES'
-    }
-]
-
 let rootNode: NavTreeItemDto = {
     root: true,
-    navItems : rootItems,
-
+    navItems : [
+        {
+            label: "-- select table --"
+        },
+        {
+            label: 'BRANCHES'
+        },
+        {
+            label: 'CUSTOMERS'
+        },
+        {
+            label: 'ORDERS'
+        },
+        {
+            label: 'ORDER_ITEMS'
+        },
+        {
+            label: 'PRODUCTS'
+        },
+        {
+            label: 'STOCK'
+        },
+        {
+            label: 'STORES'
+        },
+        {
+            label: 'WAREHOUSES'
+        },
+    ]
 }
 
-let jobsNode: NavTreeItemDto = {
+let ordersNode: NavTreeItemDto = {
     root: false,
     label: "ORDERS",
     columns: listOfValues(5, "column_"),
@@ -60,50 +77,73 @@ let jobsNode: NavTreeItemDto = {
         { values : listOfValues(5, "row_3_") },
         { values : listOfValues(5, "row_4_") },
     ],
-    navItems: [],
+    navItems : [
+        {
+            label: "-- select table --"
+        },
+        {
+            label: 'PRODUCTS'
+        },
+        {
+            label: 'CUSTOMERS'
+        },
+        {
+            label: 'ORDER_ITEMS'
+        },
+    ],
     children: []
 
 }
+
+let customersNode = <NavTreeItemDto>{
+    root: false,
+    label: "CUSTOMERS",
+    columns: listOfValues(5, "column_"),
+    rows: [
+        { values : listOfValues(5, "row_1_") },
+    ],
+};
+
+let productsNode = <NavTreeItemDto>{
+    root: false,
+    label: "PRODUCTS",
+    columns: listOfValues(7, "column_"),
+    rows: [
+        { values : listOfValues(7, "row_1_") },
+    ],
+};
+
+
 
 export const RootNode = NavigationTreeComponentStory.bind({});
 RootNode.args = {
     tree: rootNode
 }
 
-export const SelectJobs =  NavigationTreeComponentStory.bind({});
-SelectJobs.args = {
-    tree: jobsNode
+export const SelectOrders =  NavigationTreeComponentStory.bind({});
+SelectOrders.args = {
+    tree: {
+        ... rootNode,
+        children: [
+            ordersNode
+        ]
+    }
 }
 
 export const WithChildren = NavigationTreeComponentStory.bind({});
+
 WithChildren.args = {
-    tree: <NavTreeItemDto> {
-        root: false,
-        label: "ORDERS",
-        columns: listOfValues(5, "column_"),
-        rows: [
-            { values : listOfValues(5, "row_1_") },
-            { values : listOfValues(5, "row_2_") },
-            { values : listOfValues(5, "row_3_") },
-            { values : listOfValues(5, "row_4_") },
-        ],
+    tree: {
+        ... rootNode,
         children: [
-            <NavTreeItemDto>{
-                root: false,
-                label: "CUSTOMERS",
-                columns: listOfValues(5, "column_"),
-                rows: [
-                    { values : listOfValues(5, "row_1_") },
-                ],
-            },
-            <NavTreeItemDto>{
-                root: false,
-                label: "PRODUCTS",
-                columns: listOfValues(7, "column_"),
-                rows: [
-                    { values : listOfValues(7, "row_1_") },
-                ],
-            },
+            {
+                ... ordersNode,
+                children: [
+                    customersNode,
+                    productsNode,
+                ]
+            }
         ]
     }
+
 }

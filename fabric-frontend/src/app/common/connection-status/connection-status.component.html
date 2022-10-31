@@ -1,1 +1,3 @@
-<app-status [status]="status"></app-status>
+<ng-container *ngIf="status$ | async as status">
+    <app-status [status]="status"></app-status>
+</ng-container>

@@ -1,0 +1,7 @@
+<ul *ngIf="spec" class="nav flex-column">
+    <li *ngFor="let item of spec.items" class="nav-item">
+        <a href="javascript:void(0);" class="nav-link"  (click)="doSelect(item.key)">
+            <fa-icon *ngIf="item.key===active" [icon]="faAngleRight"></fa-icon> {{item.label}}
+        </a>
+    </li>
+</ul>

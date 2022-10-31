@@ -11,7 +11,10 @@
 </ng-template>
 
 <ng-template #title>
-    <app-title text="Console"></app-title>
+    <div class="d-flex flex-row">
+        <app-title text="Console"></app-title>
+        <app-data-source-selection-panel (selected)="selectDataSource($event)"></app-data-source-selection-panel>
+    </div>
 </ng-template>
 
 <ng-template #breadcrumb>
@@ -19,6 +22,11 @@
 </ng-template>
 
 <ng-template #middle>
-    <app-data-source-selection-panel (selected)="selectDataSource($event)"></app-data-source-selection-panel>
+    <div class="intro-container" *ngIf="!selectedDataSource">
+        <app-intro [title]="'Datasource connection required.'" >
+            <p>Use the <a (click)="goto.settingsPage()" href="javascript:void(0);">settings page</a> to set up environments and datasources.</p>
+            <p>Select a Datasource and Environment from the menu to connect.</p>
+        </app-intro>
+    </div>
     <app-console-panel *ngIf="selectedDataSource" [dataSource]="selectedDataSource"></app-console-panel>
 </ng-template>

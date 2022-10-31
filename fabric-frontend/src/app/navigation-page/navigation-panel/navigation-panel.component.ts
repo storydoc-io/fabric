@@ -20,8 +20,10 @@ export class NavigationPanelComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     let systemComponentKey = this.dataSource.systemComponentKey;
-    this.service.loadNavItems(systemComponentKey).then(navItems => this.initNavItems(navItems))
+    this.service.loadNavItems(systemComponentKey, null)
   }
+
+  tree$ = this.service.tree$
 
   // navitems
 

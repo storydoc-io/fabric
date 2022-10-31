@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {SystemDescriptionService} from "./system-description.service";
 import {SystemComponentDto} from "@fabric/models";
 import {BreadcrumbItem} from "@fabric/common";
+import {NavItemSpec, NavSpec} from "../common/styleguide/nav/nav.component";
 
 type SystemDescriptionTabState = 'ENVIRONMENTS' | 'SYSTEM'
 type DataSourceTabState = 'SETTINGS' | 'METADATA'
@@ -29,6 +30,20 @@ export class SystemDescriptionPageComponent implements OnInit {
 
     systemTypeDescriptors$ = this.service.systemTypeDescriptors$
 
+    leftNavigation: NavSpec = {
+        defaultSelection: 'SYSTEM',
+        select: (key) => this.selectedSystemDescriptionTab = key,
+        items: [
+            <NavItemSpec>{
+                label: 'Datasources',
+                key: 'SYSTEM'
+            },
+            <NavItemSpec>{
+                label: 'Environments',
+                key: 'ENVIRONMENTS'
+            }
+        ]
+    }
     selectedSystemDescriptionTab: SystemDescriptionTabState = 'SYSTEM'
 
     selectedDataSourceTab: DataSourceTabState = 'SETTINGS'

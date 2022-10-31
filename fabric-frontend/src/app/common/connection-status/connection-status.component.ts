@@ -13,8 +13,6 @@ export class ConnectionStatusComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  get status(): string {
-    return this.service.status
-  }
+  status$ = this.service.status$
 
 }

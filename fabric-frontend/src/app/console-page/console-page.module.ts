@@ -7,6 +7,7 @@ import {SnippetPanelComponent} from './console-panel/snippet-panel/snippet-panel
 import {HistoryPanelComponent} from './console-panel/history-panel/history-panel.component';
 import {SnippetDialogComponent} from './console-panel/snippet-dialog/snippet-dialog.component';
 import {TableComponent} from './console-panel/table/table.component';
+import {ComponentModule} from "../component/component.module";
 
 @NgModule({
     declarations: [
@@ -19,7 +20,8 @@ import {TableComponent} from './console-panel/table/table.component';
     ],
     imports: [
         CoreModule,
-        FabricCommonModule
+        FabricCommonModule,
+        ComponentModule
     ],
     exports: [
         ConsolePageComponent

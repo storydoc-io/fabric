@@ -1,6 +1,15 @@
+
 <app-panel>
     <h4>Connection settings</h4>
-    <table class="table table-sm table-striped table-bordered">
+
+    <div *ngIf="settingRowsForSystemComponent().length == 0" class="intro-container" >
+        <app-intro [title]="'No environments defined yet.'" >
+            <p>First create an environment to connect the datasource to.</p>
+        </app-intro>
+    </div>
+
+
+    <table *ngIf="settingRowsForSystemComponent().length > 0"  class="table table-sm table-striped table-bordered">
         <thead>
         <tr>
             <th scope="col">Environment</th>

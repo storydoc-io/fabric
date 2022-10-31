@@ -1,22 +1,9 @@
-<div style="cursor: pointer;" (click)="toggleCollapse()">
-    <fa-icon [icon]="icon()"></fa-icon>
-</div>
 <ng-container *ngIf="!collapsed()">
-    <div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-light" style="width: 280px;">
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-            <svg class="bi me-2" width="40" height="32">
-                <use xlink:href="#bootstrap"></use>
-            </svg>
-            <span class="fs-4">Fabric</span>
-        </a>
-        <hr>
-        <ul class="nav nav-pills flex-column mb-auto">
+    <div class="sidebar">
+        <ul class="nav nav-pills flex-column">
             <li *ngFor="let action of actions" class="nav-item">
                 <a href="javascript:void(0);" class="nav-link" [class.active]="action.id==active"
                    (click)="navigateTo(action.route)">
-                    <svg class="bi me-2" width="16" height="16">
-                        <use xlink:href="#home"></use>
-                    </svg>
                     {{action.label}}
                 </a>
             </li>

@@ -1,16 +1,18 @@
+<div class="item-container">
 <ng-container *ngIf="item.root">
     <div class="navigation-section">
         <fa-icon [icon]="selectIcon"></fa-icon>
         &nbsp;
-        <select class="form-select navigation-select" *ngIf="item.navItems">
-            <option *ngFor="let navItem of item.navItems">
+        <select *ngIf="item.navItems" [ngModel]="item.navItems" class="form-select navigation-select"  (ngModelChange)="selectNav($event)">
+            <option>-- select --</option>
+            <option [ngValue]="navItem" *ngFor="let navItem of item.navItems">
                 {{navItem.label}}
             </option>
         </select>
     </div>
 </ng-container>
 <ng-container *ngIf="!item.root">
-    <div class="item-container">
+    <div class="table-container">
         <div class="title-section">
             {{item.label}}
         </div>
@@ -30,9 +32,8 @@
                 </tbody>
             </table>
         </div>
-        <div *ngIf="item.children" class="navigation-section">
+        <div *ngIf="item.navItems" class="navigation-section">
             <fa-icon [icon]="selectIcon"></fa-icon>
-            &nbsp;
             <select class="form-select navigation-select" *ngIf="item.navItems">
                 <option *ngFor="let navItem of item.navItems">
                     {{navItem.label}}
@@ -40,13 +41,14 @@
             </select>
         </div>
     </div>
-    <ng-container *ngIf="item.children">
-        <div class="children-container">
-            <ng-container *ngFor="let child of item.children">
-                <div class="child-container">
-                    <app-navigation-tree-item [item]="child" [depth]="depth+1"></app-navigation-tree-item>
-                </div>
-            </ng-container>
-        </div>
-    </ng-container>
 </ng-container>
+<ng-container *ngIf="item.children">
+    <div class="children-container">
+        <ng-container *ngFor="let child of item.children">
+            <div class="child-container">
+                <app-navigation-tree-item [item]="child" [depth]="depth+1"></app-navigation-tree-item>
+            </div>
+        </ng-container>
+    </div>
+</ng-container>
+</div>

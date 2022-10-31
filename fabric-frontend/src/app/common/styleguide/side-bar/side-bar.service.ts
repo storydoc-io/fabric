@@ -7,10 +7,14 @@ export class SideBarService {
 
   constructor() { }
 
-  collapsed: boolean = false
+  collapsed: boolean = true
 
   toggleState() {
     this.collapsed = !this.collapsed
+  }
+
+  collapse() {
+    this.collapsed = true
   }
 
 }

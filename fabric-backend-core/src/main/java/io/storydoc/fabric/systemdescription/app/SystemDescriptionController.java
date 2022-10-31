@@ -2,6 +2,7 @@ package io.storydoc.fabric.systemdescription.app;
 
 import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
 import io.storydoc.fabric.systemdescription.app.systemtype.SystemTypeDescriptorDTO;
+import lombok.SneakyThrows;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ public class SystemDescriptionController {
 
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @SneakyThrows
     SystemDescriptionDTO getSystemDescription() {
         return systemDescriptionService.getSystemDescription();
     }

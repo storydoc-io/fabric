@@ -1,7 +1,6 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {Router} from "@angular/router";
 import {SideBarService} from "./side-bar.service";
-import {faBars, faTimes} from '@fortawesome/free-solid-svg-icons';
 
 export interface ActionSpec {
   label: string
@@ -16,7 +15,12 @@ type PageId = 'settings' | 'dashboard' | 'console' | 'navigation'
   templateUrl: './side-bar.component.html',
   styleUrls: ['./side-bar.component.scss']
 })
-export class SideBarComponent implements OnInit {
+export class SideBarComponent {
+
+  constructor(private router: Router, private sideBarService: SideBarService) { }
+
+  @Input()
+  active: PageId;
 
   actions: ActionSpec[] = [
     {
@@ -41,28 +45,17 @@ export class SideBarComponent implements OnInit {
     },
   ]
 
-  @Input()
-  active: PageId;
-
   navigateTo(route:string[]) {
+    this.sideBarService.collapse()
     this.router.navigate(route )
   }
 
-  constructor(private router: Router, private service: SideBarService) { }
-
-  ngOnInit(): void {
-  }
-
   toggleCollapse() {
-    this.service.toggleState()
+    this.sideBarService.toggleState()
   }
 
   collapsed(): boolean {
-    return this.service.collapsed;
-  }
-
-  icon() {
-    return this.collapsed() ? faBars : faTimes
+    return this.sideBarService.collapsed;
   }
 
 }

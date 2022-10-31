@@ -1,5 +1,8 @@
 .item-container {
   position: relative;
+}
+
+.table-container {
   padding: 10px;
   border: 1px solid steelblue;
   border-radius: 10px;
@@ -16,7 +19,7 @@
 }
 
 .navigation-select {
-  width: 150px;
+  width: 200px;
   padding: 0px;
   display: inline;
 }

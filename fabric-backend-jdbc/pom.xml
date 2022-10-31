@@ -39,13 +39,11 @@
             <artifactId>HikariCP</artifactId>
             <version>${hikaricp-version}</version>
         </dependency>
-<!--
         <dependency>
             <groupId>com.oracle</groupId>
             <artifactId>ojdbc8</artifactId>
             <version>12.2.0.1.0</version>
         </dependency>
--->
         <!-- test -->
         <dependency>
             <groupId>junit</groupId>

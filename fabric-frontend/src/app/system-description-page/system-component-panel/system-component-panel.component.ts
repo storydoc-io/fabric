@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from "@fabric/models";
 import {SystemComponentDialogData, SystemComponentDialogSpec} from "./system-component-dialog/system-component-dialog.component";
 import {HasConfirmationDialogMixin} from "@fabric/common";
@@ -63,8 +63,10 @@ export class SystemComponentPanelComponent extends HasConfirmationDialogMixin im
         systemType: null
       },
       confirm: data => {
+        let systemComponentDto = <SystemComponentDto>data
         this.closeSystemComponentDialog()
-        this.service.addSystemComponent(<SystemComponentDto>data)
+        this.service.addSystemComponent(systemComponentDto)
+        this.selectionChanged.emit(systemComponentDto)
       },
       cancel: () => this.closeSystemComponentDialog()
     })
@@ -92,6 +94,7 @@ export class SystemComponentPanelComponent extends HasConfirmationDialogMixin im
       confirm: () => {
         this.closeConfirmationDialog()
         this.service.deleteSystemComponent(systemComponent)
+        this.selectionChanged.emit(null)
       },
       cancel: () => this.closeConfirmationDialog()
     })

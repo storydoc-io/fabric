@@ -3,6 +3,9 @@
         <div class="col-md-12">
             <app-panel>
                 <div style="min-height: 80vh; max-height: 80vh; overflow: auto">
+                    <ng-container *ngIf="tree$ | async as tree">
+                        <app-navigation-tree [tree]="tree" ></app-navigation-tree>
+                    </ng-container>
                 </div>
             </app-panel>
         </div>

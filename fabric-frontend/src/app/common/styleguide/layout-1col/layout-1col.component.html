@@ -1,12 +1,35 @@
-<div [class.sidenav-collapsed]="sideBarCollapsed()" [class.sidenav]="!sideBarCollapsed()" >
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Storydoc.io | Fabric</a>
+    </div>
+</nav>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light page-nav-bar">
+    <div class="d-flex flex-grow-1">
+        <span class="navbar-brand"></span>
+        <div class="navbar-brand " >
+            <div style="cursor: pointer;" (click)="toggleSideBar()">
+                <fa-icon [icon]="icon()"></fa-icon>
+            </div>
+        </div>
+        <div class="navbar-brand">
+            <ng-container *ngTemplateOutlet="title"></ng-container>
+        </div>
+    </div>
+    <div class="collapse navbar-collapse flex-grow-1 text-right">
+        <ul class="navbar-nav ms-auto flex-nowrap">
+            <li class="nav-item">
+                <app-connection-status></app-connection-status>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="text-white bg-light sidebar-container">
     <ng-container *ngTemplateOutlet="sidebar"></ng-container>
 </div>
+<div *ngIf="!sideBarCollapsed()" class="outside-sidebar-container" (click)="toggleSideBar()"></div>
 <div [class.main]="!sideBarCollapsed()" [class.main-full-screen]="sideBarCollapsed()">
     <div class="container-fluid">
-        <div class="row">
-            <ng-container *ngTemplateOutlet="title"></ng-container>
-            <ng-container *ngTemplateOutlet="breadcrumb"></ng-container>
-        </div>
         <div class="row">
             <ng-container *ngTemplateOutlet="middle"></ng-container>
         </div>

@@ -1,5 +1,13 @@
-<app-panel>
-    <h4>Datasources</h4>
+<h4>Datasources</h4>
+
+<div *ngIf="systemDescription.systemComponents.length == 0" class="intro-container" >
+    <app-intro [title]="'No datasources defined yet.'" >
+        <p>Add <a href="javascript:void(0);" (click)="addComponent(systemDescription)" > first datasource.</a></p>
+    </app-intro>
+</div>
+
+
+<app-panel *ngIf="systemDescription.systemComponents.length > 0">
     <table class="table table-sm table-striped table-bordered">
         <thead>
         <tr>
@@ -13,7 +21,8 @@
         <tbody>
         <tr *ngFor="let systemComponent of systemDescription.systemComponents" (click)="select(systemComponent)">
             <th scope="row">
-                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" [checked]="systemComponent.key===selection?.key">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"
+                       [checked]="systemComponent.key===selection?.key">
             </th>
             <td>{{systemComponent.key}}</td>
             <td>{{systemComponent.label}}</td>

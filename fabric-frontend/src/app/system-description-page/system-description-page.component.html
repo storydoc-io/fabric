@@ -24,22 +24,11 @@
 
 <ng-template #middle>
     <ng-container *ngIf="systemTypeDescriptors$ | async as systemTypeDescriptors">
-        <div *ngIf="systemDescription$ | async as systemDescription">
-            <div class="container-fluid">
+        <div *ngIf="systemDescription$ | async as systemDescription" class="mt-4">
+            <div class="container-fluid" >
                 <div class="row">
                     <div class="col-md-2">
-                        <ul class="nav nav-tabs flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link" [class.active]="selectedSystemDescriptionTab==='SYSTEM'"
-                                   aria-current="page"
-                                   (click)="selectSystemDescriptionTab('SYSTEM')"
-                                   href="javascript:void(0);">Datasources</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" [class.active]="selectedSystemDescriptionTab==='ENVIRONMENTS'"
-                                   (click)="selectSystemDescriptionTab('ENVIRONMENTS')" href="javascript:void(0);">Environments</a>
-                            </li>
-                        </ul>
+                        <app-nav [spec]="leftNavigation"></app-nav>
                     </div>
                     <div class="col-md-10">
                         <ng-container [ngSwitch]="selectedSystemDescriptionTab">

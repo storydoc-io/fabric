@@ -1,1 +1,12 @@
-<span>status: {{status}}</span>
+<div *ngIf="status.status==='Calling'" class="status-container">
+    <fa-icon class="status-icon" [icon]="faArrowUp" ></fa-icon>
+</div>
+<div *ngIf="status.status==='Problem'" class="status-container">
+    <div class="popover__wrapper">
+        <fa-icon class="status-icon status-icon-problem" [icon]="faExclamationTriangle" ></fa-icon>
+        <div class="popover__content">
+            <p class="popover__message">Connection problem</p>
+            {{status.msg}}
+        </div>
+    </div>
+</div>
