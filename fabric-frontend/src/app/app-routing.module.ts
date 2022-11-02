@@ -9,7 +9,7 @@ import {NavigationPageComponent} from "./navigation-page/navigation-page.compone
 
 
 const routes: Routes = [
-  {path: '', redirectTo: '/fe/dashboard', pathMatch: 'full'},
+  {path: '', redirectTo: '/fe/console', pathMatch: 'full'},
   {path: 'fe/dashboard', component: DashboardPageComponent},
   {path: 'fe/console', component: ConsolePageComponent},
   {path: 'fe/navigation', component: NavigationPageComponent},

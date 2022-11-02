@@ -29,19 +29,9 @@ export class SideBarComponent {
       route: ['fe', 'systemdescription']
     },
     {
-      id : 'dashboard',
-      label: 'Snapshots',
-      route: ['fe', 'dashboard']
-    },
-    {
       id : 'console',
       label: 'Console',
       route: ['fe', 'console']
-    },
-    {
-      id : 'navigation',
-      label: 'Navigator',
-      route: ['fe', 'navigation']
     },
   ]
 
