@@ -1,1 +1,1 @@
-java -Dio.storydoc.workspaceFolder=workspace -jar ${project.build.finalName}-spring-boot.jar
+java -cp ${project.build.finalName}-spring-boot.jar -Dloader.path=lib -Dio.storydoc.workspaceFolder=workspace org.springframework.boot.loader.PropertiesLauncher
