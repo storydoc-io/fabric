@@ -38,7 +38,7 @@
                     </button>
                     &nbsp;
                     <ng-container *ngIf="connectionTester?.testRunning">
-                        <span><img src="/assets/loading.gif" height="100px" alt="image" (click)="cancelTest()"></span>
+                        <app-loading (onClick)="cancelTest()"></app-loading>
                     </ng-container>
                     <ng-container *ngIf="connectionTester?.testResult">
                         <fa-icon *ngIf="connectionTester.testResult.result" size="2x" [icon]="faCheckCircle" style="vertical-align:bottom; color: mediumseagreen"></fa-icon>

@@ -71,8 +71,8 @@ export class EnvironmentPanelComponent extends HasConfirmationDialogMixin implem
   removeEnvironment(environment: EnvironmentDto) {
     this.openConfirmationDialog({
       title: 'Confirm delete',
-      message: `Delete environment ${environment.key}?`,
-      warning: `This will also remove ${environment.key} connection settings`,
+      message: `Delete '${environment.label}' environment ?`,
+      warning: `This will also remove datasource connection settings for this environment.`,
       confirm: () => {
         this.closeConfirmationDialog()
         this.service.deleteEnvironment(environment)

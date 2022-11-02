@@ -27,10 +27,18 @@ export class MetaModelPanelComponent extends HasConfirmationDialogMixin  impleme
 
   environment: EnvironmentDto
 
+  structureDTo: StructureDto
+
+  loading: boolean = false
+
   ngOnChanges(changes: SimpleChanges): void {
     if (this.systemDescription && this.systemComponent) {
         this.environment = new SystemDescriptionWrapper(this.systemDescription).getDefaultEnvironment()
-        this.service.loadEnvironmentSystemComponentStructure(this.environment.key, this.systemComponent.key).then(dto => this.structureDTo = dto)
+        this.loading = true
+        this.service.loadEnvironmentSystemComponentStructure(this.environment.key, this.systemComponent.key).then(dto => {
+          this.loading = false
+          this.structureDTo = dto
+        })
     }
   }
 
@@ -54,8 +62,6 @@ export class MetaModelPanelComponent extends HasConfirmationDialogMixin  impleme
     this.modalService.close(this.metaModelDialogId())
   }
 
-  structureDTo: StructureDto
-
   addMetaModel(systemDescription: SystemDescriptionDto) {
     this.openMetaModelDialog({
       systemComponent: this.systemComponent,
@@ -65,10 +71,17 @@ export class MetaModelPanelComponent extends HasConfirmationDialogMixin  impleme
       },
       confirm: (data: MetaModelDialogData) => {
         this.closeMetaModelDialog()
-        this.service.fetchMetaModel(this.systemComponent, data.environmentKey).then((structureDto =>  this.structureDTo = structureDto))
+        this.loading = true
+        this.service.fetchMetaModel(this.systemComponent, data.environmentKey).then((structureDto =>  {
+          this.loading = false
+          this.structureDTo = structureDto
+        }))
       },
       cancel: () => this.closeMetaModelDialog()
     })
   }
 
+  spinnerClicked() {
+    console.log('clicked!!')
+  }
 }

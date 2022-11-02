@@ -157,7 +157,11 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
 
 
     public MongoMetaModel getMetaModel(String systemComponentKey) {
-        return metaModelStorage.loadMetaModel(systemComponentKey, getMetaModelDeSerializer());
+        try {
+            return metaModelStorage.loadMetaModel(systemComponentKey, getMetaModelDeSerializer());
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     // connection
@@ -190,6 +194,7 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
     }
 
     private StructureDTO toDto(String systemComponentKey, MongoMetaModel metaModel) {
+        if (metaModel == null) return null;
         return StructureDTO.builder()
                 .id(systemComponentKey)
                 .systemType(systemType())

@@ -42,6 +42,7 @@ public class SystemDescriptionController {
     }
 
     @GetMapping(value = "structure/", produces = MediaType.APPLICATION_JSON_VALUE)
+    @SneakyThrows
     StructureDTO getSystemComponentEnvironmentStructure(String envKey, String systemComponentKey) {
         return systemDescriptionService.getStructure(envKey, systemComponentKey);
     }

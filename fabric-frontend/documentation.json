@@ -680,12 +680,12 @@
         },
         {
             "name": "DataSourceSelection",
-            "id": "interface-DataSourceSelection-23d5db79c1a4c6734c2a28ae8ac7f1d736c047000a682ca0c549320ef5a260b807f621e4392866b685830dfea023b6d5326da30c98a075ae974bbb81938d02b2",
+            "id": "interface-DataSourceSelection-d4570867b23d7797977bb84f617d6040143992345515e5ce1e28b78f9395f6b59d4c8740062993fc4d8303961b5bc8581c690e35ff58cc11c31736d00e48a97d",
             "file": "src/app/component/data-source-selection-panel/data-source-selection-panel.component.ts",
             "deprecated": false,
             "deprecationMessage": "",
             "type": "interface",
-            "sourceCode": "import {Component, EventEmitter, OnInit, Output} from '@angular/core';\nimport {SystemDescriptionService} from \"../../system-description-page/system-description.service\";\nimport {FormControl, FormGroup, Validators} from \"@angular/forms\";\nimport {faBolt} from '@fortawesome/free-solid-svg-icons';\n\nexport interface DataSourceSelection {\n    environmentKey: string,\n    systemComponentKey: string\n}\n\n@Component({\n    selector: 'app-data-source-selection-panel',\n    templateUrl: './data-source-selection-panel.component.html',\n    styleUrls: ['./data-source-selection-panel.component.scss']\n})\nexport class DataSourceSelectionPanelComponent implements OnInit {\n\n    constructor(private systemDescriptionService: SystemDescriptionService) {\n    }\n\n    systemDescription$ = this.systemDescriptionService.systemDescription$;\n\n    collapsed: boolean = false\n\n    faBolt = faBolt\n\n    ngOnInit(): void {\n    }\n\n    @Output()\n    selected = new EventEmitter<DataSourceSelection>()\n\n    formGroup: FormGroup = new FormGroup({\n        environmentKey: new FormControl(null, [Validators.required]),\n        systemComponentKey: new FormControl(null, [Validators.required]),\n    })\n\n    onEnvironmentChange() {\n\n    }\n\n    connect() {\n        this.selected.emit(this.formGroup.value)\n        this.collapse()\n    }\n\n    collapse() {\n        this.collapsed = true\n    }\n\n    expand() {\n        this.collapsed = false\n    }\n}\n",
+            "sourceCode": "import {Component, EventEmitter, OnInit, Output} from '@angular/core';\nimport {SystemDescriptionService} from \"../../system-description-page/system-description.service\";\nimport {FormControl, FormGroup, Validators} from \"@angular/forms\";\nimport {faBolt, faTimes} from '@fortawesome/free-solid-svg-icons';\n\nexport interface DataSourceSelection {\n    environmentKey: string,\n    systemComponentKey: string\n}\n\n@Component({\n    selector: 'app-data-source-selection-panel',\n    templateUrl: './data-source-selection-panel.component.html',\n    styleUrls: ['./data-source-selection-panel.component.scss']\n})\nexport class DataSourceSelectionPanelComponent implements OnInit {\n\n    constructor(private systemDescriptionService: SystemDescriptionService) {\n    }\n\n    systemDescription$ = this.systemDescriptionService.systemDescription$;\n\n    connected: boolean = false;\n\n    faBolt = faBolt\n    faTimes = faTimes\n\n    ngOnInit(): void {\n    }\n\n    @Output()\n    selected = new EventEmitter<DataSourceSelection>()\n\n    formGroup: FormGroup = new FormGroup({\n        environmentKey: new FormControl(null, [Validators.required]),\n        systemComponentKey: new FormControl(null, [Validators.required]),\n    })\n\n    get environmentKeyControl(): FormControl {\n        return <FormControl> this.formGroup.get('environmentKey')\n    }\n\n    get systemComponentKeyControl(): FormControl {\n        return <FormControl> this.formGroup.get('systemComponentKey')\n    }\n\n    connect() {\n        this.selected.emit(this.formGroup.value)\n        this.connected = true\n    }\n\n    disconnect() {\n        this.selected.emit(null)\n        this.connected = false\n        this.formGroup.setValue({ environmentKey: null, systemComponentKey : null })\n    }\n\n}\n",
             "properties": [
                 {
                     "name": "environmentKey",
@@ -1454,18 +1454,59 @@
         },
         {
             "name": "NavItemSpec",
-            "id": "interface-NavItemSpec-d3fefdf22f5ea882323b420c7ea9c33368d8341b5acacd5bf8b90c757024beb69d5e0ca86b3012036e82de8e547fbd2870993716c7e4c27988cd67922fd9bc13",
+            "id": "interface-NavItemSpec-e4daedfa736e26650d84d2b4455f9f1c37e305e01abaae8f54a4bc6ef7c049f780acc941cb7cc747d2e540ff2fcf3d3ac50fbaf63437080178cddbee114d130c",
             "file": "src/app/common/styleguide/nav/nav.component.ts",
             "deprecated": false,
             "deprecationMessage": "",
             "type": "interface",
-            "sourceCode": "import {Component, Input} from '@angular/core';\n\n\nexport interface NavItemSpec {\n  label: string\n  select: () => void\n}\n\n@Component({\n  selector: 'app-nav',\n  templateUrl: './nav.component.html',\n  styleUrls: ['./nav.component.scss']\n})\nexport class NavComponent {\n\n  constructor() { }\n\n  active: NavItemSpec\n\n  @Input()\n  actions: NavItemSpec[]\n\n  doSelect(action: NavItemSpec) {\n    action.select()\n  }\n\n}\n",
+            "sourceCode": "import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';\nimport {faAngleRight} from \"@fortawesome/free-solid-svg-icons\";\n\nexport interface NavSpec {\n  items: NavItemSpec[]\n  select: (string) => void\n  defaultSelection: string\n}\n\nexport interface NavItemSpec {\n  label: string\n  key: string\n}\n\n@Component({\n  selector: 'app-nav',\n  templateUrl: './nav.component.html',\n  styleUrls: ['./nav.component.scss']\n})\nexport class NavComponent implements OnChanges{\n\n  faAngleRight = faAngleRight\n\n  constructor() { }\n\n  ngOnChanges(changes: SimpleChanges): void {\n    this.doSelect(this.spec.defaultSelection)\n  }\n\n  active: string\n\n  @Input()\n  spec: NavSpec\n\n  doSelect(key: string) {\n    this.active = key\n    this.spec.select(key)\n  }\n\n}\n",
             "properties": [
+                {
+                    "name": "key",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 12
+                },
                 {
                     "name": "label",
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 11
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 165,
+            "methods": []
+        },
+        {
+            "name": "NavSpec",
+            "id": "interface-NavSpec-e4daedfa736e26650d84d2b4455f9f1c37e305e01abaae8f54a4bc6ef7c049f780acc941cb7cc747d2e540ff2fcf3d3ac50fbaf63437080178cddbee114d130c",
+            "file": "src/app/common/styleguide/nav/nav.component.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';\nimport {faAngleRight} from \"@fortawesome/free-solid-svg-icons\";\n\nexport interface NavSpec {\n  items: NavItemSpec[]\n  select: (string) => void\n  defaultSelection: string\n}\n\nexport interface NavItemSpec {\n  label: string\n  key: string\n}\n\n@Component({\n  selector: 'app-nav',\n  templateUrl: './nav.component.html',\n  styleUrls: ['./nav.component.scss']\n})\nexport class NavComponent implements OnChanges{\n\n  faAngleRight = faAngleRight\n\n  constructor() { }\n\n  ngOnChanges(changes: SimpleChanges): void {\n    this.doSelect(this.spec.defaultSelection)\n  }\n\n  active: string\n\n  @Input()\n  spec: NavSpec\n\n  doSelect(key: string) {\n    this.active = key\n    this.spec.select(key)\n  }\n\n}\n",
+            "properties": [
+                {
+                    "name": "defaultSelection",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 7
+                },
+                {
+                    "name": "items",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NavItemSpec[]",
                     "optional": false,
                     "description": "",
                     "line": 5
@@ -5494,6 +5535,59 @@
                     {
                         "name": "consoleControllerService",
                         "type": "ConsoleControllerService",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
+            },
+            "type": "injectable"
+        },
+        {
+            "name": "RoutingService",
+            "id": "injectable-RoutingService-97f78dbb2ca0563ef943225eb721aec4ea90091932cbf6d8b76e3084f22ddda614e68d4189c8395da22d68f3fad33845938c62c75e552d9edff3c791cbee8e06",
+            "file": "src/app/common/routing.service.ts",
+            "properties": [],
+            "methods": [
+                {
+                    "name": "settingsPage",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 11,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        123
+                    ]
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "description": "",
+            "rawdescription": "\n",
+            "sourceCode": "import {Injectable} from '@angular/core';\nimport {Router} from \"@angular/router\";\n\n@Injectable({\n  providedIn: 'root'\n})\nexport class RoutingService {\n\n  constructor(private router: Router) { }\n\n  public settingsPage() {\n    this.router.navigate(['fe', 'systemdescription'])\n  }\n\n}\n",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [
+                    {
+                        "name": "router",
+                        "type": "Router",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "line": 7,
+                "jsdoctags": [
+                    {
+                        "name": "router",
+                        "type": "Router",
                         "deprecated": false,
                         "deprecationMessage": "",
                         "tagName": {
@@ -10533,7 +10627,7 @@
         },
         {
             "name": "ConsolePageComponent",
-            "id": "component-ConsolePageComponent-71a6e209f0803cefb1c354b49e5289e6f8c13ea67c7ea3595703cad3812955a5cf453a79ff344d2d117d3d32ec7f253c59b812a96b0fb3224c163f272ec61748",
+            "id": "component-ConsolePageComponent-272081599cac5d9e9dd2fd27bad52e114119259a55881c104a47344ac75072b767b969757cd5ba993d53df0794d2175a427a49748d222261f8c465df61ee975f",
             "file": "src/app/console-page/console-page.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -10560,7 +10654,19 @@
                     "type": "BreadcrumbItem[]",
                     "optional": false,
                     "description": "",
-                    "line": 12
+                    "line": 13
+                },
+                {
+                    "name": "goto",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "RoutingService",
+                    "optional": false,
+                    "description": "",
+                    "line": 23,
+                    "modifierKind": [
+                        123
+                    ]
                 },
                 {
                     "name": "selectedDataSource",
@@ -10569,7 +10675,7 @@
                     "type": "DataSourceSelection",
                     "optional": false,
                     "description": "",
-                    "line": 27
+                    "line": 28
                 }
             ],
             "methodsClass": [
@@ -10579,7 +10685,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 24,
+                    "line": 25,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -10596,7 +10702,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 29,
+                    "line": 30,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -10619,11 +10725,11 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, OnInit} from '@angular/core';\nimport {BreadcrumbItem} from \"@fabric/common\";\nimport {DataSourceSelection} from \"@fabric/component\";\n\n@Component({\n  selector: 'app-console-page',\n  templateUrl: './console-page.component.html',\n  styleUrls: ['./console-page.component.scss']\n})\nexport class ConsolePageComponent implements OnInit {\n\n  breadcrumbs: BreadcrumbItem[] = [\n    {\n      label: 'Home',\n      route: '/'\n    },\n    {\n      label: 'Console'\n    }\n  ]\n\n  constructor() { }\n\n  ngOnInit(): void {\n  }\n\n  selectedDataSource: DataSourceSelection\n\n  selectDataSource(dataSource: DataSourceSelection) {\n    this.selectedDataSource = dataSource\n  }\n\n}\n",
+            "sourceCode": "import {Component, OnInit} from '@angular/core';\nimport {BreadcrumbItem} from \"@fabric/common\";\nimport {DataSourceSelection} from \"@fabric/component\";\nimport {RoutingService} from \"../common/routing.service\";\n\n@Component({\n  selector: 'app-console-page',\n  templateUrl: './console-page.component.html',\n  styleUrls: ['./console-page.component.scss']\n})\nexport class ConsolePageComponent implements OnInit {\n\n  breadcrumbs: BreadcrumbItem[] = [\n    {\n      label: 'Home',\n      route: '/'\n    },\n    {\n      label: 'Console'\n    }\n  ]\n\n  constructor(public goto: RoutingService) { }\n\n  ngOnInit(): void {\n  }\n\n  selectedDataSource: DataSourceSelection\n\n  selectDataSource(dataSource: DataSourceSelection) {\n    this.selectedDataSource = dataSource\n  }\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
-                    "data": "",
+                    "data": ".intro-container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  text-align: center;\n  min-height: 50vh;\n}",
                     "styleUrl": "./console-page.component.scss"
                 }
             ],
@@ -10633,13 +10739,31 @@
                 "description": "",
                 "deprecated": false,
                 "deprecationMessage": "",
-                "args": [],
-                "line": 20
+                "args": [
+                    {
+                        "name": "goto",
+                        "type": "RoutingService",
+                        "deprecated": false,
+                        "deprecationMessage": ""
+                    }
+                ],
+                "line": 21,
+                "jsdoctags": [
+                    {
+                        "name": "goto",
+                        "type": "RoutingService",
+                        "deprecated": false,
+                        "deprecationMessage": "",
+                        "tagName": {
+                            "text": "param"
+                        }
+                    }
+                ]
             },
             "implements": [
                 "OnInit"
             ],
-            "templateData": "<app-layout-1col\n        [sidebar]=\"sidebar\"\n        [title]=\"title\"\n        [breadcrumb]=\"breadcrumb\"\n        [middle]=\"middle\"\n>\n</app-layout-1col>\n\n<ng-template #sidebar>\n    <app-side-bar [active]=\"'console'\"></app-side-bar>\n</ng-template>\n\n<ng-template #title>\n    <app-title text=\"Console\"></app-title>\n</ng-template>\n\n<ng-template #breadcrumb>\n    <app-breadcrumb [breadcrumbs]=\"breadcrumbs\"></app-breadcrumb>\n</ng-template>\n\n<ng-template #middle>\n    <app-data-source-selection-panel (selected)=\"selectDataSource($event)\"></app-data-source-selection-panel>\n    <app-console-panel *ngIf=\"selectedDataSource\" [dataSource]=\"selectedDataSource\"></app-console-panel>\n</ng-template>"
+            "templateData": "<app-layout-1col\n        [sidebar]=\"sidebar\"\n        [title]=\"title\"\n        [breadcrumb]=\"breadcrumb\"\n        [middle]=\"middle\"\n>\n</app-layout-1col>\n\n<ng-template #sidebar>\n    <app-side-bar [active]=\"'console'\"></app-side-bar>\n</ng-template>\n\n<ng-template #title>\n    <div class=\"d-flex flex-row\">\n        <app-title text=\"Console\"></app-title>\n        <app-data-source-selection-panel (selected)=\"selectDataSource($event)\"></app-data-source-selection-panel>\n    </div>\n</ng-template>\n\n<ng-template #breadcrumb>\n    <app-breadcrumb [breadcrumbs]=\"breadcrumbs\"></app-breadcrumb>\n</ng-template>\n\n<ng-template #middle>\n    <div class=\"intro-container\" *ngIf=\"!selectedDataSource\">\n        <app-intro [title]=\"'Datasource connection required.'\" >\n            <p>Use the <a (click)=\"goto.settingsPage()\" href=\"javascript:void(0);\">settings page</a> to set up environments and datasources.</p>\n            <p>Select a Datasource and Environment from the menu to connect.</p>\n        </app-intro>\n    </div>\n    <app-console-panel *ngIf=\"selectedDataSource\" [dataSource]=\"selectedDataSource\"></app-console-panel>\n</ng-template>"
         },
         {
             "name": "ConsolePanelComponent",
@@ -11454,7 +11578,7 @@
         },
         {
             "name": "DataSourceSelectionPanelComponent",
-            "id": "component-DataSourceSelectionPanelComponent-23d5db79c1a4c6734c2a28ae8ac7f1d736c047000a682ca0c549320ef5a260b807f621e4392866b685830dfea023b6d5326da30c98a075ae974bbb81938d02b2",
+            "id": "component-DataSourceSelectionPanelComponent-d4570867b23d7797977bb84f617d6040143992345515e5ce1e28b78f9395f6b59d4c8740062993fc4d8303961b5bc8581c690e35ff58cc11c31736d00e48a97d",
             "file": "src/app/component/data-source-selection-panel/data-source-selection-panel.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -11477,13 +11601,13 @@
                     "defaultValue": "new EventEmitter<DataSourceSelection>()",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "line": 31,
+                    "line": 32,
                     "type": "EventEmitter"
                 }
             ],
             "propertiesClass": [
                 {
-                    "name": "collapsed",
+                    "name": "connected",
                     "defaultValue": "false",
                     "deprecated": false,
                     "deprecationMessage": "",
@@ -11503,6 +11627,16 @@
                     "line": 25
                 },
                 {
+                    "name": "faTimes",
+                    "defaultValue": "faTimes",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 26
+                },
+                {
                     "name": "formGroup",
                     "defaultValue": "new FormGroup({\n        environmentKey: new FormControl(null, [Validators.required]),\n        systemComponentKey: new FormControl(null, [Validators.required]),\n    })",
                     "deprecated": false,
@@ -11510,7 +11644,7 @@
                     "type": "FormGroup",
                     "optional": false,
                     "description": "",
-                    "line": 33
+                    "line": 34
                 },
                 {
                     "name": "systemDescription$",
@@ -11525,7 +11659,7 @@
             ],
             "methodsClass": [
                 {
-                    "name": "collapse",
+                    "name": "connect",
                     "args": [],
                     "optional": false,
                     "returnType": "void",
@@ -11535,22 +11669,12 @@
                     "deprecationMessage": ""
                 },
                 {
-                    "name": "connect",
+                    "name": "disconnect",
                     "args": [],
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 42,
-                    "deprecated": false,
-                    "deprecationMessage": ""
-                },
-                {
-                    "name": "expand",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 51,
+                    "line": 52,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -11560,17 +11684,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 27,
-                    "deprecated": false,
-                    "deprecationMessage": ""
-                },
-                {
-                    "name": "onEnvironmentChange",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 38,
+                    "line": 28,
                     "deprecated": false,
                     "deprecationMessage": ""
                 }
@@ -11582,11 +11696,11 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, EventEmitter, OnInit, Output} from '@angular/core';\nimport {SystemDescriptionService} from \"../../system-description-page/system-description.service\";\nimport {FormControl, FormGroup, Validators} from \"@angular/forms\";\nimport {faBolt} from '@fortawesome/free-solid-svg-icons';\n\nexport interface DataSourceSelection {\n    environmentKey: string,\n    systemComponentKey: string\n}\n\n@Component({\n    selector: 'app-data-source-selection-panel',\n    templateUrl: './data-source-selection-panel.component.html',\n    styleUrls: ['./data-source-selection-panel.component.scss']\n})\nexport class DataSourceSelectionPanelComponent implements OnInit {\n\n    constructor(private systemDescriptionService: SystemDescriptionService) {\n    }\n\n    systemDescription$ = this.systemDescriptionService.systemDescription$;\n\n    collapsed: boolean = false\n\n    faBolt = faBolt\n\n    ngOnInit(): void {\n    }\n\n    @Output()\n    selected = new EventEmitter<DataSourceSelection>()\n\n    formGroup: FormGroup = new FormGroup({\n        environmentKey: new FormControl(null, [Validators.required]),\n        systemComponentKey: new FormControl(null, [Validators.required]),\n    })\n\n    onEnvironmentChange() {\n\n    }\n\n    connect() {\n        this.selected.emit(this.formGroup.value)\n        this.collapse()\n    }\n\n    collapse() {\n        this.collapsed = true\n    }\n\n    expand() {\n        this.collapsed = false\n    }\n}\n",
+            "sourceCode": "import {Component, EventEmitter, OnInit, Output} from '@angular/core';\nimport {SystemDescriptionService} from \"../../system-description-page/system-description.service\";\nimport {FormControl, FormGroup, Validators} from \"@angular/forms\";\nimport {faBolt, faTimes} from '@fortawesome/free-solid-svg-icons';\n\nexport interface DataSourceSelection {\n    environmentKey: string,\n    systemComponentKey: string\n}\n\n@Component({\n    selector: 'app-data-source-selection-panel',\n    templateUrl: './data-source-selection-panel.component.html',\n    styleUrls: ['./data-source-selection-panel.component.scss']\n})\nexport class DataSourceSelectionPanelComponent implements OnInit {\n\n    constructor(private systemDescriptionService: SystemDescriptionService) {\n    }\n\n    systemDescription$ = this.systemDescriptionService.systemDescription$;\n\n    connected: boolean = false;\n\n    faBolt = faBolt\n    faTimes = faTimes\n\n    ngOnInit(): void {\n    }\n\n    @Output()\n    selected = new EventEmitter<DataSourceSelection>()\n\n    formGroup: FormGroup = new FormGroup({\n        environmentKey: new FormControl(null, [Validators.required]),\n        systemComponentKey: new FormControl(null, [Validators.required]),\n    })\n\n    get environmentKeyControl(): FormControl {\n        return <FormControl> this.formGroup.get('environmentKey')\n    }\n\n    get systemComponentKeyControl(): FormControl {\n        return <FormControl> this.formGroup.get('systemComponentKey')\n    }\n\n    connect() {\n        this.selected.emit(this.formGroup.value)\n        this.connected = true\n    }\n\n    disconnect() {\n        this.selected.emit(null)\n        this.connected = false\n        this.formGroup.setValue({ environmentKey: null, systemComponentKey : null })\n    }\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
-                    "data": "",
+                    "data": ".connection-container .disconnect-button {\n  visibility: hidden;\n}\n\n.connection-container:hover .disconnect-button {\n  visibility: visible;\n}\n",
                     "styleUrl": "./data-source-selection-panel.component.scss"
                 }
             ],
@@ -11620,7 +11734,27 @@
             "implements": [
                 "OnInit"
             ],
-            "templateData": "<ng-container *ngIf=\"!collapsed && systemDescription$ | async as systemDescription\">\n    <form [formGroup]=\"formGroup\">\n\n    <div class=\"row\">\n        <div class=\"col-md-3\">\n            <div class=\"form-floating  mb-2\">\n                <select id=\"systemComponentKey\" formControlName=\"systemComponentKey\" class=\"form-select\"  >\n                    <option *ngFor=\"let systemComponent of systemDescription.systemComponents\"\n                            [ngValue]=\"systemComponent.key\">{{systemComponent.key}}</option>\n                </select>\n                <label for=\"systemComponentKey\" class=\"form-label\">Datasource</label>\n            </div>\n        </div>\n        <div class=\"col-md-3\">\n            <div class=\"form-floating mb-2\" >\n                <select id=\"environmentKey\" formControlName=\"environmentKey\" class=\"form-select\" (change)=\"onEnvironmentChange()\" >\n                    <option *ngFor=\"let environment of systemDescription.environments\"\n                            [ngValue]=\"environment.key\">{{environment.key}}</option>\n                </select>\n                <label for=\"environmentKey\" class=\"form-label\">Environment</label>\n            </div>\n        </div>\n        <div class=\"col-md-2\">\n            <button type=\"button\" class=\"btn btn-outline-primary\" (click)=\"connect()\">\n                <fa-icon [icon]=\"faBolt\"></fa-icon> Connect\n            </button>\n        </div>\n    </div>\n    </form>\n</ng-container>\n\n<ng-container *ngIf=\"collapsed\">\n    <button type=\"button\" class=\"btn btn-outline-success\" (click)=\"expand()\">\n        <fa-icon [icon]=\"faBolt\"></fa-icon>\n    </button>\n</ng-container>"
+            "accessors": {
+                "environmentKeyControl": {
+                    "name": "environmentKeyControl",
+                    "getSignature": {
+                        "name": "environmentKeyControl",
+                        "type": "",
+                        "returnType": "FormControl",
+                        "line": 39
+                    }
+                },
+                "systemComponentKeyControl": {
+                    "name": "systemComponentKeyControl",
+                    "getSignature": {
+                        "name": "systemComponentKeyControl",
+                        "type": "",
+                        "returnType": "FormControl",
+                        "line": 43
+                    }
+                }
+            },
+            "templateData": "<ng-container *ngIf=\"systemDescription$ | async as systemDescription\">\n    <ng-container *ngIf=\"!connected\">\n        <form [formGroup]=\"formGroup\">\n            <div class=\"d-flex\">\n                <div class=\"ps-3\">\n                    <select id=\"systemComponentKey\" formControlName=\"systemComponentKey\" class=\"form-select\">\n                        <option [ngValue]=\"null\" selected disabled>Datasource</option>\n                        <option *ngFor=\"let systemComponent of systemDescription.systemComponents\" [ngValue]=\"systemComponent.key\">{{systemComponent.key}}</option>\n                    </select>\n                </div>\n                <div class=\"ps-1\">\n                    <select id=\"environmentKey\" formControlName=\"environmentKey\" class=\"form-select\">\n                        <option [ngValue]=\"null\" selected disabled>Environment</option>\n                        <option *ngFor=\"let environment of systemDescription.environments\" [ngValue]=\"environment.key\">{{environment.key}}</option>\n                    </select>\n                </div>\n                <div class=\"ps-1\">\n                    <button type=\"button\" class=\"btn btn-outline-primary\" (click)=\"connect()\" [disabled]=\"!formGroup.valid\">\n                        <fa-icon [icon]=\"faBolt\"></fa-icon>\n                    </button>\n                </div>\n            </div>\n        </form>\n    </ng-container>\n    <ng-container *ngIf=\"connected\">\n        <div class=\"d-flex connection-container\">\n            <div class=\"ps-3\">\n                <div class=\"form-text\">{{systemComponentKeyControl.value}}</div>\n            </div>\n            <div class=\"ps-1\">\n                <div class=\"form-text\">{{environmentKeyControl.value}}</div>\n            </div>\n            <div class=\"ps-1\">\n                <button type=\"button\" class=\"btn btn-outline-primary btn-sm disconnect-button\" (click)=\"disconnect()\">\n                    <fa-icon [icon]=\"faTimes\"></fa-icon>\n                </button>\n            </div>\n        </div>\n    </ng-container>\n</ng-container>\n\n"
         },
         {
             "name": "DummyPageComponent",
@@ -12322,7 +12456,7 @@
             "implements": [
                 "OnInit"
             ],
-            "templateData": "<app-panel>\n    <h4>Environments</h4>\n    <table class=\"table table-sm table-striped table-bordered\">\n        <thead>\n        <tr>\n            <th scope=\"col\">#</th>\n            <th scope=\"col\">Key</th>\n            <th scope=\"col\">Label</th>\n            <th scope=\"col\"></th>\n        </tr>\n        </thead>\n        <tbody>\n        <tr *ngFor=\"let environment of systemDescription.environments\">\n            <th scope=\"row\"></th>\n            <td>{{environment.key}}</td>\n            <td>{{environment.label}}</td>\n            <td>\n                <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n                     (click)=\"editEnvironment(systemDescription, environment)\">Edit\n                </div>\n                <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n                     (click)=\"removeEnvironment(environment)\">Remove\n                </div>\n            </td>\n\n        </tr>\n        </tbody>\n    </table>\n    <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n         (click)=\"addEnvironment(systemDescription)\">\n        Add\n    </div>\n</app-panel>\n\n<jw-modal [id]=\"environmentDialogId()\">\n    <app-environment-dialog [spec]=\"environmentDialogSpec\"></app-environment-dialog>\n</jw-modal>\n\n<jw-modal [id]=\"confirmationDialogId()\">\n    <app-confirmation-dialog [spec]=\"confirmationDialogSpec\"></app-confirmation-dialog>\n</jw-modal>\n"
+            "templateData": "<h4>Environments</h4>\n\n<div *ngIf=\"systemDescription.environments.length == 0\" class=\"intro-container\" >\n    <app-intro [title]=\"'No environments defined yet.'\" >\n        <p>Add <a href=\"javascript:void(0);\" (click)=\"addEnvironment(systemDescription)\" > first environment.</a></p>\n        <p>An environment names an instance of the system used for a specific purpose, e.g. DEV, QA, Production</p>\n    </app-intro>\n</div>\n\n<app-panel *ngIf=\"systemDescription.environments.length > 0\">\n    <table class=\"table table-sm table-striped table-bordered\">\n        <thead>\n        <tr>\n            <th scope=\"col\">#</th>\n            <th scope=\"col\">Key</th>\n            <th scope=\"col\">Label</th>\n            <th scope=\"col\"></th>\n        </tr>\n        </thead>\n        <tbody>\n        <tr *ngFor=\"let environment of systemDescription.environments\">\n            <th scope=\"row\"></th>\n            <td>{{environment.key}}</td>\n            <td>{{environment.label}}</td>\n            <td>\n                <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n                     (click)=\"editEnvironment(systemDescription, environment)\">Edit\n                </div>\n                <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n                     (click)=\"removeEnvironment(environment)\">Remove\n                </div>\n            </td>\n\n        </tr>\n        </tbody>\n    </table>\n    <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n         (click)=\"addEnvironment(systemDescription)\">\n        Add\n    </div>\n</app-panel>\n\n<jw-modal [id]=\"environmentDialogId()\">\n    <app-environment-dialog [spec]=\"environmentDialogSpec\"></app-environment-dialog>\n</jw-modal>\n\n<jw-modal [id]=\"confirmationDialogId()\">\n    <app-confirmation-dialog [spec]=\"confirmationDialogSpec\"></app-confirmation-dialog>\n</jw-modal>\n"
         },
         {
             "name": "FormInputFloatingComponent",
@@ -12595,6 +12729,88 @@
             ],
             "stylesData": "",
             "templateData": "<ng-container *ngIf=\"historyItems\">\n    <div class=\"list-group\">\n        <a class=\"mydivouter list-group-item list-group-item-action list-group-item-light\" *ngFor=\"let item of historyItems\"\n           (click)=\"select(item)\" href=\"javascript:void(0);\">\n            {{asOneLine(item)}}\n            <div class=\"mybuttonoverlap\">\n                <app-action-buttons [spec]=\"actions(item)\"></app-action-buttons>\n            </div>\n        </a>\n    </div>\n</ng-container>"
+        },
+        {
+            "name": "IntroComponent",
+            "id": "component-IntroComponent-bb3ca97cad118a5a8720b821455af0aaafa7b8e24ca33edb07d454f82ff79ed5954c558c2a7f7474b869b4176030f4212c2739fadfe4c348a124530ebf054874",
+            "file": "src/app/common/styleguide/intro/intro.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-intro",
+            "styleUrls": [
+                "./intro.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./intro.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "title",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 16,
+                    "type": "string",
+                    "decorators": []
+                }
+            ],
+            "outputsClass": [],
+            "propertiesClass": [
+                {
+                    "name": "faLightbulb",
+                    "defaultValue": "faLightbulb",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 11
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "ngOnInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 18,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import {Component, Input, OnInit} from '@angular/core';\nimport {faLightbulb} from \"@fortawesome/free-solid-svg-icons\";\n\n@Component({\n  selector: 'app-intro',\n  templateUrl: './intro.component.html',\n  styleUrls: ['./intro.component.scss']\n})\nexport class IntroComponent implements OnInit {\n\n  faLightbulb = faLightbulb\n\n  constructor() { }\n\n  @Input()\n  title: string\n\n  ngOnInit(): void {\n  }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": "",
+                    "styleUrl": "./intro.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [],
+                "line": 11
+            },
+            "implements": [
+                "OnInit"
+            ],
+            "templateData": "    <div class=\"jumbotron\">\n        <div class=\"container\">\n            <div class=\"h-100 p-5 bg-light border rounded-3\">\n                <h4><fa-icon [icon]=\"faLightbulb\" ]></fa-icon>{{title}}</h4>\n                <p></p>\n                <ng-content></ng-content>\n            </div>\n        </div>\n    </div>\n"
         },
         {
             "name": "Layout1ColComponent",
@@ -13988,7 +14204,7 @@
         },
         {
             "name": "NavComponent",
-            "id": "component-NavComponent-d3fefdf22f5ea882323b420c7ea9c33368d8341b5acacd5bf8b90c757024beb69d5e0ca86b3012036e82de8e547fbd2870993716c7e4c27988cd67922fd9bc13",
+            "id": "component-NavComponent-e4daedfa736e26650d84d2b4455f9f1c37e305e01abaae8f54a4bc6ef7c049f780acc941cb7cc747d2e540ff2fcf3d3ac50fbaf63437080178cddbee114d130c",
             "file": "src/app/common/styleguide/nav/nav.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -14006,11 +14222,11 @@
             "viewProviders": [],
             "inputsClass": [
                 {
-                    "name": "actions",
+                    "name": "spec",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "line": 21,
-                    "type": "NavItemSpec[]",
+                    "line": 33,
+                    "type": "NavSpec",
                     "decorators": []
                 }
             ],
@@ -14020,10 +14236,20 @@
                     "name": "active",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "type": "NavItemSpec",
+                    "type": "string",
                     "optional": false,
                     "description": "",
-                    "line": 18
+                    "line": 30
+                },
+                {
+                    "name": "faAngleRight",
+                    "defaultValue": "faAngleRight",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 22
                 }
             ],
             "methodsClass": [
@@ -14031,8 +14257,8 @@
                     "name": "doSelect",
                     "args": [
                         {
-                            "name": "action",
-                            "type": "NavItemSpec",
+                            "name": "key",
+                            "type": "string",
                             "deprecated": false,
                             "deprecationMessage": ""
                         }
@@ -14040,13 +14266,41 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 23,
+                    "line": 35,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
                         {
-                            "name": "action",
-                            "type": "NavItemSpec",
+                            "name": "key",
+                            "type": "string",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "ngOnChanges",
+                    "args": [
+                        {
+                            "name": "changes",
+                            "type": "SimpleChanges",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 26,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "changes",
+                            "type": "SimpleChanges",
                             "deprecated": false,
                             "deprecationMessage": "",
                             "tagName": {
@@ -14063,7 +14317,7 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, Input} from '@angular/core';\n\n\nexport interface NavItemSpec {\n  label: string\n  select: () => void\n}\n\n@Component({\n  selector: 'app-nav',\n  templateUrl: './nav.component.html',\n  styleUrls: ['./nav.component.scss']\n})\nexport class NavComponent {\n\n  constructor() { }\n\n  active: NavItemSpec\n\n  @Input()\n  actions: NavItemSpec[]\n\n  doSelect(action: NavItemSpec) {\n    action.select()\n  }\n\n}\n",
+            "sourceCode": "import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';\nimport {faAngleRight} from \"@fortawesome/free-solid-svg-icons\";\n\nexport interface NavSpec {\n  items: NavItemSpec[]\n  select: (string) => void\n  defaultSelection: string\n}\n\nexport interface NavItemSpec {\n  label: string\n  key: string\n}\n\n@Component({\n  selector: 'app-nav',\n  templateUrl: './nav.component.html',\n  styleUrls: ['./nav.component.scss']\n})\nexport class NavComponent implements OnChanges{\n\n  faAngleRight = faAngleRight\n\n  constructor() { }\n\n  ngOnChanges(changes: SimpleChanges): void {\n    this.doSelect(this.spec.defaultSelection)\n  }\n\n  active: string\n\n  @Input()\n  spec: NavSpec\n\n  doSelect(key: string) {\n    this.active = key\n    this.spec.select(key)\n  }\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
@@ -14078,9 +14332,12 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "args": [],
-                "line": 14
+                "line": 22
             },
-            "templateData": "<ul *ngIf=\"actions\" class=\"nav flex-column\">\n    <li *ngFor=\"let action of actions\" class=\"nav-item\">\n        <a href=\"javascript:void(0);\" class=\"nav-link\" [class.active]=\"action===active\"\n           (click)=\"doSelect(action)\">\n            {{action.label}}\n        </a>\n    </li>\n</ul>\n"
+            "implements": [
+                "OnChanges"
+            ],
+            "templateData": "<ul *ngIf=\"spec\" class=\"nav flex-column\">\n    <li *ngFor=\"let item of spec.items\" class=\"nav-item\">\n        <a href=\"javascript:void(0);\" class=\"nav-link\"  (click)=\"doSelect(item.key)\">\n            <fa-icon *ngIf=\"item.key===active\" [icon]=\"faAngleRight\"></fa-icon> {{item.label}}\n        </a>\n    </li>\n</ul>\n"
         },
         {
             "name": "NavigationPageComponent",
@@ -15817,7 +16074,7 @@
             "implements": [
                 "OnInit"
             ],
-            "templateData": "<app-panel>\n    <h4>Connection settings</h4>\n    <table class=\"table table-sm table-striped table-bordered\">\n        <thead>\n        <tr>\n            <th scope=\"col\">Environment</th>\n            <th scope=\"col\">Datasource</th>\n            <th scope=\"col\">Settings</th>\n        </tr>\n        </thead>\n        <tbody>\n        <tr *ngFor=\"let settingRow of settingRowsForSystemComponent()\">\n            <td>{{settingRow.environmentKey}}</td>\n            <td>{{settingRow.systemComponentKey}}</td>\n            <td>\n                <div *ngFor=\"let setting of settingRow.settings\">\n                    {{setting.key}} = {{setting.value}}\n                </div>\n            </td>\n            <td>\n                <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n                     (click)=\"editSetting(systemDescription, settingRow)\">Edit\n                </div>\n                <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n                     (click)=\"removeSetting(systemDescription, settingRow)\">Remove\n                </div>\n            </td>\n        </tr>\n        </tbody>\n    </table>\n    <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n         (click)=\"addSetting(systemDescription)\">\n        Add\n    </div>\n</app-panel>\n\n<jw-modal [id]=\"settingsDialogId()\">\n    <app-settings-dialog [spec]=\"settingsDialogSpec\"></app-settings-dialog>\n</jw-modal>\n\n<jw-modal [id]=\"confirmationDialogId()\">\n    <app-confirmation-dialog [spec]=\"confirmationDialogSpec\"></app-confirmation-dialog>\n</jw-modal>\n"
+            "templateData": "\n<app-panel>\n    <h4>Connection settings</h4>\n\n    <div *ngIf=\"settingRowsForSystemComponent().length == 0\" class=\"intro-container\" >\n        <app-intro [title]=\"'No environments defined yet.'\" >\n            <p>First create an environment to connect the datasource to.</p>\n        </app-intro>\n    </div>\n\n\n    <table *ngIf=\"settingRowsForSystemComponent().length > 0\"  class=\"table table-sm table-striped table-bordered\">\n        <thead>\n        <tr>\n            <th scope=\"col\">Environment</th>\n            <th scope=\"col\">Datasource</th>\n            <th scope=\"col\">Settings</th>\n        </tr>\n        </thead>\n        <tbody>\n        <tr *ngFor=\"let settingRow of settingRowsForSystemComponent()\">\n            <td>{{settingRow.environmentKey}}</td>\n            <td>{{settingRow.systemComponentKey}}</td>\n            <td>\n                <div *ngFor=\"let setting of settingRow.settings\">\n                    {{setting.key}} = {{setting.value}}\n                </div>\n            </td>\n            <td>\n                <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n                     (click)=\"editSetting(systemDescription, settingRow)\">Edit\n                </div>\n                <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n                     (click)=\"removeSetting(systemDescription, settingRow)\">Remove\n                </div>\n            </td>\n        </tr>\n        </tbody>\n    </table>\n    <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n         (click)=\"addSetting(systemDescription)\">\n        Add\n    </div>\n</app-panel>\n\n<jw-modal [id]=\"settingsDialogId()\">\n    <app-settings-dialog [spec]=\"settingsDialogSpec\"></app-settings-dialog>\n</jw-modal>\n\n<jw-modal [id]=\"confirmationDialogId()\">\n    <app-confirmation-dialog [spec]=\"confirmationDialogSpec\"></app-confirmation-dialog>\n</jw-modal>\n"
         },
         {
             "name": "SideBarComponent",
@@ -17698,7 +17955,7 @@
         },
         {
             "name": "SystemComponentPanelComponent",
-            "id": "component-SystemComponentPanelComponent-91d98060dad24b767cc5d87046ba9023f939dce8e3256632f9c88389be081ed6de5a9f5878a17e08f047026a52066106216da5923bf7f9d73b0d1fdfb1fc5861",
+            "id": "component-SystemComponentPanelComponent-33b76280f1e1d93b826080e6961e138d77e191623b2aedec85c63b8548fe95004b827061245737b36439665b4d5e6c4e0ff7fcce65ea4a3faa5eff72a0b613ec",
             "file": "src/app/system-description-page/system-component-panel/system-component-panel.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -17821,7 +18078,7 @@
                     "optional": false,
                     "returnType": "string",
                     "typeParameters": [],
-                    "line": 106,
+                    "line": 109,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "inheritance": {
@@ -17847,7 +18104,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 73,
+                    "line": 75,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -17925,7 +18182,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 87,
+                    "line": 89,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -17998,7 +18255,7 @@
                     "optional": false,
                     "returnType": "string[]",
                     "typeParameters": [],
-                    "line": 100,
+                    "line": 103,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -18078,7 +18335,7 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, Input, OnInit, Output, EventEmitter} from '@angular/core';\nimport {SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from \"@fabric/models\";\nimport {SystemComponentDialogData, SystemComponentDialogSpec} from \"./system-component-dialog/system-component-dialog.component\";\nimport {HasConfirmationDialogMixin} from \"@fabric/common\";\nimport {ModalService} from \"../../common/modal/modal-service\";\nimport {SystemDescriptionService} from \"../system-description.service\";\n\n@Component({\n  selector: 'app-system-component-panel',\n  templateUrl: './system-component-panel.component.html',\n  styleUrls: ['./system-component-panel.component.scss']\n})\nexport class SystemComponentPanelComponent extends HasConfirmationDialogMixin implements OnInit {\n\n  constructor(modalService: ModalService, private service: SystemDescriptionService) {\n    super(modalService);\n  }\n\n  ngOnInit(): void {\n  }\n\n  @Input()\n  systemTypes: SystemTypeDescriptorDto[]\n\n  @Input()\n  systemDescription: SystemDescriptionDto\n\n  @Input()\n  selection: SystemComponentDto\n\n  @Output()\n  selectionChanged = new EventEmitter<SystemComponentDto>()\n\n  select(systemComponent: SystemComponentDto) {\n      this.selectionChanged.emit(systemComponent)\n  }\n\n  // data sources\n\n  systemComponentDialogSpec: SystemComponentDialogSpec\n\n  systemComponentDialogId(): string {\n    return 'system-component-dialog'\n  }\n\n  private openSystemComponentDialog(spec: SystemComponentDialogSpec) {\n    this.systemComponentDialogSpec = spec\n    this.modalService.open(this.systemComponentDialogId())\n  }\n\n  private closeSystemComponentDialog() {\n    this.systemComponentDialogSpec = null\n    this.modalService.close(this.systemComponentDialogId())\n  }\n\n  addComponent(systemDescription: SystemDescriptionDto) {\n    this.openSystemComponentDialog({\n      systemTypes: this.systemTypes,\n      keys: this.systemComponentKeys(systemDescription),\n      data: {\n        key: null,\n        label: null,\n        systemType: null\n      },\n      confirm: data => {\n        this.closeSystemComponentDialog()\n        this.service.addSystemComponent(<SystemComponentDto>data)\n      },\n      cancel: () => this.closeSystemComponentDialog()\n    })\n  }\n\n  editComponent(systemDescription: SystemDescriptionDto, systemComponent: SystemComponentDto) {\n    this.openSystemComponentDialog({\n      systemTypes: this.systemTypes,\n      keys: this.systemComponentKeys(systemDescription, systemComponent),\n      data: <SystemComponentDialogData> { ... systemComponent},\n      confirm: data => {\n        this.closeSystemComponentDialog()\n        this.service.updateSystemComponent(systemComponent, <SystemComponentDto>data)\n      },\n      cancel: () => this.closeSystemComponentDialog()\n    })\n  }\n\n\n  removeComponent(systemComponent: SystemComponentDto) {\n    this.openConfirmationDialog({\n      title: 'Confirm delete',\n      message: `Delete datasource ${systemComponent.key}?`,\n      warning: `This will also remove ${systemComponent.key}'s connection settings`,\n      confirm: () => {\n        this.closeConfirmationDialog()\n        this.service.deleteSystemComponent(systemComponent)\n      },\n      cancel: () => this.closeConfirmationDialog()\n    })\n  }\n\n  private systemComponentKeys(systemDescription: SystemDescriptionDto, exceptSystemComponent?: SystemComponentDto): string[] {\n    return systemDescription.systemComponents\n        .filter(systemComponent => systemComponent.key != exceptSystemComponent?.key)\n        .map(systemComponent => systemComponent.key);\n  }\n\n  confirmationDialogId(): string {\n    return 'confirmation-dialog-systemcomponent'\n  }\n\n\n}\n",
+            "sourceCode": "import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';\nimport {SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from \"@fabric/models\";\nimport {SystemComponentDialogData, SystemComponentDialogSpec} from \"./system-component-dialog/system-component-dialog.component\";\nimport {HasConfirmationDialogMixin} from \"@fabric/common\";\nimport {ModalService} from \"../../common/modal/modal-service\";\nimport {SystemDescriptionService} from \"../system-description.service\";\n\n@Component({\n  selector: 'app-system-component-panel',\n  templateUrl: './system-component-panel.component.html',\n  styleUrls: ['./system-component-panel.component.scss']\n})\nexport class SystemComponentPanelComponent extends HasConfirmationDialogMixin implements OnInit {\n\n  constructor(modalService: ModalService, private service: SystemDescriptionService) {\n    super(modalService);\n  }\n\n  ngOnInit(): void {\n  }\n\n  @Input()\n  systemTypes: SystemTypeDescriptorDto[]\n\n  @Input()\n  systemDescription: SystemDescriptionDto\n\n  @Input()\n  selection: SystemComponentDto\n\n  @Output()\n  selectionChanged = new EventEmitter<SystemComponentDto>()\n\n  select(systemComponent: SystemComponentDto) {\n      this.selectionChanged.emit(systemComponent)\n  }\n\n  // data sources\n\n  systemComponentDialogSpec: SystemComponentDialogSpec\n\n  systemComponentDialogId(): string {\n    return 'system-component-dialog'\n  }\n\n  private openSystemComponentDialog(spec: SystemComponentDialogSpec) {\n    this.systemComponentDialogSpec = spec\n    this.modalService.open(this.systemComponentDialogId())\n  }\n\n  private closeSystemComponentDialog() {\n    this.systemComponentDialogSpec = null\n    this.modalService.close(this.systemComponentDialogId())\n  }\n\n  addComponent(systemDescription: SystemDescriptionDto) {\n    this.openSystemComponentDialog({\n      systemTypes: this.systemTypes,\n      keys: this.systemComponentKeys(systemDescription),\n      data: {\n        key: null,\n        label: null,\n        systemType: null\n      },\n      confirm: data => {\n        let systemComponentDto = <SystemComponentDto>data\n        this.closeSystemComponentDialog()\n        this.service.addSystemComponent(systemComponentDto)\n        this.selectionChanged.emit(systemComponentDto)\n      },\n      cancel: () => this.closeSystemComponentDialog()\n    })\n  }\n\n  editComponent(systemDescription: SystemDescriptionDto, systemComponent: SystemComponentDto) {\n    this.openSystemComponentDialog({\n      systemTypes: this.systemTypes,\n      keys: this.systemComponentKeys(systemDescription, systemComponent),\n      data: <SystemComponentDialogData> { ... systemComponent},\n      confirm: data => {\n        this.closeSystemComponentDialog()\n        this.service.updateSystemComponent(systemComponent, <SystemComponentDto>data)\n      },\n      cancel: () => this.closeSystemComponentDialog()\n    })\n  }\n\n\n  removeComponent(systemComponent: SystemComponentDto) {\n    this.openConfirmationDialog({\n      title: 'Confirm delete',\n      message: `Delete datasource ${systemComponent.key}?`,\n      warning: `This will also remove ${systemComponent.key}'s connection settings`,\n      confirm: () => {\n        this.closeConfirmationDialog()\n        this.service.deleteSystemComponent(systemComponent)\n        this.selectionChanged.emit(null)\n      },\n      cancel: () => this.closeConfirmationDialog()\n    })\n  }\n\n  private systemComponentKeys(systemDescription: SystemDescriptionDto, exceptSystemComponent?: SystemComponentDto): string[] {\n    return systemDescription.systemComponents\n        .filter(systemComponent => systemComponent.key != exceptSystemComponent?.key)\n        .map(systemComponent => systemComponent.key);\n  }\n\n  confirmationDialogId(): string {\n    return 'confirmation-dialog-systemcomponent'\n  }\n\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
@@ -18132,11 +18389,11 @@
             "implements": [
                 "OnInit"
             ],
-            "templateData": "<app-panel>\n    <h4>Datasources</h4>\n    <table class=\"table table-sm table-striped table-bordered\">\n        <thead>\n        <tr>\n            <th scope=\"col\">#</th>\n            <th scope=\"col\">Key</th>\n            <th scope=\"col\">Label</th>\n            <th scope=\"col\">System type</th>\n            <th></th>\n        </tr>\n        </thead>\n        <tbody>\n        <tr *ngFor=\"let systemComponent of systemDescription.systemComponents\" (click)=\"select(systemComponent)\">\n            <th scope=\"row\">\n                <input class=\"form-check-input\" type=\"radio\" name=\"flexRadioDefault\" id=\"flexRadioDefault1\" [checked]=\"systemComponent.key===selection?.key\">\n            </th>\n            <td>{{systemComponent.key}}</td>\n            <td>{{systemComponent.label}}</td>\n            <td>{{systemComponent.systemType}}</td>\n            <td>\n                <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n                     (click)=\"editComponent(systemDescription, systemComponent)\">Edit\n                </div>\n                <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n                     (click)=\"removeComponent(systemComponent)\">Remove\n                </div>\n            </td>\n        </tr>\n        </tbody>\n    </table>\n    <div class=\"btn  btn-sm btn-outline-primary float-right m-2\" (click)=\"addComponent(systemDescription)\">\n        Add\n    </div>\n</app-panel>\n\n<jw-modal [id]=\"systemComponentDialogId()\">\n    <app-system-component-dialog [spec]=\"systemComponentDialogSpec\"></app-system-component-dialog>\n</jw-modal>\n\n<jw-modal [id]=\"confirmationDialogId()\">\n    <app-confirmation-dialog [spec]=\"confirmationDialogSpec\"></app-confirmation-dialog>\n</jw-modal>\n"
+            "templateData": "<h4>Datasources</h4>\n\n<div *ngIf=\"systemDescription.systemComponents.length == 0\" class=\"intro-container\" >\n    <app-intro [title]=\"'No datasources defined yet.'\" >\n        <p>Add <a href=\"javascript:void(0);\" (click)=\"addComponent(systemDescription)\" > first datasource.</a></p>\n    </app-intro>\n</div>\n\n\n<app-panel *ngIf=\"systemDescription.systemComponents.length > 0\">\n    <table class=\"table table-sm table-striped table-bordered\">\n        <thead>\n        <tr>\n            <th scope=\"col\">#</th>\n            <th scope=\"col\">Key</th>\n            <th scope=\"col\">Label</th>\n            <th scope=\"col\">System type</th>\n            <th></th>\n        </tr>\n        </thead>\n        <tbody>\n        <tr *ngFor=\"let systemComponent of systemDescription.systemComponents\" (click)=\"select(systemComponent)\">\n            <th scope=\"row\">\n                <input class=\"form-check-input\" type=\"radio\" name=\"flexRadioDefault\" id=\"flexRadioDefault1\"\n                       [checked]=\"systemComponent.key===selection?.key\">\n            </th>\n            <td>{{systemComponent.key}}</td>\n            <td>{{systemComponent.label}}</td>\n            <td>{{systemComponent.systemType}}</td>\n            <td>\n                <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n                     (click)=\"editComponent(systemDescription, systemComponent)\">Edit\n                </div>\n                <div class=\"btn  btn-sm btn-outline-primary float-right m-2\"\n                     (click)=\"removeComponent(systemComponent)\">Remove\n                </div>\n            </td>\n        </tr>\n        </tbody>\n    </table>\n    <div class=\"btn  btn-sm btn-outline-primary float-right m-2\" (click)=\"addComponent(systemDescription)\">\n        Add\n    </div>\n</app-panel>\n\n<jw-modal [id]=\"systemComponentDialogId()\">\n    <app-system-component-dialog [spec]=\"systemComponentDialogSpec\"></app-system-component-dialog>\n</jw-modal>\n\n<jw-modal [id]=\"confirmationDialogId()\">\n    <app-confirmation-dialog [spec]=\"confirmationDialogSpec\"></app-confirmation-dialog>\n</jw-modal>\n"
         },
         {
             "name": "SystemDescriptionPageComponent",
-            "id": "component-SystemDescriptionPageComponent-7c853b14c026b9e367876170892a78c8491cf5cd6b1f1fc233e50c08c4ad201b3faddd9e7a67c7b2cc3108d06db9cc7f66e05712ca3aeae48d63f007c9b96d5c",
+            "id": "component-SystemDescriptionPageComponent-06cf4ac5bb8d319ac3f1cfb211576d1ac52a23bd7109693cab7191fcf2f1f047c80c012550c76f27a45fb515051ef86841ef8e8fa2648d8983a116d7b337d7c4",
             "file": "src/app/system-description-page/system-description-page.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -18163,7 +18420,17 @@
                     "type": "BreadcrumbItem[]",
                     "optional": false,
                     "description": "",
-                    "line": 16
+                    "line": 17
+                },
+                {
+                    "name": "leftNavigation",
+                    "defaultValue": "{\n        defaultSelection: 'SYSTEM',\n        select: (key) => this.selectedSystemDescriptionTab = key,\n        items: [\n            <NavItemSpec>{\n                label: 'Datasources',\n                key: 'SYSTEM'\n            },\n            <NavItemSpec>{\n                label: 'Environments',\n                key: 'ENVIRONMENTS'\n            }\n        ]\n    }",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NavSpec",
+                    "optional": false,
+                    "description": "",
+                    "line": 33
                 },
                 {
                     "name": "selectedDataSourceTab",
@@ -18173,7 +18440,7 @@
                     "type": "DataSourceTabState",
                     "optional": false,
                     "description": "",
-                    "line": 34
+                    "line": 49
                 },
                 {
                     "name": "selectedSystemComponent",
@@ -18182,7 +18449,7 @@
                     "type": "SystemComponentDto",
                     "optional": false,
                     "description": "",
-                    "line": 47
+                    "line": 62
                 },
                 {
                     "name": "selectedSystemDescriptionTab",
@@ -18192,7 +18459,7 @@
                     "type": "SystemDescriptionTabState",
                     "optional": false,
                     "description": "",
-                    "line": 32
+                    "line": 47
                 },
                 {
                     "name": "systemDescription$",
@@ -18202,7 +18469,7 @@
                     "type": "",
                     "optional": false,
                     "description": "",
-                    "line": 28
+                    "line": 29
                 },
                 {
                     "name": "systemTypeDescriptors$",
@@ -18212,7 +18479,7 @@
                     "type": "",
                     "optional": false,
                     "description": "",
-                    "line": 30
+                    "line": 31
                 }
             ],
             "methodsClass": [
@@ -18222,7 +18489,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 36,
+                    "line": 51,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -18239,7 +18506,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 43,
+                    "line": 58,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -18267,7 +18534,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 39,
+                    "line": 54,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -18295,7 +18562,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 49,
+                    "line": 64,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -18318,7 +18585,7 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, OnInit} from '@angular/core';\nimport {SystemDescriptionService} from \"./system-description.service\";\nimport {SystemComponentDto} from \"@fabric/models\";\nimport {BreadcrumbItem} from \"@fabric/common\";\n\ntype SystemDescriptionTabState = 'ENVIRONMENTS' | 'SYSTEM'\ntype DataSourceTabState = 'SETTINGS' | 'METADATA'\n\n@Component({\n    selector: 'app-system-description-page',\n    templateUrl: './system-description-page.component.html',\n    styleUrls: ['./system-description-page.component.scss']\n})\nexport class SystemDescriptionPageComponent implements OnInit {\n\n    breadcrumbs: BreadcrumbItem[] = [\n        {\n            label: 'Home',\n            route: '/'\n        },\n        {\n            label: 'Settings'\n        }\n    ]\n\n    constructor(private service: SystemDescriptionService) {}\n\n    systemDescription$ = this.service.systemDescription$\n\n    systemTypeDescriptors$ = this.service.systemTypeDescriptors$\n\n    selectedSystemDescriptionTab: SystemDescriptionTabState = 'SYSTEM'\n\n    selectedDataSourceTab: DataSourceTabState = 'SETTINGS'\n\n    ngOnInit(): void {\n    }\n\n    selectSystemDescriptionTab(tab: SystemDescriptionTabState) {\n        this.selectedSystemDescriptionTab = tab\n    }\n\n    selectDataSourceTab(tab: DataSourceTabState) {\n        this.selectedDataSourceTab = tab\n    }\n\n    selectedSystemComponent: SystemComponentDto\n\n    systemComponentSelectionChanged(systemComponent: SystemComponentDto) {\n        this.selectedSystemComponent = systemComponent\n    }\n\n}\n",
+            "sourceCode": "import {Component, OnInit} from '@angular/core';\nimport {SystemDescriptionService} from \"./system-description.service\";\nimport {SystemComponentDto} from \"@fabric/models\";\nimport {BreadcrumbItem} from \"@fabric/common\";\nimport {NavItemSpec, NavSpec} from \"../common/styleguide/nav/nav.component\";\n\ntype SystemDescriptionTabState = 'ENVIRONMENTS' | 'SYSTEM'\ntype DataSourceTabState = 'SETTINGS' | 'METADATA'\n\n@Component({\n    selector: 'app-system-description-page',\n    templateUrl: './system-description-page.component.html',\n    styleUrls: ['./system-description-page.component.scss']\n})\nexport class SystemDescriptionPageComponent implements OnInit {\n\n    breadcrumbs: BreadcrumbItem[] = [\n        {\n            label: 'Home',\n            route: '/'\n        },\n        {\n            label: 'Settings'\n        }\n    ]\n\n    constructor(private service: SystemDescriptionService) {}\n\n    systemDescription$ = this.service.systemDescription$\n\n    systemTypeDescriptors$ = this.service.systemTypeDescriptors$\n\n    leftNavigation: NavSpec = {\n        defaultSelection: 'SYSTEM',\n        select: (key) => this.selectedSystemDescriptionTab = key,\n        items: [\n            <NavItemSpec>{\n                label: 'Datasources',\n                key: 'SYSTEM'\n            },\n            <NavItemSpec>{\n                label: 'Environments',\n                key: 'ENVIRONMENTS'\n            }\n        ]\n    }\n    selectedSystemDescriptionTab: SystemDescriptionTabState = 'SYSTEM'\n\n    selectedDataSourceTab: DataSourceTabState = 'SETTINGS'\n\n    ngOnInit(): void {\n    }\n\n    selectSystemDescriptionTab(tab: SystemDescriptionTabState) {\n        this.selectedSystemDescriptionTab = tab\n    }\n\n    selectDataSourceTab(tab: DataSourceTabState) {\n        this.selectedDataSourceTab = tab\n    }\n\n    selectedSystemComponent: SystemComponentDto\n\n    systemComponentSelectionChanged(systemComponent: SystemComponentDto) {\n        this.selectedSystemComponent = systemComponent\n    }\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
@@ -18340,7 +18607,7 @@
                         "deprecationMessage": ""
                     }
                 ],
-                "line": 24,
+                "line": 25,
                 "jsdoctags": [
                     {
                         "name": "service",
@@ -18356,7 +18623,7 @@
             "implements": [
                 "OnInit"
             ],
-            "templateData": "<app-layout-1col\n        [sidebar]=\"sidebar\"\n        [title]=\"title\"\n        [breadcrumb]=\"breadcrumb\"\n        [middle]=\"middle\"\n>\n</app-layout-1col>\n\n<ng-template #sidebar>\n    <app-side-bar [active]=\"'settings'\"></app-side-bar>\n</ng-template>\n\n<ng-template #title>\n    <div class=\"row\">\n        <h3>Settings</h3>\n    </div>\n</ng-template>\n\n\n<ng-template #breadcrumb>\n    <app-breadcrumb [breadcrumbs]=\"breadcrumbs\"></app-breadcrumb>\n</ng-template>\n\n\n<ng-template #middle>\n    <ng-container *ngIf=\"systemTypeDescriptors$ | async as systemTypeDescriptors\">\n        <div *ngIf=\"systemDescription$ | async as systemDescription\">\n            <div class=\"container-fluid\" style=\"border: 1px solid red;\" >\n                <div class=\"row\">\n                    <div class=\"col-md-2\">\n                        <ul class=\"nav nav-tabs flex-column\">\n                            <li class=\"nav-item\">\n                                <a class=\"nav-link\" [class.active]=\"selectedSystemDescriptionTab==='SYSTEM'\"\n                                   aria-current=\"page\"\n                                   (click)=\"selectSystemDescriptionTab('SYSTEM')\"\n                                   href=\"javascript:void(0);\">Datasources</a>\n                            </li>\n                            <li class=\"nav-item\">\n                                <a class=\"nav-link\" [class.active]=\"selectedSystemDescriptionTab==='ENVIRONMENTS'\"\n                                   (click)=\"selectSystemDescriptionTab('ENVIRONMENTS')\" href=\"javascript:void(0);\">Environments</a>\n                            </li>\n                        </ul>\n                    </div>\n                    <div class=\"col-md-10\">\n                        <ng-container [ngSwitch]=\"selectedSystemDescriptionTab\">\n                            <ng-container *ngSwitchCase=\"'ENVIRONMENTS'\">\n                                <app-environment-panel [systemDescription]=\"systemDescription\"></app-environment-panel>\n                            </ng-container>\n                            <ng-container *ngSwitchCase=\"'SYSTEM'\">\n                                <app-system-component-panel\n                                        [systemDescription]=\"systemDescription\"\n                                        [systemTypes]=\"systemTypeDescriptors\"\n                                        (selectionChanged)=\"systemComponentSelectionChanged($event)\"\n                                        [selection]=\"selectedSystemComponent\">\n                                </app-system-component-panel>\n                                <br>\n                                <ng-container *ngIf=\"selectedSystemComponent\">\n                                    <h4>{{selectedSystemComponent.label}} details</h4>\n                                    <ul class=\"nav nav-tabs\">\n                                        <li class=\"nav-item\">\n                                            <a class=\"nav-link\"\n                                               [class.active]=\"selectedDataSourceTab==='SETTINGS'\"\n                                               (click)=\"selectDataSourceTab('SETTINGS')\"\n                                               href=\"javascript:void(0);\">\n                                                Connection settings\n                                            </a>\n                                        </li>\n                                        <li class=\"nav-item\">\n                                            <a class=\"nav-link\"\n                                               [class.active]=\"selectedDataSourceTab==='METADATA'\"\n                                               (click)=\"selectDataSourceTab('METADATA')\"\n                                               href=\"javascript:void(0);\">\n                                                Metadata\n                                            </a>\n                                        </li>\n                                    </ul>\n                                    <ng-container [ngSwitch]=\"selectedDataSourceTab\">\n                                        <ng-container *ngSwitchCase=\"'SETTINGS'\">\n                                            <app-settings-panel\n                                                    [systemDescription]=\"systemDescription\"\n                                                    [systemTypes]=\"systemTypeDescriptors\"\n                                                    [systemComponent]=\"selectedSystemComponent\">\n                                            </app-settings-panel>\n                                        </ng-container>\n                                        <ng-container *ngSwitchCase=\"'METADATA'\">\n                                            <app-meta-model-panel\n                                                    [systemDescription]=\"systemDescription\"\n                                                    [systemComponent]=\"selectedSystemComponent\">\n                                            </app-meta-model-panel>\n                                        </ng-container>\n                                    </ng-container>\n                                </ng-container>\n                            </ng-container>\n                        </ng-container>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </ng-container>\n\n</ng-template>\n\n"
+            "templateData": "<app-layout-1col\n        [sidebar]=\"sidebar\"\n        [title]=\"title\"\n        [breadcrumb]=\"breadcrumb\"\n        [middle]=\"middle\"\n>\n</app-layout-1col>\n\n<ng-template #sidebar>\n    <app-side-bar [active]=\"'settings'\"></app-side-bar>\n</ng-template>\n\n<ng-template #title>\n    <div class=\"row\">\n        <h3>Settings</h3>\n    </div>\n</ng-template>\n\n\n<ng-template #breadcrumb>\n    <app-breadcrumb [breadcrumbs]=\"breadcrumbs\"></app-breadcrumb>\n</ng-template>\n\n\n<ng-template #middle>\n    <ng-container *ngIf=\"systemTypeDescriptors$ | async as systemTypeDescriptors\">\n        <div *ngIf=\"systemDescription$ | async as systemDescription\" class=\"mt-4\">\n            <div class=\"container-fluid\" >\n                <div class=\"row\">\n                    <div class=\"col-md-2\">\n                        <app-nav [spec]=\"leftNavigation\"></app-nav>\n                    </div>\n                    <div class=\"col-md-10\">\n                        <ng-container [ngSwitch]=\"selectedSystemDescriptionTab\">\n                            <ng-container *ngSwitchCase=\"'ENVIRONMENTS'\">\n                                <app-environment-panel [systemDescription]=\"systemDescription\"></app-environment-panel>\n                            </ng-container>\n                            <ng-container *ngSwitchCase=\"'SYSTEM'\">\n                                <app-system-component-panel\n                                        [systemDescription]=\"systemDescription\"\n                                        [systemTypes]=\"systemTypeDescriptors\"\n                                        (selectionChanged)=\"systemComponentSelectionChanged($event)\"\n                                        [selection]=\"selectedSystemComponent\">\n                                </app-system-component-panel>\n                                <br>\n                                <ng-container *ngIf=\"selectedSystemComponent\">\n                                    <h4>{{selectedSystemComponent.label}} details</h4>\n                                    <ul class=\"nav nav-tabs\">\n                                        <li class=\"nav-item\">\n                                            <a class=\"nav-link\"\n                                               [class.active]=\"selectedDataSourceTab==='SETTINGS'\"\n                                               (click)=\"selectDataSourceTab('SETTINGS')\"\n                                               href=\"javascript:void(0);\">\n                                                Connection settings\n                                            </a>\n                                        </li>\n                                        <li class=\"nav-item\">\n                                            <a class=\"nav-link\"\n                                               [class.active]=\"selectedDataSourceTab==='METADATA'\"\n                                               (click)=\"selectDataSourceTab('METADATA')\"\n                                               href=\"javascript:void(0);\">\n                                                Metadata\n                                            </a>\n                                        </li>\n                                    </ul>\n                                    <ng-container [ngSwitch]=\"selectedDataSourceTab\">\n                                        <ng-container *ngSwitchCase=\"'SETTINGS'\">\n                                            <app-settings-panel\n                                                    [systemDescription]=\"systemDescription\"\n                                                    [systemTypes]=\"systemTypeDescriptors\"\n                                                    [systemComponent]=\"selectedSystemComponent\">\n                                            </app-settings-panel>\n                                        </ng-container>\n                                        <ng-container *ngSwitchCase=\"'METADATA'\">\n                                            <app-meta-model-panel\n                                                    [systemDescription]=\"systemDescription\"\n                                                    [systemComponent]=\"selectedSystemComponent\">\n                                            </app-meta-model-panel>\n                                        </ng-container>\n                                    </ng-container>\n                                </ng-container>\n                            </ng-container>\n                        </ng-container>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </ng-container>\n\n</ng-template>\n\n"
         },
         {
             "name": "TableComponent",
@@ -19073,13 +19340,13 @@
         },
         {
             "name": "FabricCommonModule",
-            "id": "module-FabricCommonModule-2f19f028d3d416cc8a4700a81b91632348e274884e2cd4cedaa621e22beedcf5d612da83f432f14cc19673ccf57c1b56609f4444da6c7de0abaf84e4bc845ebd",
+            "id": "module-FabricCommonModule-6f4647c4f5ec48f575a77133dce8dac3bd1bf45cdf307cc300a48afda008af007398e8b08efb304a1223bcd0d8b9ac1dd7e229c21f8a91435aa3127d1540134b",
             "description": "",
             "deprecationMessage": "",
             "deprecated": false,
             "file": "src/app/common/common.module.ts",
             "methods": [],
-            "sourceCode": "import {NgModule} from \"@angular/core\";\n\nimport {CoreModule} from '../core.module';\n\nimport {PopupMenuComponent} from './popup-menu/popup-menu.component';\nimport {ModalComponent} from './modal/modal.component';\nimport {Layout1ColComponent} from \"./styleguide/layout-1col/layout-1col.component\";\nimport {BackButtonComponent} from \"./styleguide/back-button/back-button.component\";\nimport {PanelComponent} from \"./styleguide/panel/panel.component\";\nimport {ConfirmationDialogComponent} from \"./confirmation-dialog/confirmation-dialog.component\";\nimport {ValidationMessagesComponent} from './validation-messages/validation-messages.component';\nimport {TitleComponent} from './styleguide/title/title.component';\nimport {BreadcrumbComponent} from './styleguide/breadcrumb/breadcrumb.component';\nimport {ActionButtonsComponent} from './styleguide/action-buttons/action-buttons.component';\nimport {SideBarComponent} from './styleguide/side-bar/side-bar.component';\nimport {ModalHeaderComponent} from './styleguide/modal-header/modal-header.component';\nimport {ModalFooterComponent} from './styleguide/modal-footer/modal-footer.component';\nimport {HTTP_INTERCEPTORS} from \"@angular/common/http\";\nimport {HttpErrorInterceptor} from \"./connection-status/http-error.interceptor\";\nimport {ConnectionStatusComponent} from './connection-status/connection-status.component';\nimport {CommandProgressComponent} from './styleguide/command-progress/command-progress.component';\nimport {StatusComponent} from './styleguide/status/status.component';\nimport { NavComponent } from './styleguide/nav/nav.component';\n\n@NgModule({\n    declarations: [\n        ModalComponent,\n        PopupMenuComponent,\n        Layout1ColComponent,\n        BackButtonComponent,\n        PanelComponent,\n        ConfirmationDialogComponent,\n        ValidationMessagesComponent,\n        TitleComponent,\n        BreadcrumbComponent,\n        ActionButtonsComponent,\n        SideBarComponent,\n        ModalHeaderComponent,\n        ModalFooterComponent,\n        ConnectionStatusComponent,\n        CommandProgressComponent,\n        StatusComponent,\n        NavComponent,\n    ],\n    providers: [\n        {\n            provide: HTTP_INTERCEPTORS,\n            useClass: HttpErrorInterceptor,\n            multi: true\n        }\n    ],\n    imports: [\n        CoreModule,\n    ],\n    exports: [\n        ModalComponent,\n        PopupMenuComponent,\n        Layout1ColComponent,\n        BackButtonComponent,\n        PanelComponent,\n        ConfirmationDialogComponent,\n        ValidationMessagesComponent,\n        TitleComponent,\n        BreadcrumbComponent,\n        ActionButtonsComponent,\n        SideBarComponent,\n        ModalHeaderComponent,\n        ModalFooterComponent,\n        CommandProgressComponent,\n    ]\n})\nexport class FabricCommonModule {\n\n}\n",
+            "sourceCode": "import {NgModule} from \"@angular/core\";\n\nimport {CoreModule} from '../core.module';\n\nimport {PopupMenuComponent} from './popup-menu/popup-menu.component';\nimport {ModalComponent} from './modal/modal.component';\nimport {Layout1ColComponent} from \"./styleguide/layout-1col/layout-1col.component\";\nimport {BackButtonComponent} from \"./styleguide/back-button/back-button.component\";\nimport {PanelComponent} from \"./styleguide/panel/panel.component\";\nimport {ConfirmationDialogComponent} from \"./confirmation-dialog/confirmation-dialog.component\";\nimport {ValidationMessagesComponent} from './validation-messages/validation-messages.component';\nimport {TitleComponent} from './styleguide/title/title.component';\nimport {BreadcrumbComponent} from './styleguide/breadcrumb/breadcrumb.component';\nimport {ActionButtonsComponent} from './styleguide/action-buttons/action-buttons.component';\nimport {SideBarComponent} from './styleguide/side-bar/side-bar.component';\nimport {ModalHeaderComponent} from './styleguide/modal-header/modal-header.component';\nimport {ModalFooterComponent} from './styleguide/modal-footer/modal-footer.component';\nimport {HTTP_INTERCEPTORS} from \"@angular/common/http\";\nimport {HttpErrorInterceptor} from \"./connection-status/http-error.interceptor\";\nimport {ConnectionStatusComponent} from './connection-status/connection-status.component';\nimport {CommandProgressComponent} from './styleguide/command-progress/command-progress.component';\nimport {StatusComponent} from './styleguide/status/status.component';\nimport {NavComponent} from './styleguide/nav/nav.component';\nimport {IntroComponent} from './styleguide/intro/intro.component';\n\n@NgModule({\n    declarations: [\n        ModalComponent,\n        PopupMenuComponent,\n        Layout1ColComponent,\n        BackButtonComponent,\n        PanelComponent,\n        ConfirmationDialogComponent,\n        ValidationMessagesComponent,\n        TitleComponent,\n        BreadcrumbComponent,\n        ActionButtonsComponent,\n        SideBarComponent,\n        ModalHeaderComponent,\n        ModalFooterComponent,\n        ConnectionStatusComponent,\n        CommandProgressComponent,\n        StatusComponent,\n        NavComponent,\n        IntroComponent,\n    ],\n    providers: [\n        {\n            provide: HTTP_INTERCEPTORS,\n            useClass: HttpErrorInterceptor,\n            multi: true\n        }\n    ],\n    imports: [\n        CoreModule,\n    ],\n    exports: [\n        ModalComponent,\n        PopupMenuComponent,\n        Layout1ColComponent,\n        BackButtonComponent,\n        PanelComponent,\n        ConfirmationDialogComponent,\n        ValidationMessagesComponent,\n        TitleComponent,\n        BreadcrumbComponent,\n        ActionButtonsComponent,\n        SideBarComponent,\n        ModalHeaderComponent,\n        ModalFooterComponent,\n        CommandProgressComponent,\n        NavComponent,\n        IntroComponent,\n    ]\n})\nexport class FabricCommonModule {\n\n}\n",
             "children": [
                 {
                     "type": "providers",
@@ -19109,6 +19376,9 @@
                         },
                         {
                             "name": "ConnectionStatusComponent"
+                        },
+                        {
+                            "name": "IntroComponent"
                         },
                         {
                             "name": "Layout1ColComponent"
@@ -19172,6 +19442,9 @@
                             "name": "ConfirmationDialogComponent"
                         },
                         {
+                            "name": "IntroComponent"
+                        },
+                        {
                             "name": "Layout1ColComponent"
                         },
                         {
@@ -19182,6 +19455,9 @@
                         },
                         {
                             "name": "ModalHeaderComponent"
+                        },
+                        {
+                            "name": "NavComponent"
                         },
                         {
                             "name": "PanelComponent"
@@ -19425,7 +19701,7 @@
                 "deprecated": false,
                 "deprecationMessage": "",
                 "type": "",
-                "defaultValue": "StatusComponentStory.bind({})"
+                "defaultValue": "NavComponentStory.bind({})"
             },
             {
                 "name": "DEFAULT_PAGE_SIZE",
@@ -19456,6 +19732,16 @@
                 "deprecationMessage": "",
                 "type": "object",
                 "defaultValue": "{\n  production: false,\n  port: 4200\n}"
+            },
+            {
+                "name": "NavComponentStory",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/styleguide/nav/nav.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story<NavComponent>",
+                "defaultValue": "(args: NavComponent) => ({\n    component: NavComponent,\n    props: args,\n\n})"
             },
             {
                 "name": "NavigationTreeComponentStory",
@@ -19565,16 +19851,6 @@
                 "deprecationMessage": "",
                 "type": "Story<SnippetDialogComponent>",
                 "defaultValue": "(args: SnippetDialogComponent) => ({\n  component: SnippetDialogComponent,\n  props: args,\n})"
-            },
-            {
-                "name": "StatusComponentStory",
-                "ctype": "miscellaneous",
-                "subtype": "variable",
-                "file": "src/app/common/styleguide/nav/nav.stories.ts",
-                "deprecated": false,
-                "deprecationMessage": "",
-                "type": "Story<NavComponent>",
-                "defaultValue": "(args: NavComponent) => ({\n    component: NavComponent,\n    props: args,\n\n})"
             },
             {
                 "name": "StatusComponentStory",
@@ -20107,10 +20383,10 @@
                     "deprecated": false,
                     "deprecationMessage": "",
                     "type": "",
-                    "defaultValue": "StatusComponentStory.bind({})"
+                    "defaultValue": "NavComponentStory.bind({})"
                 },
                 {
-                    "name": "StatusComponentStory",
+                    "name": "NavComponentStory",
                     "ctype": "miscellaneous",
                     "subtype": "variable",
                     "file": "src/app/common/styleguide/nav/nav.stories.ts",
@@ -21146,6 +21422,15 @@
                 "status": "low"
             },
             {
+                "filePath": "src/app/common/routing.service.ts",
+                "type": "injectable",
+                "linktype": "injectable",
+                "name": "RoutingService",
+                "coveragePercent": 0,
+                "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
                 "filePath": "src/app/common/styleguide/action-buttons/action-buttons.component.ts",
                 "type": "component",
                 "linktype": "component",
@@ -21287,6 +21572,15 @@
                 "status": "low"
             },
             {
+                "filePath": "src/app/common/styleguide/intro/intro.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "IntroComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/5",
+                "status": "low"
+            },
+            {
                 "filePath": "src/app/common/styleguide/layout-1col/layout-1col.component.ts",
                 "type": "component",
                 "linktype": "component",
@@ -21319,7 +21613,7 @@
                 "linktype": "component",
                 "name": "NavComponent",
                 "coveragePercent": 0,
-                "coverageCount": "0/5",
+                "coverageCount": "0/7",
                 "status": "low"
             },
             {
@@ -21329,6 +21623,15 @@
                 "name": "NavItemSpec",
                 "coveragePercent": 0,
                 "coverageCount": "0/3",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/styleguide/nav/nav.component.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "NavSpec",
+                "coveragePercent": 0,
+                "coverageCount": "0/4",
                 "status": "low"
             },
             {
@@ -21346,7 +21649,7 @@
                 "type": "variable",
                 "linktype": "miscellaneous",
                 "linksubtype": "variable",
-                "name": "StatusComponentStory",
+                "name": "NavComponentStory",
                 "coveragePercent": 0,
                 "coverageCount": "0/1",
                 "status": "low"
@@ -21479,7 +21782,7 @@
                 "linktype": "component",
                 "name": "DataSourceSelectionPanelComponent",
                 "coveragePercent": 0,
-                "coverageCount": "0/12",
+                "coverageCount": "0/11",
                 "status": "low"
             },
             {
@@ -21497,7 +21800,7 @@
                 "linktype": "component",
                 "name": "ConsolePageComponent",
                 "coveragePercent": 0,
-                "coverageCount": "0/6",
+                "coverageCount": "0/7",
                 "status": "low"
             },
             {
@@ -22222,7 +22525,7 @@
                 "linktype": "component",
                 "name": "SystemDescriptionPageComponent",
                 "coveragePercent": 0,
-                "coverageCount": "0/12",
+                "coverageCount": "0/13",
                 "status": "low"
             },
             {

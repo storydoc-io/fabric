@@ -1,4 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
+import {faLightbulb} from "@fortawesome/free-solid-svg-icons";
 
 @Component({
   selector: 'app-intro',
@@ -6,6 +7,8 @@ import {Component, Input, OnInit} from '@angular/core';
   styleUrls: ['./intro.component.scss']
 })
 export class IntroComponent implements OnInit {
+
+  faLightbulb = faLightbulb
 
   constructor() { }
 

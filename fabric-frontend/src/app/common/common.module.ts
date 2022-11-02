@@ -22,6 +22,7 @@ import {CommandProgressComponent} from './styleguide/command-progress/command-pr
 import {StatusComponent} from './styleguide/status/status.component';
 import {NavComponent} from './styleguide/nav/nav.component';
 import {IntroComponent} from './styleguide/intro/intro.component';
+import {LoadingComponent} from './loading/loading.component';
 
 @NgModule({
     declarations: [
@@ -43,6 +44,7 @@ import {IntroComponent} from './styleguide/intro/intro.component';
         StatusComponent,
         NavComponent,
         IntroComponent,
+        LoadingComponent,
     ],
     providers: [
         {
@@ -71,6 +73,7 @@ import {IntroComponent} from './styleguide/intro/intro.component';
         CommandProgressComponent,
         NavComponent,
         IntroComponent,
+        LoadingComponent,
     ]
 })
 export class FabricCommonModule {
