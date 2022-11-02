@@ -14,6 +14,7 @@ public class DBMetaData2StructureMapper {
     public static final String STRUCTURE_TYPE__FOREIGN_KEY = "FOREIGNKEY";
 
     public  StructureDTO toDto(DBMetaData dbMetaData) {
+        if (dbMetaData==null) return null;
         return StructureDTO.builder()
                 .systemType(JDBC_SYSTEM_TYPE)
                 .structureType("SCHEMA")

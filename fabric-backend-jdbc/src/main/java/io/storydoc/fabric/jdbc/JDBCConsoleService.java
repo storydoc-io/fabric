@@ -62,13 +62,17 @@ public class JDBCConsoleService extends JDBCServiceBase implements ConsoleHandle
                     .systemType(systemType())
                     .consoleOutputType(ConsoleOutputType.TABULAR)
                     .tabular(resultSetMapper.tabularResponse(resultSet))
+/*
                     .navItems(getNavigation(NavigationRequest.builder()
                             .systemComponentKey(requestDTO.getSystemComponentKey())
                             .navItem(requestDTO.getNavItem())
                             .build()))
+
+ */
                     .build();
             }
         } catch (Exception e) {
+            log.info("error executing query", e);
             return ConsoleResponseItemDTO.builder()
                     .systemType(systemType())
                     .consoleOutputType(ConsoleOutputType.STACKTRACE)
