@@ -29,7 +29,7 @@ export class ConsolePanelComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges) {
         let systemComponentKey = this.dataSource.systemComponentKey;
-        this.service.loadNavItems(systemComponentKey).then(navItems => this.initNavItems(navItems))
+        //this.service.loadNavItems(systemComponentKey).then(navItems => this.initNavItems(navItems))
         this.service.loadDescriptor(systemComponentKey).then(descriptor => this.initForm(descriptor))
         this.service.loadSnippets(systemComponentKey).then(snippets => this.initSnippets(snippets))
     }

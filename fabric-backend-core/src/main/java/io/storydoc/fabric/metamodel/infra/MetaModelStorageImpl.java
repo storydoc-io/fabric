@@ -34,9 +34,12 @@ public class MetaModelStorageImpl extends StorageBase implements MetaModelStorag
     }
 
     @Override
-    @SneakyThrows
     public <MM extends MetaModel> MM loadMetaModel(String systemCompenentKey, MetaModelDeserializer<MM> deserializer) {
-        ResourceUrn metaModelModelUrn = workspaceStructure.getMetaModelUrn(systemCompenentKey);
-        return deserializer.read(workspaceQueryService.getInputStream(metaModelModelUrn));
+        try {
+            ResourceUrn metaModelModelUrn = workspaceStructure.getMetaModelUrn(systemCompenentKey);
+            return deserializer.read(workspaceQueryService.getInputStream(metaModelModelUrn));
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
