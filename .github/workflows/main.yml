@@ -2,9 +2,7 @@ name: Maven CI/CD
 
 on:
  push:
-    branches: [ main ]
- pull_request:
-    branches: [ main ]
+    branches: [ release/0.1.x ]
 
 jobs:
   build_and_test:
