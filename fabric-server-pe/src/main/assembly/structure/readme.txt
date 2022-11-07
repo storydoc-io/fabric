@@ -12,13 +12,11 @@ application settings:
 
     to change the settings open config/application.yaml
 
-        server port  (default: 8080)
+    default settings:
 
-wokspace
+        server port : 8080
 
-    (meta)data is by default kept in the "workspace" directory
-
-    this directory can be changed in run.sh or run.bat
+        workspace folder: "workspace"
 
 running the application:
 
