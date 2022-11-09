@@ -69,9 +69,7 @@ export class ConsolePanelComponent implements OnChanges {
             attributes,
             this.currentNavItem
         ).then((response) => {
-            this.jsonOutput = null
-            this.stackTraceOutput = null
-            this.tabularResponse = null
+            this.clearOutput();
             switch (response.consoleOutputType) {
                 case 'JSON': {
                     this.jsonOutput = JSON.parse(response.content)
@@ -91,12 +89,18 @@ export class ConsolePanelComponent implements OnChanges {
         })
     }
 
+    private clearOutput() {
+        this.jsonOutput = null
+        this.stackTraceOutput = null
+        this.tabularResponse = null
+    }
+
     clear() {
         this.descriptor.items.forEach((descriptorItem, index) => {
                 this.fieldControl(index).setValue(null)
             }
         )
-
+        this.clearOutput()
     }
 
     // tabs history/snippet
