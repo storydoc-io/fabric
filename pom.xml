@@ -4,7 +4,7 @@
 
     <groupId>io.storydoc.fabric</groupId>
     <artifactId>fabric</artifactId>
-    <version>0.1.0-RC2</version>
+    <version>0.1.0</version>
 
     <packaging>pom</packaging>
 
@@ -29,37 +29,37 @@
             <dependency>
                 <groupId>io.storydoc.fabric</groupId>
                 <artifactId>fabric-backend-core</artifactId>
-                <version>0.1.0-RC2</version>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>io.storydoc.fabric</groupId>
                 <artifactId>fabric-backend-mongo</artifactId>
-                <version>0.1.0-RC2</version>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>io.storydoc.fabric</groupId>
                 <artifactId>fabric-backend-elastic</artifactId>
-                <version>0.1.0-RC2</version>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>io.storydoc.fabric</groupId>
                 <artifactId>fabric-backend-jdbc</artifactId>
-                <version>0.1.0-RC2</version>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>io.storydoc.fabric</groupId>
                 <artifactId>fabric-backend</artifactId>
-                <version>0.1.0-RC2</version>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>io.storydoc.fabric</groupId>
                 <artifactId>fabric-frontend</artifactId>
-                <version>0.1.0-RC2</version>
+                <version>0.1.0</version>
             </dependency>
             <dependency>
                 <groupId>io.storydoc.fabric</groupId>
                 <artifactId>fabric-server-pe</artifactId>
-                <version>0.1.0-RC2</version>
+                <version>0.1.0</version>
             </dependency>
 
             <dependency>
