@@ -11,7 +11,7 @@
                 <div class="ps-1">
                     <select id="environmentKey" formControlName="environmentKey" class="form-select">
                         <option [ngValue]="null" selected disabled>Environment</option>
-                        <option *ngFor="let environment of systemDescription.environments" [ngValue]="environment.key">{{environment.key}}</option>
+                        <option *ngFor="let environment of getAvailableEnvironments(systemDescription)" [ngValue]="environment.key">{{environment.key}}</option>
                     </select>
                 </div>
                 <div class="ps-1">

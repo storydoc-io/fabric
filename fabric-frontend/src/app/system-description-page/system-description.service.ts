@@ -62,9 +62,19 @@ export class SystemDescriptionWrapper {
         return this.systemDescription.environments.find(env => env.key === envKey)
     }
 
+    getSystemComponentByKey(systemComponentKey: string): SystemComponentDto {
+        return this.systemDescription.systemComponents.find(comp => comp.key === systemComponentKey)
+    }
+
     getEnvironments(systemComponent: SystemComponentDto): EnvironmentDto[] {
         return this.settingRows()
             .filter(row => row.systemComponentKey === systemComponent.key)
+            .map(row => this.getEnvironmentByKey(row.environmentKey))
+    }
+
+    getEnvironmentsWithSettingsForSystemComponentKey(systemComponentKey: string): EnvironmentDto[] {
+        return this.settingRows()
+            .filter(row => row.systemComponentKey === systemComponentKey)
             .map(row => this.getEnvironmentByKey(row.environmentKey))
     }
 

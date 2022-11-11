@@ -1,7 +1,8 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {SystemDescriptionService} from "../../system-description-page/system-description.service";
+import {SystemDescriptionService, SystemDescriptionWrapper} from "../../system-description-page/system-description.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {faBolt, faTimes} from '@fortawesome/free-solid-svg-icons';
+import {EnvironmentDto, SystemDescriptionDto} from "@fabric/models";
 
 export interface DataSourceSelection {
     environmentKey: string,
@@ -40,9 +41,20 @@ export class DataSourceSelectionPanelComponent implements OnInit {
         return <FormControl> this.formGroup.get('environmentKey')
     }
 
+    getAvailableEnvironments(systemDescription: SystemDescriptionDto): EnvironmentDto[] {
+        let systemComponentKey = this.systemComponentKeyControl.value
+        if (!systemComponentKey) return []
+        return new SystemDescriptionWrapper(systemDescription).getEnvironmentsWithSettingsForSystemComponentKey(systemComponentKey)
+    }
+
     get systemComponentKeyControl(): FormControl {
         return <FormControl> this.formGroup.get('systemComponentKey')
     }
+
+    selectedSystemComponent() {
+        return this.systemComponentKeyControl.value;
+    }
+
 
     connect() {
         this.selected.emit(this.formGroup.value)
