@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {faArrowUp, faExclamationTriangle} from '@fortawesome/free-solid-svg-icons';
 
 export interface ConnectionStatus {
@@ -16,10 +16,13 @@ export class StatusComponent {
   faExclamationTriangle = faExclamationTriangle
   faArrowUp = faArrowUp
 
-  constructor() { }
-
   @Input()
   status: ConnectionStatus
 
+  @Output()
+  onClicked = new EventEmitter()
 
+  showStatus() {
+      this.onClicked.emit()
+  }
 }

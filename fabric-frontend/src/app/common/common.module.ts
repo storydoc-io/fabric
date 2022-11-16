@@ -23,6 +23,7 @@ import {StatusComponent} from './styleguide/status/status.component';
 import {NavComponent} from './styleguide/nav/nav.component';
 import {IntroComponent} from './styleguide/intro/intro.component';
 import {LoadingComponent} from './loading/loading.component';
+import { ToastComponent } from './toast/toast.component';
 
 @NgModule({
     declarations: [
@@ -45,6 +46,7 @@ import {LoadingComponent} from './loading/loading.component';
         NavComponent,
         IntroComponent,
         LoadingComponent,
+        ToastComponent,
     ],
     providers: [
         {

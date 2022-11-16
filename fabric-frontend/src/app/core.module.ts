@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {ApiModule} from "./api/api.module";
 import {environment} from "../environments/environment";
 import {DragDropModule} from "@angular/cdk/drag-drop";
@@ -9,6 +9,7 @@ import {AppRoutingModule} from "./app-routing.module";
 import {ReactiveFormsModule} from "@angular/forms";
 import {FontAwesomeModule} from "@fortawesome/angular-fontawesome";
 import {TreeModule} from '@circlon/angular-tree-component';
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import {TreeModule} from '@circlon/angular-tree-component';
     AppRoutingModule,
     ReactiveFormsModule,
     FontAwesomeModule,
-    TreeModule
+    TreeModule,
+    BrowserAnimationsModule
   ],
   exports: [
     CommonModule,

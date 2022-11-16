@@ -5,7 +5,6 @@ import io.storydoc.fabric.command.domain.ProgressMonitor;
 import io.storydoc.fabric.connection.app.ConnectionTestRequestDTO;
 import io.storydoc.fabric.connection.app.ConnectionTestResponseDTO;
 import io.storydoc.fabric.connection.domain.ConnectionHandler;
-import io.storydoc.fabric.core.infra.StorageBase;
 import io.storydoc.fabric.metamodel.domain.*;
 import io.storydoc.fabric.mongo.metamodel.MongoMetaModel;
 import io.storydoc.fabric.mongo.navigation.MongoNavigationModel;
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class MongoSnapshotService extends StorageBase implements SnapshotHandler_ModelBased<MongoSnapshot>, MetaModelHandler<MongoMetaModel>, ConnectionHandler, SystemStructureHandler {
+public class MongoSnapshotService extends MongoServiceBase implements SnapshotHandler_ModelBased<MongoSnapshot>, MetaModelHandler<MongoMetaModel>, ConnectionHandler, SystemStructureHandler {
 
     private final SnapshotStorage snapshotStorage;
 
@@ -46,12 +45,6 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
         this.metaModelStorage = metaModelStorage;
     }
 
-    // systemtype
-
-    @Override
-    public String systemType() {
-        return "MONGO";
-    }
 
     @Override
     public SystemTypeDescriptorDTO getSystemTypeDescriptor() {
@@ -77,7 +70,7 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
 
         String systemComponentKey = systemComponent.getKey();
         MongoSettings mongoSettings = toMongoSettings(settings);
-        MongoClient mongoClient = MongoClients.create(mongoSettings.getConnectionUrl());
+        MongoClient mongoClient = getMongoClient(mongoSettings);
         MongoDatabase database = mongoClient.getDatabase(mongoSettings.getDbName());
 
 
@@ -104,13 +97,6 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
         return mongoSnapshot;
     }
 
-    private MongoSettings toMongoSettings(Map<String, String> settingsMap) {
-        return MongoSettings.builder()
-                .connectionUrl(settingsMap.get("connectionUrl"))
-                .dbName(settingsMap.get("dbName"))
-                .build();
-    }
-
     @Override
     public SnapshotSerializer<MongoSnapshot> getSerializer() {
         return ((mongoSnapshot, outputStream) -> objectMapper.writeValue(outputStream, mongoSnapshot));
@@ -133,7 +119,7 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
     @Override
     public MongoMetaModel createMetaModel(MetaModelId metaModelId, SystemComponentDTO systemComponent, Map<String, String> settings) {
         MongoSettings mongoSettings = toMongoSettings(settings);
-        MongoClient mongoClient = MongoClients.create(mongoSettings.getConnectionUrl());
+        MongoClient mongoClient = getMongoClient(mongoSettings);
         MongoDatabase database = mongoClient.getDatabase(mongoSettings.getDbName());
 
         MongoMetaModel metaModel = new MongoMetaModel();
@@ -170,7 +156,7 @@ public class MongoSnapshotService extends StorageBase implements SnapshotHandler
     public ConnectionTestResponseDTO testConnection(ConnectionTestRequestDTO connectionTestRequestDTO) {
         try {
             MongoSettings mongoSettings = toMongoSettings(connectionTestRequestDTO.getSettings());
-            MongoClient mongoClient = MongoClients.create(mongoSettings.getConnectionUrl());
+            MongoClient mongoClient = getMongoClient(mongoSettings);
             MongoDatabase database = mongoClient.getDatabase(mongoSettings.getDbName());
             MongoIterable<String> collectionNames = database.listCollectionNames();
             collectionNames.forEach(collectionName -> {

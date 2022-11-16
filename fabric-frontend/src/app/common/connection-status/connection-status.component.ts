@@ -15,4 +15,7 @@ export class ConnectionStatusComponent implements OnInit {
 
   status$ = this.service.status$
 
+  showInToast() {
+      this.service.showToast()
+  }
 }
