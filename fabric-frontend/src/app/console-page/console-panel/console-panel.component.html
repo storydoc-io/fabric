@@ -7,10 +7,10 @@
                         <ng-container formArrayName="fields">
                             <ng-container *ngFor="let item of descriptor.items; let i=index">
                                 <ng-container *ngIf="item.inputType==='TEXT'">
-                                    <input type="text" class="form-control" [formControl]="fieldControl(i)">
+                                    <input type="text" class="form-control" [formControl]="fieldControl(i)" [placeholder]="item.placeholder" >
                                 </ng-container>
                                 <ng-container *ngIf="item.inputType==='TEXTAREA'">
-                                    <textarea rows="12" class="form-control" [formControl]="fieldControl(i)"></textarea>
+                                    <textarea rows="12" class="form-control" [formControl]="fieldControl(i)" [placeholder]="item.placeholder" ></textarea>
                                 </ng-container>
                                 <ng-container *ngIf="item.inputType==='SELECT'">
                                     <select class="form-control" [formControl]="fieldControl(i)">

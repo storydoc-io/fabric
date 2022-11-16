@@ -9,6 +9,7 @@ import { ConnectionControllerService } from './services/connection-controller.se
 import { ConsoleControllerService } from './services/console-controller.service';
 import { MetaModelControllerService } from './services/meta-model-controller.service';
 import { MongoSnapshotControllerService } from './services/mongo-snapshot-controller.service';
+import { RedirectToAngularService } from './services/redirect-to-angular.service';
 import { SnapshotControllerService } from './services/snapshot-controller.service';
 import { SystemDescriptionControllerService } from './services/system-description-controller.service';
 import { WorkspaceRestControllerService } from './services/workspace-rest-controller.service';
@@ -26,6 +27,7 @@ import { WorkspaceRestControllerService } from './services/workspace-rest-contro
     ConsoleControllerService,
     MetaModelControllerService,
     MongoSnapshotControllerService,
+    RedirectToAngularService,
     SnapshotControllerService,
     SystemDescriptionControllerService,
     WorkspaceRestControllerService,

@@ -54,14 +54,17 @@ public class ElasticConsoleService extends ElasticServiceBase implements Connect
                                 .name(CONSOLE_FIELD_HTTP_METHOD)
                                 .inputType(ConsoleInputType.SELECT)
                                 .selectValues(List.of("GET","POST","PUT"))
+                                .placeholder("http method")
                                 .build(),
                         ConsoleDescriptorItemDTO.builder()
                                 .name(CONSOLE_FIELD_ENDPOINT)
                                 .inputType(ConsoleInputType.TEXT)
+                                .placeholder("endpoint")
                                 .build(),
                         ConsoleDescriptorItemDTO.builder()
                                 .name(CONSOLE_FIELD_JSON_ENTITY)
                                 .inputType(ConsoleInputType.TEXTAREA)
+                                .placeholder("body")
                                 .build()
                 ))
                 .build();

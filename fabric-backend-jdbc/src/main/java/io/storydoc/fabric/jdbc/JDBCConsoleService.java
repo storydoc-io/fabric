@@ -43,6 +43,7 @@ public class JDBCConsoleService extends JDBCServiceBase implements ConsoleHandle
                         ConsoleDescriptorItemDTO.builder()
                                 .name(CONSOLE_FIELD_SQL_QUERY)
                                 .inputType(ConsoleInputType.TEXT)
+                                .placeholder("query")
                                 .build()
                 ))
                 .build();

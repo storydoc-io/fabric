@@ -36,10 +36,12 @@ public class MongoConsoleService extends MongoServiceBase implements ConsoleHand
                         ConsoleDescriptorItemDTO.builder()
                                 .name(CONSOLE_FIELD_COLLECTION_NAME)
                                 .inputType(ConsoleInputType.TEXT)
+                                .placeholder("collection name")
                                 .build(),
                         ConsoleDescriptorItemDTO.builder()
                                 .name(CONSOLE_FIELD_FILTER)
-                                .inputType(ConsoleInputType.TEXT)
+                                .inputType(ConsoleInputType.TEXTAREA)
+                                .placeholder("filter, e.g. { \"<field>\" : \"<value>\" }")
                                 .build()
                 ))
                 .build();
@@ -54,7 +56,9 @@ public class MongoConsoleService extends MongoServiceBase implements ConsoleHand
 
         String collectionName = requestDTO.getAttributes().get(CONSOLE_FIELD_COLLECTION_NAME);
         String filter = requestDTO.getAttributes().get(CONSOLE_FIELD_FILTER);
-        filter = "{ \"sequenceName\": \"CA5\"}";
+        if (filter == null || filter.length() == 0) {
+            filter = "{}";
+        }
 
         Bson bsonFilter = Document.parse(filter);
 

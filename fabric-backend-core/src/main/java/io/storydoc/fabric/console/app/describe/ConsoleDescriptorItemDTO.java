@@ -16,5 +16,6 @@ public class ConsoleDescriptorItemDTO {
     private ConsoleInputType inputType;
     private String name;
     private List<String> selectValues;
+    private String placeholder;
 
 }
