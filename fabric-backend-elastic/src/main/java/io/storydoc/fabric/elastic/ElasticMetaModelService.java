@@ -120,12 +120,16 @@ public class ElasticMetaModelService extends ElasticServiceBase implements MetaM
                                 .key(SETTING_KEY__PORT)
                                 .description("Port")
                                 .placeHolder("enter port")
-                                .build(),
+                                .build()
+/*
+                        ,
                         SettingDescriptorDTO.builder()
                                 .key(SETTING_KEY__SCHEMA_PATTERN)
-                                .description("Schema Pattern")
+                                .description("Index Pattern")
                                 .placeHolder("enter schema pattern")
                                 .build()
+
+ */
 
                 ))
                 .build();

@@ -23,7 +23,8 @@ import {StatusComponent} from './styleguide/status/status.component';
 import {NavComponent} from './styleguide/nav/nav.component';
 import {IntroComponent} from './styleguide/intro/intro.component';
 import {LoadingComponent} from './loading/loading.component';
-import { ToastComponent } from './toast/toast.component';
+import {ToastComponent} from './toast/toast.component';
+import {InfoComponent} from './styleguide/info/info.component';
 
 @NgModule({
     declarations: [
@@ -47,6 +48,7 @@ import { ToastComponent } from './toast/toast.component';
         IntroComponent,
         LoadingComponent,
         ToastComponent,
+        InfoComponent,
     ],
     providers: [
         {
@@ -76,6 +78,7 @@ import { ToastComponent } from './toast/toast.component';
         NavComponent,
         IntroComponent,
         LoadingComponent,
+        InfoComponent,
     ]
 })
 export class FabricCommonModule {

@@ -68,7 +68,7 @@ export class SettingsDialogComponent implements OnInit {
     ngOnChanges(changes: SimpleChanges): void {
         if (this.spec != null) {
             this.specWrapper = new SettingsDialogSpecWrapper(this.spec)
-            this.configureSettingsControlForSystemType(this.specWrapper.getSystemType(this.spec.data.systemComponentKey))
+            this.configureSettingsControlForSystemType(this.systemType)
             if (this.spec.mode==='EDIT'){
                 this.formGroup.setValue(this.spec.data)
             } else {
@@ -78,6 +78,10 @@ export class SettingsDialogComponent implements OnInit {
             this.formGroup.markAsUntouched()
             this.connectionTester = null
         }
+    }
+
+    get systemType(): string {
+        return this.specWrapper.getSystemType(this.spec.data.systemComponentKey)
     }
 
     formGroup: FormGroup = new FormGroup({
