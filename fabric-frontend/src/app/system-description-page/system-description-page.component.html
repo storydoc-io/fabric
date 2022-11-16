@@ -54,6 +54,7 @@
                                                 Connection settings
                                             </a>
                                         </li>
+                                        <!--
                                         <li class="nav-item">
                                             <a class="nav-link"
                                                [class.active]="selectedDataSourceTab==='METADATA'"
@@ -62,6 +63,7 @@
                                                 Metadata
                                             </a>
                                         </li>
+                                        -->
                                     </ul>
                                     <ng-container [ngSwitch]="selectedDataSourceTab">
                                         <ng-container *ngSwitchCase="'SETTINGS'">
@@ -72,10 +74,12 @@
                                             </app-settings-panel>
                                         </ng-container>
                                         <ng-container *ngSwitchCase="'METADATA'">
+                                            <!--
                                             <app-meta-model-panel
                                                     [systemDescription]="systemDescription"
                                                     [systemComponent]="selectedSystemComponent">
                                             </app-meta-model-panel>
+                                            -->
                                         </ng-container>
                                     </ng-container>
                                 </ng-container>
