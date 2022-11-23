@@ -8,8 +8,8 @@ export class ConsoleService {
     constructor(private consoleControllerService: ConsoleControllerService) {
     }
 
-    loadDescriptor(systemComponentKey: string) : Promise<ConsoleDescriptorDto>{
-        return this.consoleControllerService.getDescriptorUsingGet({systemComponentKey})
+    loadDescriptor(systemType: string) : Promise<ConsoleDescriptorDto>{
+        return this.consoleControllerService.getDescriptorUsingGet({systemType})
             .toPromise()
     }
 
@@ -24,18 +24,18 @@ export class ConsoleService {
         }).toPromise()
     }
 
-    loadSnippets(systemComponentKey:string): Promise<SnippetDto[]> {
-        return this.consoleControllerService.getSnippetsUsingGet({systemComponentKey}).toPromise()
+    loadSnippets(systemType:string): Promise<SnippetDto[]> {
+        return this.consoleControllerService.getSnippetsUsingGet({systemType}).toPromise()
     }
 
-    addSnippet(title: string, systemComponentKey: string, attributes: {}): Promise<SnippetDto[]> {
+    addSnippet(title: string, systemType: string, attributes: {}): Promise<SnippetDto[]> {
         return this.consoleControllerService.createSnippetUsingPost({
-            systemComponentKey,
+            systemType,
             body: {
                 title,
                 attributes
             }
-        }).toPromise().then(()=> this.loadSnippets(systemComponentKey))
+        }).toPromise().then(()=> this.loadSnippets(systemType))
 
     }
 

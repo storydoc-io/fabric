@@ -1,12 +1,12 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {SystemDescriptionService, SystemDescriptionWrapper} from "../../system-description-page/system-description.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {faBolt, faTimes} from '@fortawesome/free-solid-svg-icons';
-import {EnvironmentDto, SystemDescriptionDto} from "@fabric/models";
+import {EnvironmentDto, SystemComponentDto, SystemDescriptionDto} from "@fabric/models";
 
 export interface DataSourceSelection {
-    environmentKey: string,
-    systemComponentKey: string
+    environment: EnvironmentDto,
+    systemComponent: SystemComponentDto
 }
 
 @Component({
@@ -29,35 +29,40 @@ export class DataSourceSelectionPanelComponent implements OnInit {
     ngOnInit(): void {
     }
 
+    @Input()
+    systemDescription: SystemDescriptionDto
+
     @Output()
     selected = new EventEmitter<DataSourceSelection>()
 
     formGroup: FormGroup = new FormGroup({
-        environmentKey: new FormControl(null, [Validators.required]),
-        systemComponentKey: new FormControl(null, [Validators.required]),
+        environment: new FormControl(null, [Validators.required]),
+        systemComponent: new FormControl(null, [Validators.required]),
     })
 
-    get environmentKeyControl(): FormControl {
-        return <FormControl> this.formGroup.get('environmentKey')
+    get environmentControl(): FormControl {
+        return <FormControl> this.formGroup.get('environment')
     }
 
     getAvailableEnvironments(systemDescription: SystemDescriptionDto): EnvironmentDto[] {
-        let systemComponentKey = this.systemComponentKeyControl.value
+        let systemComponentKey = this.systemComponentControl.value?.key
         if (!systemComponentKey) return []
         return new SystemDescriptionWrapper(systemDescription).getEnvironmentsWithSettingsForSystemComponentKey(systemComponentKey)
     }
 
-    get systemComponentKeyControl(): FormControl {
-        return <FormControl> this.formGroup.get('systemComponentKey')
+    get systemComponentControl(): FormControl {
+        return <FormControl> this.formGroup.get('systemComponent')
     }
 
     selectedSystemComponent() {
-        return this.systemComponentKeyControl.value;
+        return this.systemComponentControl.value;
     }
 
 
     connect() {
-        this.selected.emit(this.formGroup.value)
+        let value = this.formGroup.value;
+        console.log('value:', value)
+        this.selected.emit(value)
         this.connected = true
     }
 

@@ -28,10 +28,10 @@ export class ConsolePanelComponent implements OnChanges {
     dataSource: DataSourceSelection
 
     ngOnChanges(changes: SimpleChanges) {
-        let systemComponentKey = this.dataSource.systemComponentKey;
+        let systemType = this.dataSource.systemComponent.systemType;
         //this.service.loadNavItems(systemComponentKey).then(navItems => this.initNavItems(navItems))
-        this.service.loadDescriptor(systemComponentKey).then(descriptor => this.initForm(descriptor))
-        this.service.loadSnippets(systemComponentKey).then(snippets => this.initSnippets(snippets))
+        this.service.loadDescriptor(systemType).then(descriptor => this.initForm(descriptor))
+        this.service.loadSnippets(systemType).then(snippets => this.initSnippets(snippets))
     }
 
     descriptor: ConsoleDescriptorDto
@@ -64,8 +64,8 @@ export class ConsolePanelComponent implements OnChanges {
             attributes[this.descriptor.items[i].name] = fieldValue
         })
         this.service.runRequest(
-            this.dataSource.environmentKey,
-            this.dataSource.systemComponentKey,
+            this.dataSource.environment.key,
+            this.dataSource.systemComponent.key,
             attributes,
             this.currentNavItem
         ).then((response) => {
@@ -195,7 +195,7 @@ export class ConsolePanelComponent implements OnChanges {
         descriptor.items.forEach((item, index) => {
             attributes[item.name] = data.fields[index]
         })
-        this.service.addSnippet(data.title, this.dataSource.systemComponentKey, attributes)
+        this.service.addSnippet(data.title, this.dataSource.systemComponent.systemType, attributes)
             .then((snippets) => {
                 this.snippets = snippets
             })

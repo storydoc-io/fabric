@@ -13,7 +13,9 @@
 <ng-template #title>
     <div class="d-flex flex-row">
         <app-title text="Console"></app-title>
-        <app-data-source-selection-panel (selected)="selectDataSource($event)"></app-data-source-selection-panel>
+        <ng-container *ngIf="systemDescription$ | async as systemDescription">
+            <app-data-source-selection-panel [systemDescription]="systemDescription" (selected)="selectDataSource($event)"></app-data-source-selection-panel>
+        </ng-container>
     </div>
 </ng-template>
 

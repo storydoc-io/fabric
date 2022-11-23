@@ -49,14 +49,14 @@ export class ConsoleControllerService extends BaseService {
   getDescriptorUsingGet$Response(params?: {
 
     /**
-     * systemComponentKey
+     * systemType
      */
-    systemComponentKey?: string;
+    systemType?: string;
   }): Observable<StrictHttpResponse<ConsoleDescriptorDto>> {
 
     const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.GetDescriptorUsingGetPath, 'get');
     if (params) {
-      rb.query('systemComponentKey', params.systemComponentKey, {"style":"form"});
+      rb.query('systemType', params.systemType, {"style":"form"});
     }
 
     return this.http.request(rb.build({
@@ -83,9 +83,9 @@ export class ConsoleControllerService extends BaseService {
   getDescriptorUsingGet(params?: {
 
     /**
-     * systemComponentKey
+     * systemType
      */
-    systemComponentKey?: string;
+    systemType?: string;
   }): Observable<ConsoleDescriptorDto> {
 
     return this.getDescriptorUsingGet$Response(params).pipe(
@@ -219,15 +219,15 @@ export class ConsoleControllerService extends BaseService {
   createSnippetUsingPost$Response(params?: {
 
     /**
-     * systemComponentKey
+     * systemType
      */
-    systemComponentKey?: string;
+    systemType?: string;
     body?: SnippetDto
   }): Observable<StrictHttpResponse<void>> {
 
     const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.CreateSnippetUsingPostPath, 'post');
     if (params) {
-      rb.query('systemComponentKey', params.systemComponentKey, {"style":"form"});
+      rb.query('systemType', params.systemType, {"style":"form"});
       rb.body(params.body, 'application/json');
     }
 
@@ -255,9 +255,9 @@ export class ConsoleControllerService extends BaseService {
   createSnippetUsingPost(params?: {
 
     /**
-     * systemComponentKey
+     * systemType
      */
-    systemComponentKey?: string;
+    systemType?: string;
     body?: SnippetDto
   }): Observable<void> {
 
@@ -284,14 +284,14 @@ export class ConsoleControllerService extends BaseService {
   getSnippetsUsingGet$Response(params?: {
 
     /**
-     * systemComponentKey
+     * systemType
      */
-    systemComponentKey?: string;
+    systemType?: string;
   }): Observable<StrictHttpResponse<Array<SnippetDto>>> {
 
     const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.GetSnippetsUsingGetPath, 'get');
     if (params) {
-      rb.query('systemComponentKey', params.systemComponentKey, {"style":"form"});
+      rb.query('systemType', params.systemType, {"style":"form"});
     }
 
     return this.http.request(rb.build({
@@ -318,9 +318,9 @@ export class ConsoleControllerService extends BaseService {
   getSnippetsUsingGet(params?: {
 
     /**
-     * systemComponentKey
+     * systemType
      */
-    systemComponentKey?: string;
+    systemType?: string;
   }): Observable<Array<SnippetDto>> {
 
     return this.getSnippetsUsingGet$Response(params).pipe(

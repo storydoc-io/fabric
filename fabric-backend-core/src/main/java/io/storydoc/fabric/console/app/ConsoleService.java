@@ -35,24 +35,22 @@ public class ConsoleService {
         return systemDescriptionService.getSystemComponentDTO(systemComponentKey);
     }
 
-    private ConsoleHandler getHandler(SystemComponentDTO systemComponentDTO) {
-        return handlerRegistry.getHandler(systemComponentDTO.getSystemType());
+    private ConsoleHandler getHandler(String systemType) {
+        return handlerRegistry.getHandler(systemType);
     }
 
     public ConsoleResponseItemDTO runRequest(ConsoleRequestDTO request) {
         SystemComponentDTO systemComponentDTO = getSystemComponentDTO(request.getSystemComponentKey());
         Map<String, String> settings = systemDescriptionService.getSettings(request.getSystemComponentKey(), request.getEnvironmentKey());
-        return getHandler(systemComponentDTO).runRequest(request, settings);
+        return getHandler(systemComponentDTO.getSystemType()).runRequest(request, settings);
     }
 
 
-    public ConsoleDescriptorDTO getDescriptor(String systemComponentKey) {
-        SystemComponentDTO systemComponentDTO = getSystemComponentDTO(systemComponentKey);
-        return getHandler(systemComponentDTO).getDescriptor();
+    public ConsoleDescriptorDTO getDescriptor(String systemType) {
+        return getHandler(systemType).getDescriptor();
     }
 
-    public List<SnippetDTO> getSnippets(String systemComponentKey) {
-        String systemType =  getSystemComponentDTO(systemComponentKey).getSystemType();
+    public List<SnippetDTO> getSnippets(String systemType) {
         return snippetStorage.getSnippets(systemType).stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
@@ -65,8 +63,7 @@ public class ConsoleService {
                 .build();
     }
 
-    public void createSnippet(String systemComponentKey, SnippetDTO snippetDTO) {
-        String systemType =  getSystemComponentDTO(systemComponentKey).getSystemType();
+    public void createSnippet(String systemType, SnippetDTO snippetDTO) {
         snippetStorage.addSnippet(systemType, Snippet.builder()
                 .title(snippetDTO.getTitle())
                 .attributes(snippetDTO.getAttributes())
@@ -76,6 +73,6 @@ public class ConsoleService {
 
     public List<NavItem> getNavigation(NavigationRequest navigationRequest) {
         SystemComponentDTO systemComponentDTO = getSystemComponentDTO(navigationRequest.getSystemComponentKey());
-        return getHandler(systemComponentDTO).getNavigation(navigationRequest);
+        return getHandler(systemComponentDTO.getSystemType()).getNavigation(navigationRequest);
     }
 }

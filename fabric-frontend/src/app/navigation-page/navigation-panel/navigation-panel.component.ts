@@ -19,7 +19,7 @@ export class NavigationPanelComponent implements OnInit {
   dataSource: DataSourceSelection
 
   ngOnChanges(changes: SimpleChanges) {
-    let systemComponentKey = this.dataSource.systemComponentKey;
+    let systemComponentKey = this.dataSource.systemComponent.key;
     this.service.loadNavItems(systemComponentKey, null)
   }
 

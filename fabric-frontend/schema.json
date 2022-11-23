@@ -152,9 +152,9 @@
         "operationId": "getDescriptorUsingGET",
         "parameters": [
           {
-            "name": "systemComponentKey",
+            "name": "systemType",
             "in": "query",
-            "description": "systemComponentKey",
+            "description": "systemType",
             "required": false,
             "style": "form",
             "schema": {
@@ -281,9 +281,9 @@
         "operationId": "createSnippetUsingPOST",
         "parameters": [
           {
-            "name": "systemComponentKey",
+            "name": "systemType",
             "in": "query",
-            "description": "systemComponentKey",
+            "description": "systemType",
             "required": false,
             "style": "form",
             "schema": {
@@ -328,9 +328,9 @@
         "operationId": "getSnippetsUsingGET",
         "parameters": [
           {
-            "name": "systemComponentKey",
+            "name": "systemType",
             "in": "query",
-            "description": "systemComponentKey",
+            "description": "systemType",
             "required": false,
             "style": "form",
             "schema": {

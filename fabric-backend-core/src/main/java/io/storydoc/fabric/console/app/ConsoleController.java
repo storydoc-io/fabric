@@ -22,8 +22,8 @@ public class ConsoleController {
     }
 
     @GetMapping(value= "/descriptor", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ConsoleDescriptorDTO getDescriptor(String systemComponentKey) {
-        return consoleService.getDescriptor(systemComponentKey);
+    public ConsoleDescriptorDTO getDescriptor(String systemType) {
+        return consoleService.getDescriptor(systemType);
     }
 
     @PostMapping(value="/run", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -32,13 +32,13 @@ public class ConsoleController {
     }
 
     @PostMapping(value = "/snippet", produces = MediaType.APPLICATION_JSON_VALUE)
-    public void createSnippet(String systemComponentKey, @RequestBody SnippetDTO snippetDTO) {
-        consoleService.createSnippet(systemComponentKey, snippetDTO);
+    public void createSnippet(String systemType, @RequestBody SnippetDTO snippetDTO) {
+        consoleService.createSnippet(systemType, snippetDTO);
     }
 
     @GetMapping(value="/snippets", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<SnippetDTO> getSnippets(String systemComponentKey) {
-        return consoleService.getSnippets(systemComponentKey);
+    public List<SnippetDTO> getSnippets(String systemType) {
+        return consoleService.getSnippets(systemType);
     }
 
     @PostMapping(value="/navigation", produces = MediaType.APPLICATION_JSON_VALUE)

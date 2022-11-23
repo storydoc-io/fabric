@@ -1,35 +1,42 @@
 import {Component, OnInit} from '@angular/core';
 import {BreadcrumbItem} from "@fabric/common";
 import {DataSourceSelection} from "@fabric/component";
-import {RoutingService} from "../common/routing.service";
 import {HealthCheckService} from "../common/health-check.service";
+import {SystemDescriptionService} from "../system-description-page/system-description.service";
+import {NavigationService} from "../navigation-page/navigation.service";
 
 @Component({
-  selector: 'app-console-page',
-  templateUrl: './console-page.component.html',
-  styleUrls: ['./console-page.component.scss']
+    selector: 'app-console-page',
+    templateUrl: './console-page.component.html',
+    styleUrls: ['./console-page.component.scss']
 })
 export class ConsolePageComponent implements OnInit {
 
-  breadcrumbs: BreadcrumbItem[] = [
-    {
-      label: 'Home',
-      route: '/'
-    },
-    {
-      label: 'Console'
+    breadcrumbs: BreadcrumbItem[] = [
+        {
+            label: 'Home',
+            route: '/'
+        },
+        {
+            label: 'Console'
+        }
+    ]
+
+    constructor(
+        public goto: NavigationService,
+        private healthCheckService: HealthCheckService,
+        private systemDescriptionService: SystemDescriptionService) {
     }
-  ]
 
-  constructor(public goto: RoutingService, private healthCheckService: HealthCheckService) { }
+    ngOnInit(): void {
+    }
 
-  ngOnInit(): void {
-  }
+    systemDescription$ = this.systemDescriptionService.systemDescription$
 
-  selectedDataSource: DataSourceSelection
+    selectedDataSource: DataSourceSelection
 
-  selectDataSource(dataSource: DataSourceSelection) {
-    this.selectedDataSource = dataSource
-  }
+    selectDataSource(dataSource: DataSourceSelection) {
+        this.selectedDataSource = dataSource
+    }
 
 }
