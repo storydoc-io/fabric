@@ -11,6 +11,7 @@ import { MetaModelControllerService } from './services/meta-model-controller.ser
 import { MongoSnapshotControllerService } from './services/mongo-snapshot-controller.service';
 import { RedirectToAngularService } from './services/redirect-to-angular.service';
 import { SnapshotControllerService } from './services/snapshot-controller.service';
+import { SystemControllerService } from './services/system-controller.service';
 import { SystemDescriptionControllerService } from './services/system-description-controller.service';
 import { WorkspaceRestControllerService } from './services/workspace-rest-controller.service';
 
@@ -29,6 +30,7 @@ import { WorkspaceRestControllerService } from './services/workspace-rest-contro
     MongoSnapshotControllerService,
     RedirectToAngularService,
     SnapshotControllerService,
+    SystemControllerService,
     SystemDescriptionControllerService,
     WorkspaceRestControllerService,
     ApiConfiguration

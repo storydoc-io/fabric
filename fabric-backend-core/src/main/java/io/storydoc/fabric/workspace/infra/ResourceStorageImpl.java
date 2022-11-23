@@ -105,4 +105,9 @@ public class ResourceStorageImpl implements ResourceStorage {
             throw new WorkspaceException("could not load resource " + resourceUrn, ioe);
         }
     }
+
+    @Override
+    public boolean folderExists(FolderURN folderURN){
+        return resolveFolderPath(folderURN).toFile().exists();
+    }
 }

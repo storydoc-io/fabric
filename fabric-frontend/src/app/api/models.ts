@@ -32,6 +32,7 @@ export { SnapshotId } from './models/snapshot-id';
 export { SnapshotSummaryDto } from './models/snapshot-summary-dto';
 export { SnippetDto } from './models/snippet-dto';
 export { StructureDto } from './models/structure-dto';
+export { SystemCheckResultDto } from './models/system-check-result-dto';
 export { SystemComponentDto } from './models/system-component-dto';
 export { SystemDescriptionDto } from './models/system-description-dto';
 export { SystemTypeDescriptorDto } from './models/system-type-descriptor-dto';

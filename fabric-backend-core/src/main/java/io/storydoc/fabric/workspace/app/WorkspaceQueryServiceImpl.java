@@ -43,4 +43,5 @@ public class WorkspaceQueryServiceImpl implements WorkspaceQueryService {
     public List<ResourceDTO> listResources(FolderURN folderURN) {
         return resourceStorage.listResources(folderURN);
     }
+
 }

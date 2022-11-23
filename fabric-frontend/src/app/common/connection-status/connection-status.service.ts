@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ConnectionStatus} from "../styleguide/status/status.component";
 import {BehaviorSubject} from "rxjs";
-import {TOAST_STATE, ToastService} from "../toast/toast.service";
+import {TOAST_LEVEL, ToastService} from "../toast/toast.service";
 
 @Injectable({
   providedIn: 'root'
@@ -20,7 +20,7 @@ export class ConnectionStatusService {
   showToast() {
     let status = this.status$.value
     if (status.status==='Problem') {
-      this.toastService.showToast(TOAST_STATE.danger, status.msg)
+      this.toastService.add(TOAST_LEVEL.danger, status.msg)
     }
   }
 

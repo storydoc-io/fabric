@@ -47,6 +47,10 @@
       "description": "Snapshot Controller"
     },
     {
+      "name": "system-controller",
+      "description": "System Controller"
+    },
+    {
       "name": "system-description-controller",
       "description": "System Description Controller"
     },
@@ -984,6 +988,36 @@
         }
       }
     },
+    "/api/system/checkConfig": {
+      "get": {
+        "tags": [
+          "system-controller"
+        ],
+        "summary": "checkSystemConfig",
+        "operationId": "checkSystemConfigUsingGET",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemCheckResultDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/api/systemdescription": {
       "get": {
         "tags": [
@@ -1762,6 +1796,18 @@
           },
           "systemType": {
             "type": "string"
+          }
+        }
+      },
+      "SystemCheckResultDTO": {
+        "title": "SystemCheckResultDTO",
+        "type": "object",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },

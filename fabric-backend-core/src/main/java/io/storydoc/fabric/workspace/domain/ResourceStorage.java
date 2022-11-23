@@ -19,4 +19,6 @@ public interface ResourceStorage {
     void delete(ResourceUrn resourceUrn) throws WorkspaceException;
 
     OutputStream getOutputStream(ResourceUrn resourceUrn) throws WorkspaceException;
+
+    boolean folderExists(FolderURN folderURN);
 }

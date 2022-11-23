@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {BreadcrumbItem} from "@fabric/common";
 import {DataSourceSelection} from "@fabric/component";
 import {RoutingService} from "../common/routing.service";
+import {HealthCheckService} from "../common/health-check.service";
 
 @Component({
   selector: 'app-console-page',
@@ -20,7 +21,7 @@ export class ConsolePageComponent implements OnInit {
     }
   ]
 
-  constructor(public goto: RoutingService) { }
+  constructor(public goto: RoutingService, private healthCheckService: HealthCheckService) { }
 
   ngOnInit(): void {
   }

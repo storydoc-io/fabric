@@ -1,31 +1,41 @@
 import {BehaviorSubject} from 'rxjs';
 import {Injectable} from '@angular/core';
 
-export const TOAST_STATE = {
-  success: 'success-toast',
-  warning: 'warning-toast',
-  danger: 'danger-toast'
+export const TOAST_LEVEL = {
+    success: 'success-toast',
+    warning: 'warning-toast',
+    danger: 'danger-toast'
 };
 
+export type ToastMessage = {
+    text: string
+    level: string
+}
+
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class ToastService {
-  public showsToast$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  public toastMessage$: BehaviorSubject<string> = new BehaviorSubject<string>('Default toast message');
-  public toastState$: BehaviorSubject<string> = new BehaviorSubject<string>(TOAST_STATE.success);
-  constructor() { }
 
-  showToast(toastState: string, toastMessage: string): void {
-    this.toastState$.next(toastState);
-    this.toastMessage$.next(toastMessage);
-    this.showsToast$.next(true);
-    setTimeout(() => {
-      this.dismissToast();
-    }, 7000)
-  }
+    constructor() {
+    }
 
-  dismissToast(): void {
-    this.showsToast$.next(false);
-  }
+    public toastMessages$: BehaviorSubject<ToastMessage[]> = new BehaviorSubject<ToastMessage[]>([]);
+
+    add(level: string, text: string): void {
+        let toastMessages = this.toastMessages$.value
+        let toast = {level, text}
+        toastMessages.push(toast)
+        this.toastMessages$.next(toastMessages)
+        setTimeout(() => {
+            this.dismissToast(toast);
+        }, 7000)
+    }
+
+    dismissToast(toast: ToastMessage): void {
+      let toastMessages = this.toastMessages$.value
+      toastMessages = toastMessages.filter(item => item != toast)
+      this.toastMessages$.next(toastMessages)
+    }
+
 }
