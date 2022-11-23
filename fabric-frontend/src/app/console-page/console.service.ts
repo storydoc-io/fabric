@@ -39,9 +39,28 @@ export class ConsoleService {
 
     }
 
+    editSnippet(id: string, title: string, systemType: string, attributes: {}) {
+        return this.consoleControllerService.updateSnippetUsingPut({
+            systemType,
+            body: {
+                id,
+                title,
+                attributes
+            }
+        }).toPromise().then(()=> this.loadSnippets(systemType))
+    }
+
+    deleteSnippet(id: string, systemType: string) {
+        return this.consoleControllerService.deleteSnippetUsingDelete({
+            systemType,
+            id
+        }).toPromise().then(()=> this.loadSnippets(systemType))
+    }
+
     loadNavItems(systemComponentKey: string): Promise<NavItem[]>  {
         return this.consoleControllerService.getNavigationUsingPost({body: {
             systemComponentKey,
         }}).toPromise()
     }
+
 }

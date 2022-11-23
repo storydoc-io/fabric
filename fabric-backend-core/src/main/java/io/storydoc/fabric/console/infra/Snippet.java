@@ -13,6 +13,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class Snippet {
 
+    private String id;
     private String title;
     private Map<String, String> attributes;
 

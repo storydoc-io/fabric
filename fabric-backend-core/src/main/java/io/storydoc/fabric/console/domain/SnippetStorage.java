@@ -7,4 +7,6 @@ import java.util.List;
 public interface SnippetStorage {
     void addSnippet(String systemType, Snippet snippet);
     List<Snippet> getSnippets(String systemType);
+    void updateSnippet(String systemType, Snippet build);
+    void deleteSnippet(String systemType, String id);
 }

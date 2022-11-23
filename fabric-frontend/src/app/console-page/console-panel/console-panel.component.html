@@ -41,7 +41,7 @@
                         </li>
                     </ul>
                     <ng-container *ngIf="tabState==='SNIPPETS'">
-                        <app-snippet-panel [snippets]="snippets" (selected)="snippetSelected($event)"></app-snippet-panel>
+                        <app-snippet-panel [snippets]="snippets" (onSelect)="snippetSelected($event)" (onEdit)="snippetEdit($event)" (onDelete)="snippetDelete($event)"></app-snippet-panel>
                     </ng-container>
                     <ng-container *ngIf="tabState==='HISTORY'">
                         <app-history-panel [historyItems]="historyItems"
@@ -77,4 +77,8 @@
 
 <jw-modal [id]="snippetDialogId()">
     <app-snippet-dialog [spec]="snippetDialogSpec"></app-snippet-dialog>
+</jw-modal>
+
+<jw-modal [id]="confirmationDialogId()">
+    <app-confirmation-dialog [spec]="confirmationDialogSpec"></app-confirmation-dialog>
 </jw-modal>

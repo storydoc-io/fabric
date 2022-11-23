@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';
 import {FormArray, FormControl, FormGroup} from "@angular/forms";
 import {faPlay, faTimes} from '@fortawesome/free-solid-svg-icons';
-import {ModalService} from "@fabric/common";
+import {HasConfirmationDialogMixin, ModalService} from "@fabric/common";
 import {DataSourceSelection} from "@fabric/component";
 import {ConsoleDescriptorDto, NavItem, Row, SnippetDto, TabularResponse} from "@fabric/models";
 import {ConsoleService} from "../console.service";
@@ -16,12 +16,13 @@ type TabState = 'HISTORY' | 'SNIPPETS'
     styleUrls: ['./console-panel.component.scss'],
     providers: [ConsoleService]
 })
-export class ConsolePanelComponent implements OnChanges {
+export class ConsolePanelComponent extends HasConfirmationDialogMixin implements OnChanges {
 
     faPlay = faPlay
     faTimes = faTimes
 
-    constructor(private modalService: ModalService, private service: ConsoleService) {
+    constructor(protected modalService: ModalService, private service: ConsoleService) {
+        super(modalService)
     }
 
     @Input()
@@ -154,6 +155,7 @@ export class ConsolePanelComponent implements OnChanges {
 
     convertHistoryItemToSnippet(historyItem: HistoryItem) {
         this.openSnippetDialog({
+            mode: 'NEW',
             descriptor: this.descriptor,
             data: {
                 attributes: historyItem.attributes
@@ -190,16 +192,67 @@ export class ConsolePanelComponent implements OnChanges {
         })
     }
 
-    private addSnippet(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {
-        let attributes = {}
-        descriptor.items.forEach((item, index) => {
-            attributes[item.name] = data.fields[index]
+    snippetEdit(snippet: SnippetDto) {
+        this.openSnippetDialog({
+            mode: 'EDIT',
+            descriptor: this.descriptor,
+            data: {
+                id: snippet.id,
+                title: snippet.title,
+                attributes: snippet.attributes
+            },
+            cancel: () => this.closeSnippetDialog(),
+            confirm: (data) => {
+                this.updateSnippet(this.descriptor, data);
+                this.closeSnippetDialog()
+            }
         })
+
+    }
+
+    snippetDelete(snippet: SnippetDto) {
+        this.openConfirmationDialog({
+            title: 'Confirm Delete Snippet',
+            message:  `Delete snippet '${snippet.title}'?`,
+            cancel: () => this.closeConfirmationDialog(),
+            confirm: () => { this.deleteSnippet(snippet); this.closeConfirmationDialog() }
+        })
+    }
+
+
+    private addSnippet(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {
+        let attributes = this.attributeMap(descriptor, data);
         this.service.addSnippet(data.title, this.dataSource.systemComponent.systemType, attributes)
             .then((snippets) => {
                 this.snippets = snippets
             })
     }
+
+    private attributeMap(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {
+        let attributes = {}
+        descriptor.items.forEach((item, index) => {
+            attributes[item.name] = data.fields[index]
+        })
+        return attributes;
+    }
+
+    private updateSnippet(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {
+        let attributes = this.attributeMap(descriptor, data);
+        this.service.editSnippet(data.id, data.title, this.dataSource.systemComponent.systemType, attributes)
+            .then((snippets) => {
+                this.snippets = snippets
+            })
+
+    }
+
+    private deleteSnippet(data: SnippetDialogData) {
+        this.service.deleteSnippet(data.id, this.dataSource.systemComponent.systemType)
+            .then((snippets) => {
+                this.snippets = snippets
+            })
+
+    }
+
 
     // snippet dialog
 
@@ -218,6 +271,15 @@ export class ConsolePanelComponent implements OnChanges {
         this.snippetDialogSpec = null
         this.modalService.close(this.snippetDialogId())
     }
+
+    // snippet deletion confirmation
+
+    confirmationDialogId() {
+        return "confirm-snippet-delete"
+    }
+
+    confirmationDialogSpec: any;
+
 
 
     // output

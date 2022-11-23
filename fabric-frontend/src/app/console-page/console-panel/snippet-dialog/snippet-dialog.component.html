@@ -1,6 +1,6 @@
 <div *ngIf="spec && formGroup"  class="modal-dialog">
     <div class="modal-content">
-        <app-modal-header [title]="'Create Snippet'" (onCancel)="cancel()"></app-modal-header>
+        <app-modal-header [title]="spec.mode === 'NEW' ? 'Create Snippet' : 'Edit Snippet'" (onCancel)="cancel()"></app-modal-header>
         <div class="modal-body">
             <form [formGroup]="formGroup">
                 <div class="form-floating  mb-3">

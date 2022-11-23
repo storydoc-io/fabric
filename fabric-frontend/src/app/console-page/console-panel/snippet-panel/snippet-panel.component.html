@@ -1,8 +1,12 @@
 <ng-container *ngIf="snippets">
     <div class="list-group">
         <a class="list-group-item list-group-item-action list-group-item-light" *ngFor="let snippet of snippets"
-           (click)="apply(snippet)" href="javascript:void(0);">
+           (click)="select(snippet)" href="javascript:void(0);">
             {{snippet.title}}
+            <div >
+                <app-action-buttons [spec]="actions(snippet)"></app-action-buttons>
+            </div>
         </a>
     </div>
 </ng-container>
+

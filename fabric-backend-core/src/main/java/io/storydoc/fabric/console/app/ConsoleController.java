@@ -36,6 +36,16 @@ public class ConsoleController {
         consoleService.createSnippet(systemType, snippetDTO);
     }
 
+    @PutMapping(value = "/snippet", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void updateSnippet(String systemType, @RequestBody SnippetDTO snippetDTO) {
+        consoleService.editSnippet(systemType, snippetDTO);
+    }
+
+    @DeleteMapping(value = "/snippet", produces = MediaType.APPLICATION_JSON_VALUE)
+    public void deleteSnippet(String systemType, String id) {
+        consoleService.deleteSnippet(systemType, id);
+    }
+
     @GetMapping(value="/snippets", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<SnippetDTO> getSnippets(String systemType) {
         return consoleService.getSnippets(systemType);

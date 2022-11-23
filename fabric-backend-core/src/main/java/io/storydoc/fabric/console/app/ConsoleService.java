@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -58,17 +59,34 @@ public class ConsoleService {
 
     private SnippetDTO toDto(Snippet snippet) {
         return SnippetDTO.builder()
+                .id(snippet.getId())
                 .title(snippet.getTitle())
                 .attributes(snippet.getAttributes())
                 .build();
     }
 
-    public void createSnippet(String systemType, SnippetDTO snippetDTO) {
+    public String createSnippet(String systemType, SnippetDTO snippetDTO) {
+        String id = UUID.randomUUID().toString();
+        snippetDTO.setId(id);
         snippetStorage.addSnippet(systemType, Snippet.builder()
+                .id(snippetDTO.getId())
                 .title(snippetDTO.getTitle())
                 .attributes(snippetDTO.getAttributes())
                 .build()
         );
+        return id;
+    }
+
+    public void editSnippet(String systemType, SnippetDTO snippetDTO) {
+        snippetStorage.updateSnippet(systemType, Snippet.builder()
+                .id(snippetDTO.getId())
+                .title(snippetDTO.getTitle())
+                .attributes(snippetDTO.getAttributes())
+                .build());
+    }
+
+    public void deleteSnippet(String systemType, String id) {
+        snippetStorage.deleteSnippet(systemType, id);
     }
 
     public List<NavItem> getNavigation(NavigationRequest navigationRequest) {

@@ -34,6 +34,31 @@ public class SnippetStorageImpl extends StorageBase implements SnippetStorage {
          saveSnippets(systemType, snippets);
     }
 
+    @Override
+    public void updateSnippet(String systemType, Snippet snippet) {
+        List<Snippet> snippets  = getSnippets(systemType);
+        Snippet toUpdate = getSnippet(snippet.getId(), snippets);
+        toUpdate.setTitle(snippet.getTitle());
+        toUpdate.setAttributes(snippet.getAttributes());
+        saveSnippets(systemType, snippets);
+    }
+
+    @Override
+    public void deleteSnippet(String systemType, String id) {
+        List<Snippet> snippets  = getSnippets(systemType);
+        Snippet toDelete = getSnippet(id, snippets);
+        snippets.remove(toDelete);
+        saveSnippets(systemType, snippets);
+
+    }
+
+    private Snippet getSnippet(String id, List<Snippet> snippets) {
+        return snippets.stream()
+                .filter(s -> s.getId().equals(id))
+                .findFirst()
+                .get();
+    }
+
     @SneakyThrows
     private void saveSnippets(String systemType, List<Snippet> snippets) {
         workspaceService.saveResource(workspaceStructure.getSnippetsUrn(systemType), os -> objectMapper.writeValue(os, snippets));
