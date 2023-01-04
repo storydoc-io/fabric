@@ -14,6 +14,7 @@ import java.util.List;
 @Builder
 public class MongoMetaModel extends MetaModel {
 
-    private List<String> collections;
+    private String dbName;
+    private List<Collection> collections;
 
 }

@@ -26,7 +26,12 @@
 <ng-template #middle>
     <div class="intro-container" *ngIf="!selectedDataSource">
         <app-intro [title]="'Datasource connection required.'" >
-            <p>Use the <a (click)="goto.settingsPage()" href="javascript:void(0);">settings page</a> to set up environments and datasources.</p>
+            <p>Use the settings pages to set up
+                <a (click)="routingService.navigateToEnvironmentsPage()" href="javascript:void(0);">environments</a>
+                and
+                <a (click)="routingService.navigateToDataSourcesPage()" href="javascript:void(0);">datasources</a>
+                .
+            </p>
             <p>Select a Datasource and Environment from the menu to connect.</p>
         </app-intro>
     </div>

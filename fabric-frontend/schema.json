@@ -507,6 +507,58 @@
         }
       }
     },
+    "/api/metamodel/entity/": {
+      "get": {
+        "tags": [
+          "meta-model-controller"
+        ],
+        "summary": "getMetaModelAsEntity",
+        "operationId": "getMetaModelAsEntityUsingGET",
+        "parameters": [
+          {
+            "name": "envKey",
+            "in": "query",
+            "description": "envKey",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "systemComponentKey",
+            "in": "query",
+            "description": "systemComponentKey",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EntityDTO"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/api/mongo/metamodel": {
       "get": {
         "tags": [
@@ -515,6 +567,16 @@
         "summary": "getMetaModel",
         "operationId": "getMetaModelUsingGET",
         "parameters": [
+          {
+            "name": "environmentKey",
+            "in": "query",
+            "description": "environmentKey",
+            "required": false,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "systemComponentKey",
             "in": "query",
@@ -1329,6 +1391,33 @@
   },
   "components": {
     "schemas": {
+      "AttributeDTO": {
+        "title": "AttributeDTO",
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EntityDTO"
+            }
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Collection": {
+        "title": "Collection",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "object"
+          }
+        }
+      },
       "CollectionNavItem": {
         "title": "CollectionNavItem",
         "type": "object",
@@ -1505,6 +1594,27 @@
           }
         }
       },
+      "EntityDTO": {
+        "title": "EntityDTO",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttributeDTO"
+            }
+          },
+          "entityType": {
+            "type": "string"
+          },
+          "json": {
+            "type": "boolean"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
       "EnvironmentDTO": {
         "title": "EnvironmentDTO",
         "type": "object",
@@ -1629,8 +1739,11 @@
           "collections": {
             "type": "array",
             "items": {
-              "type": "string"
+              "$ref": "#/components/schemas/Collection"
             }
+          },
+          "dbName": {
+            "type": "string"
           }
         }
       },
@@ -1683,6 +1796,9 @@
         "title": "NavigationRequest",
         "type": "object",
         "properties": {
+          "environmentKey": {
+            "type": "string"
+          },
           "navItem": {
             "$ref": "#/components/schemas/NavItem"
           },

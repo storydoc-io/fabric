@@ -1,3 +1,5 @@
+export { AttributeDto } from './models/attribute-dto';
+export { Collection } from './models/collection';
 export { CollectionNavItem } from './models/collection-nav-item';
 export { CollectionSnapshot } from './models/collection-snapshot';
 export { Column } from './models/column';
@@ -8,6 +10,7 @@ export { ConsoleDescriptorItemDto } from './models/console-descriptor-item-dto';
 export { ConsoleRequestDto } from './models/console-request-dto';
 export { ConsoleResponseDescriptionDto } from './models/console-response-description-dto';
 export { ConsoleResponseItemDto } from './models/console-response-item-dto';
+export { EntityDto } from './models/entity-dto';
 export { EnvironmentDto } from './models/environment-dto';
 export { ExecutionDto } from './models/execution-dto';
 export { ExecutionId } from './models/execution-id';

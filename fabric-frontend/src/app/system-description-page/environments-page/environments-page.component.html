@@ -1,0 +1,31 @@
+<app-layout-1col
+        [sidebar]="sidebar"
+        [title]="title"
+        [breadcrumb]="breadcrumb"
+        [middle]="middle"
+>
+</app-layout-1col>
+
+<ng-template #sidebar>
+    <app-side-bar [active]="'environments'"></app-side-bar>
+</ng-template>
+
+<ng-template #title>
+    <div class="row">
+        <app-breadcrumb [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+    </div>
+</ng-template>
+
+
+<ng-template #breadcrumb>
+
+</ng-template>
+
+
+<ng-template #middle>
+    <ng-container *ngIf="systemTypeDescriptors$ | async as systemTypeDescriptors">
+        <ng-container *ngIf="systemDescription$ | async as systemDescription">
+            <app-environment-panel [systemDescription]="systemDescription"></app-environment-panel>
+        </ng-container>
+    </ng-container>
+</ng-template>

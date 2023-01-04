@@ -1,0 +1,29 @@
+<app-panel>
+    <h4>Metadata</h4>
+
+    <ng-container *ngIf="metaModel$ | async as metaModelState">
+        <ng-container *ngIf="metaModelState.fetching">
+            <app-loading></app-loading>
+        </ng-container>
+        <ng-container *ngIf="!metaModelState.fetching">
+            <ng-container *ngIf="metaModelState.metaModel">
+                <div class="btn  btn-sm btn-outline-primary float-right m-2" (click)="addMetaModel(systemDescription)">
+                    Reload
+                </div>
+                <app-meta-model-view [entity]="metaModelState.metaModel"></app-meta-model-view>
+            </ng-container>
+            <ng-container *ngIf="!metaModelState.metaModel">
+                <app-intro [title]="'No Metadata available'">
+                    <p><a href="javascript:void(0);" (click)="addMetaModel(systemDescription)"> Fetch</a> the metadata
+                        from an environment. </p>
+                </app-intro>
+            </ng-container>
+        </ng-container>
+    </ng-container>
+</app-panel>
+
+
+<jw-modal [id]="metaModelDialogId()">
+    <app-meta-model-dialog [spec]="metaModelDialogSpec"></app-meta-model-dialog>
+</jw-modal>
+

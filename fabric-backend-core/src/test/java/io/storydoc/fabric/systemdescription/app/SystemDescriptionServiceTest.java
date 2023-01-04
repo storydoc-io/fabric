@@ -1,10 +1,8 @@
 package io.storydoc.fabric.systemdescription.app;
 
 import io.storydoc.fabric.TestBase;
-import io.storydoc.fabric.infra.WorkspaceTestUtils;
+import io.storydoc.fabric.testinfra.WorkspaceTestUtils;
 import io.storydoc.fabric.core.infra.WorkspaceStructure;
-import io.storydoc.fabric.systemdescription.app.SystemDescriptionDTO;
-import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,0 +1,60 @@
+<h4>Datasources</h4>
+
+<div *ngIf="systemDescription.systemComponents.length == 0" class="intro-container" >
+    <app-intro [title]="'No datasources defined yet.'" >
+        <p>Add <a href="javascript:void(0);" (click)="addComponent(systemDescription)" > first datasource.</a></p>
+    </app-intro>
+</div>
+
+
+<app-panel *ngIf="systemDescription.systemComponents.length > 0">
+    <table class="table table-sm table-striped table-bordered">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Key</th>
+            <th scope="col">Label</th>
+            <th scope="col">System type</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let systemComponent of systemDescription.systemComponents" (click)="select(systemComponent)" >
+            <th [class.table-active]="systemComponent.key===selection?.key" scope="row">
+                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"
+                       [checked]="systemComponent.key===selection?.key"
+
+                >
+            </th>
+            <td [class.table-active]="systemComponent.key===selection?.key">{{systemComponent.key}}</td>
+            <td [class.table-active]="systemComponent.key===selection?.key">{{systemComponent.label}}</td>
+            <td [class.table-active]="systemComponent.key===selection?.key">{{systemComponent.systemType}}</td>
+            <td [class.table-active]="systemComponent.key===selection?.key">
+                <div class="btn  btn-sm btn-outline-primary float-right m-2"
+                     (click)="editComponent(systemDescription, systemComponent)">Edit
+                </div>
+                <div class="btn  btn-sm btn-outline-primary float-right m-2"
+                     (click)="removeComponent(systemComponent)">Remove
+                </div>
+                <div class="btn  btn-sm btn-outline-primary float-right m-2"
+                     (click)="metaModel(systemComponent)">Metamodel
+                </div>
+                <div class="btn  btn-sm btn-outline-primary float-right m-2"
+                     (click)="settings(systemComponent)">Settings
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="btn  btn-sm btn-outline-primary float-right m-2" (click)="addComponent(systemDescription)">
+        Add
+    </div>
+</app-panel>
+
+<jw-modal [id]="systemComponentDialogId()">
+    <app-system-component-dialog [spec]="systemComponentDialogSpec"></app-system-component-dialog>
+</jw-modal>
+
+<jw-modal [id]="confirmationDialogId()">
+    <app-confirmation-dialog [spec]="confirmationDialogSpec"></app-confirmation-dialog>
+</jw-modal>

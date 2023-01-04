@@ -1,9 +1,10 @@
 package io.storydoc.fabric.metamodel.domain;
 
 import io.storydoc.fabric.metamodel.infra.MetaModel;
+import io.storydoc.fabric.systemdescription.domain.SystemComponentCoordinate;
 
 public interface MetaModelStorage {
-    <MM extends MetaModel>  void saveMetaModel(MM metaModel, String systemComponentKey, MetaModelId metaModelId, MetaModelSerializer<MM> serializer);
-    <MM extends MetaModel> MM loadMetaModel(String systemCompenentKey, MetaModelDeserializer<MM> deserializer);
+    <MM extends MetaModel>  void saveMetaModel(SystemComponentCoordinate coordinate, MetaModelId metaModelId, MM metaModel, MetaModelSerializer<MM> serializer);
+    <MM extends MetaModel> MM loadMetaModel(SystemComponentCoordinate coordinate, MetaModelDeserializer<MM> deserializer);
 
 }

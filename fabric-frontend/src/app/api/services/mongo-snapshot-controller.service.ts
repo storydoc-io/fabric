@@ -46,6 +46,11 @@ export class MongoSnapshotControllerService extends BaseService {
   getMetaModelUsingGet$Response(params?: {
 
     /**
+     * environmentKey
+     */
+    environmentKey?: string;
+
+    /**
      * systemComponentKey
      */
     systemComponentKey?: string;
@@ -53,6 +58,7 @@ export class MongoSnapshotControllerService extends BaseService {
 
     const rb = new RequestBuilder(this.rootUrl, MongoSnapshotControllerService.GetMetaModelUsingGetPath, 'get');
     if (params) {
+      rb.query('environmentKey', params.environmentKey, {"style":"form"});
       rb.query('systemComponentKey', params.systemComponentKey, {"style":"form"});
     }
 
@@ -78,6 +84,11 @@ export class MongoSnapshotControllerService extends BaseService {
    * This method doesn't expect any request body.
    */
   getMetaModelUsingGet(params?: {
+
+    /**
+     * environmentKey
+     */
+    environmentKey?: string;
 
     /**
      * systemComponentKey

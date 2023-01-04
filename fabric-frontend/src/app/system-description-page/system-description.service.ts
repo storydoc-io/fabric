@@ -4,8 +4,7 @@ import {distinctUntilChanged, map} from 'rxjs/operators';
 import {logChangesToObservable} from '@fabric/common';
 import {ConnectionTestResponseDto, EnvironmentDto, StructureDto, SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from '@fabric/models';
 import {ConnectionControllerService, MetaModelControllerService, SystemDescriptionControllerService} from '@fabric/services';
-import {SettingsDialogData} from './settings-panel/settings-dialog/settings-dialog.component';
-import {MongoMetaModelService} from './meta-model-panel/mongo-metamodel-panel/mongo-metamodel.service';
+import {SettingsDialogData} from './settings-page/settings-panel/settings-dialog/settings-dialog.component';
 
 
 export interface Setting {
@@ -92,8 +91,7 @@ export class SystemDescriptionService implements OnDestroy {
     constructor(
         private systemDescriptionControllerService: SystemDescriptionControllerService,
         private metaModelControllerService: MetaModelControllerService,
-        private connectionControllerService: ConnectionControllerService,
-        private mongoMetaModelService: MongoMetaModelService) {
+        private connectionControllerService: ConnectionControllerService) {
         this.init()
     }
 
@@ -233,14 +231,6 @@ export class SystemDescriptionService implements OnDestroy {
             ]
         } else
             return [];
-    }
-
-    fetchMetaModel(systemComponent: SystemComponentDto, environmentKey: string): Promise<StructureDto> {
-        return this.metaModelControllerService.createMetaModelUsingPost({
-            environmentKey,
-            systemComponentKey: systemComponent.key
-        }).toPromise()
-          .then(() => this.loadEnvironmentSystemComponentStructure(environmentKey, systemComponent.key))
     }
 
     testConnection(systemType: string, settings: any): Promise<ConnectionTestResponseDto> {

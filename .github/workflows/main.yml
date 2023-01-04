@@ -2,9 +2,9 @@ name: Maven CI/CD
 
 on:
  push:
-    branches: [ main ]
+    branches: [ main, feature/meta-model-view ]
  pull_request:
-    branches: [ main ]
+    branches: [ main, feature/meta-model-view ]
 
 jobs:
   build_and_test:

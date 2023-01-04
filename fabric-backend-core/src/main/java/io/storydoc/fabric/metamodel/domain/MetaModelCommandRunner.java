@@ -1,9 +1,9 @@
 package io.storydoc.fabric.metamodel.domain;
 
 import io.storydoc.fabric.metamodel.infra.MetaModel;
-import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
-import io.storydoc.fabric.systemdescription.app.SystemDescriptionDTO;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
+import io.storydoc.fabric.systemdescription.app.entity.EntityDTO;
+import io.storydoc.fabric.systemdescription.domain.SystemComponentCoordinate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -26,15 +26,19 @@ public class MetaModelCommandRunner {
     }
 
 
-    public void runMetaModelCommand(String environmentKey, String systemComponentKey, MetaModelId metamodelId) {
-        SystemDescriptionDTO systemDescriptionDTO  = systemDescriptionService.getSystemDescription();
-        SystemComponentDTO systemComponentDTO = systemDescriptionService.getSystemComponentDTO(systemComponentKey);
-        Map<String, String> settings = systemDescriptionDTO.getSettings()
-                .get(environmentKey)
-                .get(systemComponentKey);
-        MetaModelHandler metaModelHandler = handlerRegistry.getHandler(systemComponentDTO.getSystemType());
-        MetaModel metaModel = metaModelHandler.createMetaModel(metamodelId, systemComponentDTO, settings);
-        metaModelStorage.saveMetaModel(metaModel, systemComponentKey, metamodelId, metaModelHandler.getMetaModelSerializer());
+    public void runMetaModelCommand(MetaModelId metaModelId, SystemComponentCoordinate coordinate) {
+        String systemType = systemDescriptionService.getSystemType(coordinate.getSystemComponentKey());
+        Map<String, String> settings = systemDescriptionService.getSettings(coordinate);
+        MetaModelHandler metaModelHandler = (MetaModelHandler<? extends MetaModel>) handlerRegistry.getHandler(systemType);
+        MetaModel metaModel = metaModelHandler.createMetaModel(metaModelId, coordinate, settings);
+        metaModelStorage.saveMetaModel(coordinate, metaModelId, metaModel, metaModelHandler.getMetaModelSerializer());
 
     }
+
+    public EntityDTO getMetaModelAsEntity(SystemComponentCoordinate coordinate) {
+        String systemType = systemDescriptionService.getSystemType(coordinate.getSystemComponentKey());
+        MetaModelHandler<? extends MetaModel> metaModelHandler = (MetaModelHandler<? extends MetaModel>)handlerRegistry.getHandler(systemType);
+        return metaModelHandler.getAsEntity(coordinate);
+    }
+
 }

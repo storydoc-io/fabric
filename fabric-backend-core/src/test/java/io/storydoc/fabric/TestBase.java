@@ -1,6 +1,7 @@
 package io.storydoc.fabric;
 
 import io.storydoc.fabric.command.app.CommandService;
+import io.storydoc.fabric.command.app.ExecutionDTO;
 import io.storydoc.fabric.command.app.ExecutionStatus;
 import io.storydoc.fabric.command.domain.ExecutionId;
 import io.storydoc.fabric.config.FabricServerProperties;
@@ -60,8 +61,14 @@ abstract public class TestBase {
     protected void waitUntilExecutionFinished(ExecutionId executionId, int milliSeconds) {
         await()
                 .atMost(milliSeconds, TimeUnit.MILLISECONDS)
-                .failFast("command ended with error", ()-> ExecutionStatus.ERROR.equals(commandService.getContextInfo(executionId).getStatus()))
-                .until( () -> commandService.getContextInfo(executionId).getStatus(), equalTo(ExecutionStatus.DONE))
+                .failFast("command ended with error", ()->  {
+                    ExecutionDTO contextInfo = commandService.getContextInfo(executionId);
+                    return contextInfo != null && ExecutionStatus.ERROR.equals(contextInfo.getStatus());
+                })
+                .until( () -> {
+                    ExecutionDTO contextInfo = commandService.getContextInfo(executionId);
+                    return contextInfo == null ? null : contextInfo.getStatus();
+                }, equalTo(ExecutionStatus.DONE))
         ;
     }
 

@@ -13,6 +13,7 @@ import io.storydoc.fabric.jdbc.connection.JDBCConnectionDetails;
 import io.storydoc.fabric.jdbc.connection.JDBCConnectionManager;
 import io.storydoc.fabric.jdbc.metadata.DBMetaData;
 import io.storydoc.fabric.jdbc.request.JDBCResultSet2TabularResponseMapper;
+import io.storydoc.fabric.systemdescription.domain.SystemComponentCoordinate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -85,7 +86,10 @@ public class JDBCConsoleService extends JDBCServiceBase implements ConsoleHandle
 
     @Override
     public List<NavItem> getNavigation(NavigationRequest navigationRequest) {
-        DBMetaData dbMetaData = jdbcMetaDataService.getDbMetaData(navigationRequest.getSystemComponentKey());
+        DBMetaData dbMetaData = jdbcMetaDataService.getDbMetaData(SystemComponentCoordinate.builder()
+                .environmentKey(navigationRequest.getEnvironmentKey())
+                .systemComponentKey(navigationRequest.getSystemComponentKey())
+                .build());
         return new NavigationCalculator(dbMetaData).getNavigation(navigationRequest);
     }
 

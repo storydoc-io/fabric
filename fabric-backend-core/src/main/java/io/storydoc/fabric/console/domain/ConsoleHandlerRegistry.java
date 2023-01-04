@@ -12,7 +12,7 @@ import java.util.List;
 public class ConsoleHandlerRegistry extends HandlerRegistry<ConsoleHandler> {
 
     public ConsoleHandlerRegistry(List<ConsoleHandler> handlerList) {
-        super(handlerList);
+        super(ConsoleHandler.class, handlerList);
     }
 
 }

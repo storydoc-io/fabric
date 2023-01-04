@@ -3,6 +3,7 @@ package io.storydoc.fabric.snapshot.app;
 import io.storydoc.fabric.TestBase;
 import io.storydoc.fabric.command.domain.ExecutionId;
 import io.storydoc.fabric.core.infra.WorkspaceStructure;
+import io.storydoc.fabric.testinfra.stepdefs.StepDefs;
 import io.storydoc.fabric.snapshot.app.descriptor.SnapshotDescriptorDTO;
 import io.storydoc.fabric.snapshot.app.result.SnapshotComponentDTO;
 import io.storydoc.fabric.snapshot.app.result.SnapshotDTO;
@@ -11,6 +12,7 @@ import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionDTO;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
 import io.storydoc.fabric.workspace.WorkspaceTestFixture;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,16 +24,17 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@Slf4j
 public class SnapshotServiceTest extends TestBase {
+
+    @Autowired
+    StepDefs canon;
 
     @Autowired
     SnapshotService snapshotService;
 
     @Autowired
     SystemDescriptionService systemDescriptionService;
-
-    @Autowired
-    DummySystemDescriptionData dummySystemDescriptionData;
 
     @Autowired
     WorkspaceStructure workspaceStructure;
@@ -56,7 +59,7 @@ public class SnapshotServiceTest extends TestBase {
     @Test
     public void create_snapshot() {
         // given an system description
-        dummySystemDescriptionData.createdummySystemDescription();
+        canon.given_a_system_description();
         SystemDescriptionDTO systemDescriptionDTO = systemDescriptionService.getSystemDescription();
 
         // when I create a snapshot
@@ -109,7 +112,7 @@ public class SnapshotServiceTest extends TestBase {
     @Test
     public void delete_snapshot() {
         // given an system description
-        dummySystemDescriptionData.createdummySystemDescription();
+        canon.given_a_system_description();
         SystemDescriptionDTO systemDescriptionDTO = systemDescriptionService.getSystemDescription();
 
         // and a snapshot
@@ -141,7 +144,7 @@ public class SnapshotServiceTest extends TestBase {
     @Test
     public void list_snapshots() {
         // given a system description
-        dummySystemDescriptionData.createdummySystemDescription();
+        canon.given_a_system_description();
         SystemDescriptionDTO systemDescriptionDTO = systemDescriptionService.getSystemDescription();
 
         // when I take multiple snapshots
@@ -160,7 +163,7 @@ public class SnapshotServiceTest extends TestBase {
     @Test
     public void testUpload() {
         // given a system description
-        dummySystemDescriptionData.createdummySystemDescription();
+        canon.given_a_system_description();
         SystemDescriptionDTO systemDescriptionDTO = systemDescriptionService.getSystemDescription();
 
         // given a snapshot from the INT environment

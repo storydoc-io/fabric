@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class NavigationRequest {
+    private String environmentKey;
     private String systemComponentKey;
     private NavItem navItem;
 }

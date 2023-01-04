@@ -13,5 +13,5 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 public class ElasticMetaModel extends MetaModel {
-    private List<String> schemas;
+    private List<Schema> schemas;
 }

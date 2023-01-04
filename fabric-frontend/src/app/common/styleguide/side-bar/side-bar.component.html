@@ -2,10 +2,12 @@
     <div class="sidebar">
         <ul class="nav nav-pills flex-column">
             <li *ngFor="let action of actions" class="nav-item">
-                <a href="javascript:void(0);" class="nav-link" [class.active]="action.id==active"
-                   (click)="navigateTo(action.route)">
-                    {{action.label}}
-                </a>
+                <ng-container >
+                    <a href="javascript:void(0);" class="nav-link" [class.active]="action.id==active"
+                       (click)="navigateTo(action.route)">
+                        <span *ngIf="action.level==1">&nbsp; &nbsp; </span> {{action.label}}
+                    </a>
+                </ng-container>
             </li>
         </ul>
     </div>

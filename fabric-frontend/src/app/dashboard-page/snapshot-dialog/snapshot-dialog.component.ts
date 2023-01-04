@@ -25,7 +25,7 @@ export interface SnapshotDialogTreeNode {
     parent?: SnapshotDialogTreeNode
 }
 
-class StructureDto2TreeNodeConverter {
+export class StructureDto2TreeNodeConverter {
 
     public run(structureDto: StructureDto): SnapshotDialogTreeNode[] {
         if (!structureDto) return []

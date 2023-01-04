@@ -2,6 +2,7 @@ package io.storydoc.fabric.systemdescription.app;
 
 import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
 import io.storydoc.fabric.systemdescription.app.systemtype.SystemTypeDescriptorDTO;
+import io.storydoc.fabric.systemdescription.domain.SystemComponentCoordinate;
 import lombok.SneakyThrows;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +45,10 @@ public class SystemDescriptionController {
     @GetMapping(value = "structure/", produces = MediaType.APPLICATION_JSON_VALUE)
     @SneakyThrows
     StructureDTO getSystemComponentEnvironmentStructure(String envKey, String systemComponentKey) {
-        return systemDescriptionService.getStructure(envKey, systemComponentKey);
+        return systemDescriptionService.getStructure(SystemComponentCoordinate.builder()
+                .environmentKey(envKey)
+                .systemComponentKey(systemComponentKey)
+                .build());
     }
 
 }

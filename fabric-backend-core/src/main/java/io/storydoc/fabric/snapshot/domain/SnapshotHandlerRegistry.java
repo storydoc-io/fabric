@@ -12,7 +12,7 @@ import java.util.List;
 public class SnapshotHandlerRegistry extends HandlerRegistry<SnapshotHandler> {
 
     public SnapshotHandlerRegistry(List<SnapshotHandler> handlerList) {
-        super(handlerList);
+        super(SnapshotHandler.class, handlerList);
     }
 
 }

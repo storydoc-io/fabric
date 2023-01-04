@@ -12,7 +12,7 @@ import java.util.List;
 public class SystemStructureHandlerRegistry extends HandlerRegistry<SystemStructureHandler> {
 
     public SystemStructureHandlerRegistry(List<SystemStructureHandler> handlerList) {
-        super(handlerList);
+        super(SystemStructureHandler.class, handlerList);
     }
 
 }

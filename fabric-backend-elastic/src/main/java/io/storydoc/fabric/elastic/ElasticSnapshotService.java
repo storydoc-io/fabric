@@ -2,6 +2,7 @@ package io.storydoc.fabric.elastic;
 
 import io.storydoc.fabric.command.domain.ProgressMonitor;
 import io.storydoc.fabric.elastic.metamodel.ElasticMetaModel;
+import io.storydoc.fabric.elastic.metamodel.Schema;
 import io.storydoc.fabric.elastic.settings.ElasticSettings;
 import io.storydoc.fabric.snapshot.app.result.SnapshotItemDTO;
 import io.storydoc.fabric.snapshot.domain.SnapshotHandler_StreamBased;
@@ -9,7 +10,7 @@ import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.snapshot.domain.SnapshotSerializer;
 import io.storydoc.fabric.snapshot.infra.SnapshotStreamingJacksonWriter;
 import io.storydoc.fabric.snapshot.infra.jsonmodel.Snapshot;
-import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
+import io.storydoc.fabric.systemdescription.domain.SystemComponentCoordinate;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.search.SearchRequest;
@@ -42,12 +43,12 @@ public class ElasticSnapshotService extends ElasticServiceBase implements Snapsh
 
     // snapshot
     //@Override
-    public SnapshotItemDTO takeComponentSnapshot(SnapshotId snapshotId, SystemComponentDTO systemComponent, Map<String, String> settings) {
+    public SnapshotItemDTO takeComponentSnapshot(SnapshotId snapshotId, SystemComponentCoordinate coordinate, Map<String, String> settings) {
         try {
             ElasticSettings elasticSettings = toSettings(settings);
             RestHighLevelClient client = getClient(elasticSettings);
 
-            ElasticMetaModel metaModel = elasticMetaModelService.getMetaModel(systemComponent.getKey());
+            ElasticMetaModel metaModel = elasticMetaModelService.getMetaModel(coordinate);
 
             SnapshotItemDTO elasticSnapshot = SnapshotItemDTO.builder()
                     .systemType(systemType())
@@ -55,10 +56,10 @@ public class ElasticSnapshotService extends ElasticServiceBase implements Snapsh
                     .children(new ArrayList<>())
                     .build();
 
-            for (String index : metaModel.getSchemas()) {
+            for (Schema schema : metaModel.getSchemas()) {
                 SearchResponse response = client.search(
                         new SearchRequest()
-                            .indices(index)
+                            .indices(schema.getName())
                             .source(new SearchSourceBuilder()
                                     .trackTotalHits(true)
                             ),
@@ -66,7 +67,7 @@ public class ElasticSnapshotService extends ElasticServiceBase implements Snapsh
                 SnapshotItemDTO indexSnapshot = SnapshotItemDTO.builder()
                         .systemType(systemType())
                         .snapshotItemType("index")
-                        .id(index)
+                        .id(schema.getName())
                         .children(new ArrayList<>())
                         .attributes(Map.of("hitCount", "" + response.getHits().getTotalHits().value))
                         .build();
@@ -103,12 +104,12 @@ public class ElasticSnapshotService extends ElasticServiceBase implements Snapsh
 
     @Override
     @SneakyThrows
-    public void streamSnapshot(SnapshotId snapshotId, SystemComponentDTO systemComponent, Map<String, String> settings, OutputStream outputStream) {
+    public void streamSnapshot(SnapshotId snapshotId, SystemComponentCoordinate coordinate, Map<String, String> settings, OutputStream outputStream) {
 
         ElasticSettings elasticSettings = toSettings(settings);
         RestHighLevelClient client = getClient(elasticSettings);
 
-        ElasticMetaModel metaModel = elasticMetaModelService.getMetaModel(systemComponent.getKey());
+        ElasticMetaModel metaModel = elasticMetaModelService.getMetaModel(coordinate);
         SnapshotStreamingJacksonWriter jacksonWriter = new SnapshotStreamingJacksonWriter(outputStream, objectMapper);
 
         SnapshotItemDTO elasticSnapshot = SnapshotItemDTO.builder()
@@ -118,10 +119,10 @@ public class ElasticSnapshotService extends ElasticServiceBase implements Snapsh
         jacksonWriter.item(elasticSnapshot);
 
         jacksonWriter.children();
-        for (String index : metaModel.getSchemas()) {
+        for (Schema schema : metaModel.getSchemas()) {
             SearchResponse response = client.search(
                     new SearchRequest()
-                            .indices(index)
+                            .indices(schema.getName())
                             .source(new SearchSourceBuilder()
                                     .trackTotalHits(true)
                             ),
@@ -129,7 +130,7 @@ public class ElasticSnapshotService extends ElasticServiceBase implements Snapsh
             SnapshotItemDTO indexSnapshot = SnapshotItemDTO.builder()
                     .systemType(systemType())
                     .snapshotItemType(SNAPSHOT_ITEM_TYPE__INDEX)
-                    .id(index)
+                    .id(schema.getName())
                     .attributes(Map.of("hitCount", "" + response.getHits().getTotalHits().value))
                     .build();
             jacksonWriter.item(indexSnapshot);

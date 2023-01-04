@@ -1,0 +1,36 @@
+<app-layout-1col
+        [sidebar]="sidebar"
+        [title]="title"
+        [breadcrumb]="breadcrumb"
+        [middle]="middle"
+>
+</app-layout-1col>
+
+<ng-template #sidebar>
+    <app-side-bar [active]="'datasources'"></app-side-bar>
+</ng-template>
+
+<ng-template #title>
+    <div class="row">
+        <app-breadcrumb [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+    </div>
+</ng-template>
+
+
+<ng-template #breadcrumb>
+
+</ng-template>
+
+
+<ng-template #middle>
+    <ng-container *ngIf="systemTypeDescriptors$ | async as systemTypeDescriptors">
+        <ng-container *ngIf="systemDescription$ | async as systemDescription">
+            <app-system-component-panel
+                    [systemDescription]="systemDescription"
+                    [systemTypes]="systemTypeDescriptors"
+                    (selectionChanged)="systemComponentSelectionChanged($event)"
+                    [selection]="selectedSystemComponent">
+            </app-system-component-panel>
+        </ng-container>
+    </ng-container>
+</ng-template>

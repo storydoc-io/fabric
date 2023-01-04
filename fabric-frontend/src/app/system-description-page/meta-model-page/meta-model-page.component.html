@@ -1,0 +1,28 @@
+<app-layout-1col
+        [sidebar]="sidebar"
+        [title]="title"
+        [breadcrumb]="breadcrumb"
+        [middle]="middle"
+>
+</app-layout-1col>
+
+<ng-template #sidebar>
+    <app-side-bar [active]="'settings'"></app-side-bar>
+</ng-template>
+
+<ng-template #title>
+    <div class="row">
+        <app-breadcrumb [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+    </div>
+</ng-template>
+
+
+<ng-template #breadcrumb>
+</ng-template>
+
+
+<ng-template #middle>
+    <ng-container *ngIf="systemDescription$ | async as systemDescription">
+        <app-meta-model-panel [systemDescription]="systemDescription" [systemComponent]="systemComponent(systemDescription, systemComponentKey)" ></app-meta-model-panel>
+    </ng-container>
+</ng-template>

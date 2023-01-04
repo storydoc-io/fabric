@@ -5,6 +5,7 @@ import io.storydoc.fabric.mongo.navigation.MongoNavigationModel;
 import io.storydoc.fabric.mongo.snapshot.MongoSnapshot;
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.snapshot.domain.SnapshotStorage;
+import io.storydoc.fabric.systemdescription.domain.SystemComponentCoordinate;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +37,11 @@ public class MongoSnapshotController {
     }
 
     @GetMapping(value="metamodel", produces = MediaType.APPLICATION_JSON_VALUE)
-    public MongoMetaModel getMetaModel(String systemComponentKey) {
-        return mongoSnapshotService.getMetaModel(systemComponentKey);
+    public MongoMetaModel getMetaModel(String environmentKey, String systemComponentKey) {
+        return mongoSnapshotService.getMetaModel(SystemComponentCoordinate.builder()
+                .environmentKey(environmentKey)
+                .systemComponentKey(systemComponentKey)
+                .build());
     }
 
 }

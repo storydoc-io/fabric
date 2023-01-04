@@ -1,0 +1,28 @@
+<div *ngIf="viewModel">
+    <div class="container-fluid">
+        <div class="row">
+            <div *ngFor="let column of viewModel.columns" class="col-4 entity-column">
+                <h5>{{column.title}}</h5>
+                <br>
+                <div *ngFor="let list of column.lists">
+                    <h6>{{list.title}}</h6>
+                    <div class="list-group">
+                        <ng-container *ngFor="let entry of list.entries">
+                            <ng-container *ngIf="!entry.json">
+                                <a class="list-group-item" style="overflow: hidden;" (click)="select(column, entry)" href="javascript:void(0);">
+                                    <fa-icon *ngIf="entry.selected" [icon]="faAngleRight"></fa-icon> {{entry.label}}
+                                </a>
+                            </ng-container>
+                            <ng-container *ngIf="entry.json">
+                                <div class="list-group-item">
+                                    <pre>{{entry.label}}</pre>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

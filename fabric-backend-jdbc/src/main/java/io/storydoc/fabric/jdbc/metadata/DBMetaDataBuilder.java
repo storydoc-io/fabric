@@ -53,6 +53,7 @@ public class DBMetaDataBuilder {
 	private TableMetaData buildtTable(DatabaseMetaData jdbcMetaData, String tableName) {
 		try {
 			TableMetaData tableMetaData = TableMetaData.builder()
+					.name(tableName)
 					.columns(buildColumns(jdbcMetaData, tableName))
 					.build();
 			tableMetaData.setPrimaryKey(buildPK(jdbcMetaData, tableName, tableMetaData));

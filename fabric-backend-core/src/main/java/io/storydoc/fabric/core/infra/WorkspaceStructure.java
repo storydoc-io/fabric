@@ -2,6 +2,7 @@ package io.storydoc.fabric.core.infra;
 
 import io.storydoc.fabric.snapshot.domain.SnapshotId;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
+import io.storydoc.fabric.systemdescription.domain.SystemComponentCoordinate;
 import io.storydoc.fabric.workspace.domain.FolderURN;
 import io.storydoc.fabric.workspace.domain.ResourceUrn;
 import org.springframework.stereotype.Component;
@@ -44,8 +45,8 @@ public class WorkspaceStructure {
         return ResourceUrn.of(filename);
     }
 
-    public ResourceUrn getMetaModelUrn(String componentKey) {
-        String filename = String.format("metamodel-%s.json", componentKey);
+    public ResourceUrn getMetaModelUrn(SystemComponentCoordinate coordinate) {
+        String filename = String.format("metamodel-%s-%s.json", coordinate.getEnvironmentKey(), coordinate.getSystemComponentKey());
         return ResourceUrn.of(filename);
     }
 

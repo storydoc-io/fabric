@@ -12,6 +12,7 @@ import io.storydoc.fabric.snapshot.infra.jsonmodel.SnapshotComponentSummary;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionDTO;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
+import io.storydoc.fabric.systemdescription.domain.SystemComponentCoordinate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -39,28 +40,32 @@ public class SnapshotCommandRunner {
     }
 
     public void runSnapshotCommand(SnapshotId snapshotId, SnapshotDescriptorDTO snapshotDescriptor) {
-        String envKey = snapshotDescriptor.getEnvironmentKey();
+        String environmentKey = snapshotDescriptor.getEnvironmentKey();
         String name = snapshotDescriptor.getName();
 
         SystemDescriptionDTO systemDescriptionDTO = systemDescriptionService.getSystemDescription();
 
-        snapshotStorage.createSnapshot(snapshotId, name, envKey);
+        snapshotStorage.createSnapshot(snapshotId, name, environmentKey);
 
         for (SystemComponentDTO systemComponent : systemDescriptionDTO.getSystemComponents()) {
+            SystemComponentCoordinate coordinate = SystemComponentCoordinate.builder()
+                    .environmentKey(environmentKey)
+                    .systemComponentKey(systemComponent.getKey())
+                    .build();
             try {
                 String systemType = systemComponent.getSystemType();
                 SnapshotHandler snapshotHandler = handlerRegistry.getHandler(systemType);
                 Map<String, String> settings = systemDescriptionDTO.getSettings()
-                        .get(envKey)
+                        .get(environmentKey)
                         .get(systemComponent.getKey());
                 if (snapshotHandler instanceof SnapshotHandler_ModelBased) {
                     SnapshotHandler_ModelBased modelBasedHandler = (SnapshotHandler_ModelBased) snapshotHandler;
-                    SnapshotComponent snapshotComponent = modelBasedHandler.takeComponentSnapshot(snapshotId, systemComponent, settings);
+                    SnapshotComponent snapshotComponent = modelBasedHandler.takeComponentSnapshot(snapshotId, coordinate, settings);
                     snapshotStorage.saveSnapshotComponent(snapshotComponent, systemComponent, modelBasedHandler.getSerializer(), snapshotId);
                 } else {
                     SnapshotHandler_StreamBased streamHandler = (SnapshotHandler_StreamBased) snapshotHandler;
                     OutputStream outputStream = snapshotStorage.streamSnapshotComponent(systemComponent, snapshotId);
-                    streamHandler.streamSnapshot(snapshotId, systemComponent, settings, outputStream);
+                    streamHandler.streamSnapshot(snapshotId, coordinate, settings, outputStream);
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -73,9 +78,10 @@ public class SnapshotCommandRunner {
 
     public ExecutionId runUploadSnapshotCommand(String environmentKey, SnapshotId snapshotId) {
         Snapshot snapshot = snapshotStorage.loadSnapshot(snapshotId);
-
+log.info("!!");
         if (snapshot == null || snapshot.getSnapshotComponentSummaries().size() == 0) return null;
 
+log.info("!!!");
         return commandService.run(createUploadSnapshotCommand(environmentKey, snapshot));
 
     }

@@ -109,5 +109,10 @@
             <version>4.2.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.storydoc.fabric</groupId>
+            <artifactId>canon-framework</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

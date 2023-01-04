@@ -3,7 +3,7 @@ import {BreadcrumbItem} from "@fabric/common";
 import {DataSourceSelection} from "@fabric/component";
 import {HealthCheckService} from "../common/health-check.service";
 import {SystemDescriptionService} from "../system-description-page/system-description.service";
-import {NavigationService} from "../navigation-page/navigation.service";
+import {RoutingService} from "../common/routing.service";
 
 @Component({
     selector: 'app-console-page',
@@ -23,7 +23,7 @@ export class ConsolePageComponent implements OnInit {
     ]
 
     constructor(
-        public goto: NavigationService,
+        public routingService: RoutingService,
         private healthCheckService: HealthCheckService,
         private systemDescriptionService: SystemDescriptionService) {
     }

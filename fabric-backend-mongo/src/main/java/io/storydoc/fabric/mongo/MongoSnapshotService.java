@@ -6,6 +6,9 @@ import io.storydoc.fabric.connection.app.ConnectionTestRequestDTO;
 import io.storydoc.fabric.connection.app.ConnectionTestResponseDTO;
 import io.storydoc.fabric.connection.domain.ConnectionHandler;
 import io.storydoc.fabric.metamodel.domain.*;
+import io.storydoc.fabric.mongo.metamodel.Collection;
+import io.storydoc.fabric.mongo.metamodel.MetaModel2EntityConverter;
+import io.storydoc.fabric.mongo.metamodel.MetaModelAssembler;
 import io.storydoc.fabric.mongo.metamodel.MongoMetaModel;
 import io.storydoc.fabric.mongo.navigation.MongoNavigationModel;
 import io.storydoc.fabric.mongo.settings.MongoSettings;
@@ -14,10 +17,11 @@ import io.storydoc.fabric.mongo.snapshot.MongoSnapshot;
 import io.storydoc.fabric.navigation.domain.NavigationModelStorage;
 import io.storydoc.fabric.snapshot.domain.*;
 import io.storydoc.fabric.snapshot.infra.jsonmodel.Snapshot;
-import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
+import io.storydoc.fabric.systemdescription.app.entity.EntityDTO;
 import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
 import io.storydoc.fabric.systemdescription.app.systemtype.SettingDescriptorDTO;
 import io.storydoc.fabric.systemdescription.app.systemtype.SystemTypeDescriptorDTO;
+import io.storydoc.fabric.systemdescription.domain.SystemComponentCoordinate;
 import io.storydoc.fabric.systemdescription.domain.SystemStructureHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
@@ -66,9 +70,8 @@ public class MongoSnapshotService extends MongoServiceBase implements SnapshotHa
     }
 
     @Override
-    public MongoSnapshot takeComponentSnapshot(SnapshotId snapshotId, SystemComponentDTO systemComponent, Map<String, String> settings) {
+    public MongoSnapshot takeComponentSnapshot(SnapshotId snapshotId, SystemComponentCoordinate coordinate, Map<String, String> settings) {
 
-        String systemComponentKey = systemComponent.getKey();
         MongoSettings mongoSettings = toMongoSettings(settings);
         MongoClient mongoClient = getMongoClient(mongoSettings);
         MongoDatabase database = mongoClient.getDatabase(mongoSettings.getDbName());
@@ -77,15 +80,15 @@ public class MongoSnapshotService extends MongoServiceBase implements SnapshotHa
         MongoSnapshot mongoSnapshot = new MongoSnapshot();
         mongoSnapshot.setCollectionSnapshots(new ArrayList<>());
 
-        MongoMetaModel metaModel = getMetaModel(systemComponentKey);
+        MongoMetaModel metaModel = getMetaModel(coordinate);
 
-        metaModel.getCollections().forEach(collectionName -> {
+        metaModel.getCollections().forEach(collection -> {
             CollectionSnapshot collectionSnapshot = new CollectionSnapshot();
-            collectionSnapshot.setCollectionName(collectionName);
+            collectionSnapshot.setCollectionName(collection.getName());
 
             collectionSnapshot.setDocuments(new ArrayList<>());
-            MongoCollection<Document> collection = database.getCollection(collectionName);
-            FindIterable<Document> documents = collection.find();
+            MongoCollection<Document> mongoCollection = database.getCollection(collection.getName());
+            FindIterable<Document> documents = mongoCollection.find();
             documents.forEach(doc -> {
                 collectionSnapshot.getDocuments().add(doc.toJson());
             });
@@ -117,19 +120,13 @@ public class MongoSnapshotService extends MongoServiceBase implements SnapshotHa
     // metamodel
 
     @Override
-    public MongoMetaModel createMetaModel(MetaModelId metaModelId, SystemComponentDTO systemComponent, Map<String, String> settings) {
+    public MongoMetaModel createMetaModel(MetaModelId metaModelId, SystemComponentCoordinate coordinate, Map<String, String> settings) {
         MongoSettings mongoSettings = toMongoSettings(settings);
         MongoClient mongoClient = getMongoClient(mongoSettings);
-        MongoDatabase database = mongoClient.getDatabase(mongoSettings.getDbName());
+        String dbName = mongoSettings.getDbName();
+        MongoDatabase database = mongoClient.getDatabase(dbName);
 
-        MongoMetaModel metaModel = new MongoMetaModel();
-        metaModel.setCollections(new ArrayList<>());
-
-        MongoIterable<String> collectionNames = database.listCollectionNames();
-        collectionNames.forEach(collectionName -> {
-            metaModel.getCollections().add(collectionName);
-        });
-        return metaModel;
+        return new MetaModelAssembler().getMetaModel(database, dbName);
     }
 
     @Override
@@ -142,9 +139,9 @@ public class MongoSnapshotService extends MongoServiceBase implements SnapshotHa
     }
 
 
-    public MongoMetaModel getMetaModel(String systemComponentKey) {
+    public MongoMetaModel getMetaModel(SystemComponentCoordinate coordinate) {
         try {
-            return metaModelStorage.loadMetaModel(systemComponentKey, getMetaModelDeSerializer());
+            return metaModelStorage.loadMetaModel(coordinate, getMetaModelDeSerializer());
         } catch (Exception e) {
             return null;
         }
@@ -175,8 +172,14 @@ public class MongoSnapshotService extends MongoServiceBase implements SnapshotHa
 
 
     @Override
-    public StructureDTO getStructure(String systemComponentKey) {
-        return toDto(systemComponentKey, getMetaModel(systemComponentKey));
+    public StructureDTO getStructure(SystemComponentCoordinate coordinate) {
+        return toDto(coordinate.getSystemComponentKey(), getMetaModel(coordinate));
+    }
+
+    @Override
+    public EntityDTO getAsEntity(SystemComponentCoordinate coordinate) {
+        MongoMetaModel metaModel = getMetaModel(coordinate);
+        return new MetaModel2EntityConverter().getEntity(metaModel);
     }
 
     private StructureDTO toDto(String systemComponentKey, MongoMetaModel metaModel) {
@@ -192,12 +195,12 @@ public class MongoSnapshotService extends MongoServiceBase implements SnapshotHa
                 .build();
     }
 
-    private StructureDTO toCollectionDto(String collection) {
+    private StructureDTO toCollectionDto(Collection collection) {
         return StructureDTO.builder()
-                .id(collection)
+                .id(collection.getName())
                 .systemType(systemType())
                 .structureType("collection")
-                .attributes(Map.of("name", collection))
+                .attributes(Map.of("name", collection.getName()))
                 .build();
     }
 

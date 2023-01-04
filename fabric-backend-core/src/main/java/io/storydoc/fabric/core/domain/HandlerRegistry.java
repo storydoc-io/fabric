@@ -12,8 +12,11 @@ public class HandlerRegistry<COMMAND_HANDLER_TYPE extends CommandHandler> {
 
     private final Map<String, COMMAND_HANDLER_TYPE> handlerMap;
 
-    public HandlerRegistry(List<COMMAND_HANDLER_TYPE> handlerList) {
+    private final Class<COMMAND_HANDLER_TYPE> type;
+
+    public HandlerRegistry(Class<COMMAND_HANDLER_TYPE> type, List<COMMAND_HANDLER_TYPE> handlerList) {
         handlerMap = toHandlerMap(handlerList);
+        this.type = type;
     }
 
     private Map<String, COMMAND_HANDLER_TYPE> toHandlerMap(List<COMMAND_HANDLER_TYPE> handlerList) {
@@ -27,7 +30,7 @@ public class HandlerRegistry<COMMAND_HANDLER_TYPE extends CommandHandler> {
 
     public COMMAND_HANDLER_TYPE getHandler(String systemType) {
         COMMAND_HANDLER_TYPE handler = handlerMap.get(systemType);
-        if (handler == null) throw new FabricException("no suitable handler found for system type " + systemType);
+        if (handler == null) throw new FabricException(String.format("no suitable handler of type \"%s\" found for system type \"%s\"", type.getSimpleName(), systemType));
         return handler;
     }
 

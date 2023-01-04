@@ -6,13 +6,15 @@ import io.storydoc.fabric.connection.domain.ConnectionHandler;
 import io.storydoc.fabric.jdbc.connection.JDBCConnectionDetails;
 import io.storydoc.fabric.jdbc.connection.JDBCConnectionManager;
 import io.storydoc.fabric.jdbc.metadata.DBMetaData;
+import io.storydoc.fabric.jdbc.metadata.DBMetaData2EntityModelMapper;
 import io.storydoc.fabric.jdbc.metadata.DBMetaData2StructureMapper;
 import io.storydoc.fabric.jdbc.metadata.DBMetaDataBuilder;
 import io.storydoc.fabric.metamodel.domain.*;
-import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
+import io.storydoc.fabric.systemdescription.app.entity.EntityDTO;
 import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
 import io.storydoc.fabric.systemdescription.app.systemtype.SettingDescriptorDTO;
 import io.storydoc.fabric.systemdescription.app.systemtype.SystemTypeDescriptorDTO;
+import io.storydoc.fabric.systemdescription.domain.SystemComponentCoordinate;
 import io.storydoc.fabric.systemdescription.domain.SystemStructureHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -33,7 +35,7 @@ public class JDBCMetaDataService extends JDBCServiceBase implements MetaModelHan
     }
 
     @Override
-    public DBMetaData createMetaModel(MetaModelId metaModelId, SystemComponentDTO systemComponent, Map<String, String> settings) {
+    public DBMetaData createMetaModel(MetaModelId metaModelId, SystemComponentCoordinate coordinate, Map<String, String> settings) {
         JDBCConnectionDetails connectionDetails = toSettings(settings);
         DBMetaDataBuilder dbMetaDataBuilder = new DBMetaDataBuilder();
         return dbMetaDataBuilder.getdDBMetaData(connectionDetails.getUserName(), getDataSource(connectionDetails));
@@ -76,13 +78,18 @@ public class JDBCMetaDataService extends JDBCServiceBase implements MetaModelHan
     }
 
 
-    public DBMetaData getDbMetaData(String systemComponentKey) {
-        return metaModelStorage.loadMetaModel(systemComponentKey, getMetaModelDeSerializer());
+    public DBMetaData getDbMetaData(SystemComponentCoordinate coordinate) {
+        return metaModelStorage.loadMetaModel(coordinate, getMetaModelDeSerializer());
     }
 
     @Override
-    public StructureDTO getStructure(String systemComponentKey) {
-        return new DBMetaData2StructureMapper().toDto(getDbMetaData(systemComponentKey));
+    public StructureDTO getStructure(SystemComponentCoordinate coordinate) {
+        return new DBMetaData2StructureMapper().toDto(getDbMetaData(coordinate));
+    }
+
+    @Override
+    public EntityDTO getAsEntity(SystemComponentCoordinate coordinate) {
+        return new DBMetaData2EntityModelMapper().toEntityDto(getDbMetaData(coordinate));
     }
 
     @Override

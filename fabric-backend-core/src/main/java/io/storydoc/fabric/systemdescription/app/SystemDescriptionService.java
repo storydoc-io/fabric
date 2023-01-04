@@ -2,10 +2,7 @@ package io.storydoc.fabric.systemdescription.app;
 
 import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
 import io.storydoc.fabric.systemdescription.app.systemtype.SystemTypeDescriptorDTO;
-import io.storydoc.fabric.systemdescription.domain.SystemDescriptionStorage;
-import io.storydoc.fabric.systemdescription.domain.SystemStructureCommandRunner;
-import io.storydoc.fabric.systemdescription.domain.SystemStructureHandler;
-import io.storydoc.fabric.systemdescription.domain.SystemStructureHandlerRegistry;
+import io.storydoc.fabric.systemdescription.domain.*;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.Environment;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemComponent;
 import io.storydoc.fabric.systemdescription.infra.jsonmodel.SystemDescription;
@@ -60,12 +57,21 @@ public class SystemDescriptionService {
                 .filter(systemComponent -> systemComponent.getKey().equals(systemComponentKey))
                 .findFirst()
                 .map(this::getSystemComponentDTO)
-                .get();
+                .orElse(null);
 
     }
 
+    public String getSystemType(String systemComponentKey) {
+        SystemDescription systemDescription = systemDescriptionStorage.getOrCreateSystemDescription();
+        return systemDescription.getSystemComponents().stream()
+                .filter(systemComponent -> systemComponent.getKey().equals(systemComponentKey))
+                .findFirst()
+                .map(SystemComponent::getSystemType)
+                .orElse(null);
+    }
+
     public void updateSystemDescription(SystemDescriptionDTO dto) {
-        this.systemDescriptionStorage.saveSystemDescription(SystemDescription.builder()
+        systemDescriptionStorage.saveSystemDescription(SystemDescription.builder()
                 .environments(dto.getEnvironments().stream()
                         .map(environmentDTO -> Environment.builder()
                                 .key(environmentDTO.getKey())
@@ -86,27 +92,30 @@ public class SystemDescriptionService {
                 .build());
     }
 
-    public StructureDTO getStructure(String envKey) {
+    public StructureDTO getStructure(String environmentKey) {
         SystemDescriptionDTO systemDescription = getSystemDescription();
 
         return StructureDTO.builder()
                 .structureType("root")
-                .id(envKey)
+                .id(environmentKey)
                 .children(
                         systemDescription.getSystemComponents().stream()
-                                .map(systemComponentDTO -> systemStructureCommandRunner.getStructure(systemComponentDTO))
+                                .map(systemComponentDTO -> systemStructureCommandRunner.getStructure(systemComponentDTO.getSystemType(), SystemComponentCoordinate.builder()
+                                        .environmentKey(environmentKey)
+                                        .systemComponentKey(systemComponentDTO.getKey())
+                                        .build()))
                                 .collect(Collectors.toList())
                 )
                 .build();
     }
 
-    public StructureDTO getStructure(String envKey, String systemComponentKey) {
-        SystemComponentDTO systemComponentDTO = getSystemComponentDTO(systemComponentKey);
-        return systemStructureCommandRunner.getStructure(systemComponentDTO);
+    public StructureDTO getStructure(SystemComponentCoordinate coordinate) {
+        SystemComponentDTO systemComponentDTO = getSystemComponentDTO(coordinate.getSystemComponentKey());
+        return systemStructureCommandRunner.getStructure(systemComponentDTO.getSystemType(), coordinate);
     }
 
     public List<SystemTypeDescriptorDTO> getSystemTypeDescriptors() {
-        return this.systemStructureHandlerRegistry.getHandlers().stream()
+        return systemStructureHandlerRegistry.getHandlers().stream()
                 .map(SystemStructureHandler::getSystemTypeDescriptor)
                 .collect(Collectors.toList());
     }
@@ -121,7 +130,13 @@ public class SystemDescriptionService {
                         .label(environment.getLabel())
                         .build()
                 )
-                .get();
+                .orElse(null);
+    }
+
+    public Map<String, String> getSettings(SystemComponentCoordinate coordinate) {
+        return systemDescriptionStorage.getOrCreateSystemDescription().getSettings()
+                .get(coordinate.getEnvironmentKey())
+                .get(coordinate.getSystemComponentKey());
     }
 
     public Map<String, String> getSettings(String systemComponentKey, String environmentKey) {

@@ -6,5 +6,5 @@ import io.storydoc.fabric.systemdescription.app.systemtype.SystemTypeDescriptorD
 
 public interface SystemStructureHandler extends CommandHandler {
     SystemTypeDescriptorDTO getSystemTypeDescriptor();
-    StructureDTO getStructure(String key);
+    StructureDTO getStructure(SystemComponentCoordinate coordinate);
 }

@@ -1,51 +1,68 @@
 import {Component, Input} from '@angular/core';
 import {Router} from "@angular/router";
 import {SideBarService} from "./side-bar.service";
+import {RoutingService} from "../../routing.service";
 
-export interface ActionSpec {
-  label: string
-  id : PageId
-  route: string[]
+interface ActionSpec {
+    label: string
+    id?: PageId
+    route?: string[]
+    level: number
 }
 
-type PageId = 'settings' | 'dashboard' | 'console' | 'navigation'
+type PageId = 'settings' | 'environments'| 'datasources' | 'dashboard' | 'console' | 'navigation'
 
 @Component({
-  selector: 'app-side-bar',
-  templateUrl: './side-bar.component.html',
-  styleUrls: ['./side-bar.component.scss']
+    selector: 'app-side-bar',
+    templateUrl: './side-bar.component.html',
+    styleUrls: ['./side-bar.component.scss']
 })
 export class SideBarComponent {
 
-  constructor(private router: Router, private sideBarService: SideBarService) { }
+    constructor(private router: Router, private sideBarService: SideBarService, private routingService: RoutingService) {
+    }
 
-  @Input()
-  active: PageId;
+    @Input()
+    active: PageId;
 
-  actions: ActionSpec[] = [
-    {
-      id : 'settings',
-      label: 'Settings',
-      route: ['fe', 'systemdescription']
-    },
-    {
-      id : 'console',
-      label: 'Console',
-      route: ['fe', 'console']
-    },
-  ]
+    actions: ActionSpec[] = [
+        {
+            id: 'settings',
+            label: 'Settings',
+            level: 0
+        },
+        {
+            id: 'environments',
+            label: 'Environments',
+            route: this.routingService.environmentsPageRoute(),
+            level: 1
+        },
+        {
+            id: 'datasources',
+            label: 'Datasources',
+            route: this.routingService.dataSourcesPageRoute(),
+            level: 1
+        },
+        {
+            id: 'console',
+            label: 'Console',
+            route: this.routingService.consolePageRoute(),
+            level: 0
+        },
 
-  navigateTo(route:string[]) {
-    this.sideBarService.collapse()
-    this.router.navigate(route )
-  }
+    ]
 
-  toggleCollapse() {
-    this.sideBarService.toggleState()
-  }
+    navigateTo(route: string[]) {
+        this.sideBarService.collapse()
+        this.router.navigate(route)
+    }
 
-  collapsed(): boolean {
-    return this.sideBarService.collapsed;
-  }
+    toggleCollapse() {
+        this.sideBarService.toggleState()
+    }
+
+    collapsed(): boolean {
+        return this.sideBarService.collapsed;
+    }
 
 }

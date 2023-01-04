@@ -1,5 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
+import { Collection } from './collection';
 export interface MongoMetaModel {
-  collections?: Array<string>;
+  collections?: Array<Collection>;
+  dbName?: string;
 }

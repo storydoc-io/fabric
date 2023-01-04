@@ -12,7 +12,7 @@ import java.util.List;
 public class MetaModelHandlerRegistry extends HandlerRegistry<MetaModelHandler> {
 
     public MetaModelHandlerRegistry(List<MetaModelHandler> handlerList) {
-        super(handlerList);
+        super(MetaModelHandler.class, handlerList);
     }
 
 }

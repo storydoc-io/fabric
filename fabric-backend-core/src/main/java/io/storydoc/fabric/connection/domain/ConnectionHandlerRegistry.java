@@ -12,7 +12,7 @@ import java.util.List;
 public class ConnectionHandlerRegistry extends HandlerRegistry<ConnectionHandler> {
 
     public ConnectionHandlerRegistry(List<ConnectionHandler> handlerList) {
-        super(handlerList);
+        super(ConnectionHandler.class, handlerList);
     }
 
 }

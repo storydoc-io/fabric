@@ -5,11 +5,13 @@ import io.storydoc.fabric.command.domain.CommandExecutionEngine;
 import io.storydoc.fabric.command.domain.CommandExecutionRepository;
 import io.storydoc.fabric.command.domain.ExecutionId;
 import io.storydoc.fabric.infra.UUIDGenerator;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class CommandService {
 
     private final UUIDGenerator uuidGenerator;
@@ -29,6 +31,7 @@ public class CommandService {
         ExecutionId executionId = ExecutionId.fromString(uuidGenerator.generateID(ExecutionId.CATEGORY));
         commandExecutionRepository.save(executionId, command);
         commandExecutionEngine.runCommand(executionId, command);
+        log.info("executionId: " + executionId);
         return executionId;
     }
 

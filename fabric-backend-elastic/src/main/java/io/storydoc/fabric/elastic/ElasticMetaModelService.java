@@ -1,12 +1,15 @@
 package io.storydoc.fabric.elastic;
 
 import io.storydoc.fabric.elastic.metamodel.ElasticMetaModel;
+import io.storydoc.fabric.elastic.metamodel.ElasticMetaModel2EntityModelMapper;
+import io.storydoc.fabric.elastic.metamodel.Schema;
 import io.storydoc.fabric.elastic.settings.ElasticSettings;
 import io.storydoc.fabric.metamodel.domain.*;
-import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
+import io.storydoc.fabric.systemdescription.app.entity.EntityDTO;
 import io.storydoc.fabric.systemdescription.app.structure.StructureDTO;
 import io.storydoc.fabric.systemdescription.app.systemtype.SettingDescriptorDTO;
 import io.storydoc.fabric.systemdescription.app.systemtype.SystemTypeDescriptorDTO;
+import io.storydoc.fabric.systemdescription.domain.SystemComponentCoordinate;
 import io.storydoc.fabric.systemdescription.domain.SystemStructureHandler;
 import lombok.SneakyThrows;
 import org.elasticsearch.client.RequestOptions;
@@ -35,9 +38,9 @@ public class ElasticMetaModelService extends ElasticServiceBase implements MetaM
 
     @Override
     @SneakyThrows
-    public ElasticMetaModel createMetaModel(MetaModelId metaModelId, SystemComponentDTO systemComponent, Map<String, String> settings) {
+    public ElasticMetaModel createMetaModel(MetaModelId metaModelId, SystemComponentCoordinate coordinate, Map<String, String> settings) {
         ElasticSettings elasticSettings = toSettings(settings);
-        Pattern schemaPattern = Pattern.compile(elasticSettings.getSchemaPattern());
+        Pattern schemaPattern = Pattern.compile(".*" /*elasticSettings.getSchemaPattern()*/);
 
         RestHighLevelClient client = getClient(elasticSettings);
         GetMappingsResponse mappings = client.indices().getMapping(new GetMappingsRequest(), RequestOptions.DEFAULT);
@@ -48,7 +51,13 @@ public class ElasticMetaModelService extends ElasticServiceBase implements MetaM
         for (Map.Entry<String, MappingMetadata> entry : mappings.mappings().entrySet()) {
             String schemaName = entry.getKey();
             if (!schemaPattern.matcher(schemaName).find()) continue;
-            elasticMetaModel.getSchemas().add(schemaName);
+            MappingMetadata mappingMetadata = entry.getValue();
+            Map<String, Object> sourceMap = entry.getValue().sourceAsMap();
+            String content = mappingMetadata.get().source().toString();
+            elasticMetaModel.getSchemas().add(Schema.builder()
+                    .name(schemaName)
+                    .source(sourceMap)
+                    .build());
         }
         return elasticMetaModel;
     }
@@ -62,16 +71,21 @@ public class ElasticMetaModelService extends ElasticServiceBase implements MetaM
         return ((inputStream) -> objectMapper.readValue(inputStream, ElasticMetaModel.class));
     }
 
-    public ElasticMetaModel getMetaModel(String systemComponentKey) {
-        return metaModelStorage.loadMetaModel(systemComponentKey, getMetaModelDeSerializer());
+    public ElasticMetaModel getMetaModel(SystemComponentCoordinate coordinate) {
+        return metaModelStorage.loadMetaModel(coordinate, getMetaModelDeSerializer());
     }
 
     // system structure
 
 
     @Override
-    public StructureDTO getStructure(String systemComponentKey) {
-        return toDTo(systemComponentKey , getMetaModel(systemComponentKey));
+    public EntityDTO getAsEntity(SystemComponentCoordinate coordinate) {
+        return new ElasticMetaModel2EntityModelMapper().toEntityDto(getMetaModel(coordinate));
+    }
+
+    @Override
+    public StructureDTO getStructure(SystemComponentCoordinate coordinate) {
+        return toDTo(coordinate.getSystemComponentKey(), getMetaModel(coordinate));
     }
 
     private StructureDTO toDTo(String systemComponentKey, ElasticMetaModel metaModel) {
@@ -86,12 +100,12 @@ public class ElasticMetaModelService extends ElasticServiceBase implements MetaM
                 .build();
     }
 
-    private StructureDTO toIndexDto(String schema) {
+    private StructureDTO toIndexDto(Schema schema) {
         return StructureDTO.builder()
-                .id(schema)
+                .id(schema.getName())
                 .systemType(systemType())
                 .structureType("index")
-                .attributes(Map.of("name", schema))
+                .attributes(Map.of("name", schema.getName()))
                 .build();
     }
 
