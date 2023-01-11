@@ -7,4 +7,5 @@
 - SNAPSHOT: download [continuous integration build](https://github.com/storydoc-io/fabric/actions?query=is%3Asuccess). 
   - select the latest succesful build (top of the list, with most recent commit message)
   - Unzip the "assembly" artifact   
- 
+
+
