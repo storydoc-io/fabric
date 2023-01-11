@@ -1,7 +1,6 @@
 package io.storydoc.fabric.jdbc.metadata;
 
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
 import java.sql.DatabaseMetaData;
@@ -13,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Slf4j
 public class DBMetaDataBuilder {
 
 	public DBMetaData getdDBMetaData(String schema, DataSource dataSource) {
@@ -33,19 +31,15 @@ public class DBMetaDataBuilder {
 	private DBMetaData todDBMetaData(String schema, DatabaseMetaData jdbcMetaData) {
 
 
-		log.info("schema's");
 		List<String> schemas = new ArrayList<>();
 		ResultSet rs = jdbcMetaData.getSchemas();
 		while (rs.next()) {
-			log.info(String.format("%s | %s", rs.getString(1), rs.getString(2)));
 			schemas.add(rs.getString(2));
 		}
 
-		log.info("catalogs");
 		List<String> catalogs = new ArrayList<>();
 		rs = jdbcMetaData.getCatalogs();
 		while (rs.next()) {
-			log.info(String.format("%s ", rs.getString(1)));
 			catalogs.add(rs.getString(1));
 		}
 
@@ -66,7 +60,6 @@ public class DBMetaDataBuilder {
 	private List<String> getTableNames(ResultSet rs) throws SQLException {
 		List<String> tableNames = new ArrayList<>();
 		while (rs.next()) {
-			//log.info(String.format("%s | %s | %s | %s ", rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4)));
 			tableNames.add(rs.getString(3));
 		}
 		return tableNames;
