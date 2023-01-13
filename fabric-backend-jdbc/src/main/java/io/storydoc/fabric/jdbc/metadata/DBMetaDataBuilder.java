@@ -30,7 +30,22 @@ public class DBMetaDataBuilder {
 	@SneakyThrows
 	private DBMetaData todDBMetaData(String schema, DatabaseMetaData jdbcMetaData) {
 
-		ResultSet rs = jdbcMetaData.getTables(null, schema, "%", null);
+
+		List<String> schemas = new ArrayList<>();
+		ResultSet rs = jdbcMetaData.getSchemas();
+		while (rs.next()) {
+			schemas.add(rs.getString(2));
+		}
+
+		List<String> catalogs = new ArrayList<>();
+		rs = jdbcMetaData.getCatalogs();
+		while (rs.next()) {
+			catalogs.add(rs.getString(1));
+		}
+
+		boolean useCatalogs = catalogs.contains(schema);
+
+		rs = useCatalogs ? jdbcMetaData.getTables(schema, null, "%", null) : jdbcMetaData.getTables(null, schema, "%", null);
 		List<String> tableNames = getTableNames(rs);
 		List<TableMetaData> tableMetaDataList = tableNames.stream()
 				.map(tableName -> buildtTable(jdbcMetaData, tableName))
