@@ -4,7 +4,7 @@ import {distinctUntilChanged, map} from 'rxjs/operators';
 import {logChangesToObservable} from '@fabric/common';
 import {ConnectionTestResponseDto, EnvironmentDto, StructureDto, SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from '@fabric/models';
 import {ConnectionControllerService, MetaModelControllerService, SystemDescriptionControllerService} from '@fabric/services';
-import {SettingsDialogData} from './settings-page/settings-panel/settings-dialog/settings-dialog.component';
+import {SettingsDialogData} from './connection-settings-page/connection-settings-panel/connection-settings-dialog/connection-settings-dialog.component';
 
 
 export interface Setting {

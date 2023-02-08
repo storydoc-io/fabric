@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {BreadcrumbItem} from "@fabric/common";
 import {DataSourceSelection} from "@fabric/component";
 import {HealthCheckService} from "../common/health-check.service";
-import {SystemDescriptionService} from "../system-description-page/system-description.service";
+import {SystemDescriptionService} from "../settings/system-description.service";
 import {RoutingService} from "../common/routing.service";
 
 @Component({

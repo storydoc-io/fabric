@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {DatePipe} from '@angular/common';
-import {SystemDescriptionService} from "../../system-description-page/system-description.service";
+import {SystemDescriptionService} from "../../../settings/system-description.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {StructureDto} from "@fabric/models";
 import {ITreeModel, ITreeNode, ITreeOptions} from "@circlon/angular-tree-component/lib/defs/api";

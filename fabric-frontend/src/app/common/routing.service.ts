@@ -36,6 +36,10 @@ export class RoutingService {
     return ['/', 'fe', 'environments'];
   }
 
+  public snapshotsPageroute() {
+    return ['/', 'fe', 'snapshots'];
+  }
+
   public navigateToMetaModelPage(systemComponentKey: string) {
     this.router.navigate(this.metaModelPageRoute(systemComponentKey))
   }

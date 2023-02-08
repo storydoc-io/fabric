@@ -1,11 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {SnapshotId, SnapshotSummaryDto, SystemDescriptionDto} from "@fabric/models";
-import {ModalService} from "../../common/modal/modal-service";
-import {DashboardService} from "../dashboard.service";
+import {ActionsSpec, HasConfirmationDialogMixin, ModalService} from "@fabric/common";
+import {SnapshotsService} from "../snapshots.service";
 import {SnapshotDialogData, SnapshotDialogSpec} from "../snapshot-dialog/snapshot-dialog.component";
-import {ActionsSpec, HasConfirmationDialogMixin} from "@fabric/common";
 import {SnapshotUploadDialogSpec} from "../snapshot-upload-dialog/snapshot-upload-dialog.component";
-import {SystemDescriptionService} from "../../system-description-page/system-description.service";
+import {SystemDescriptionService} from "../../../settings/system-description.service";
 import {CommandControllerService} from "@fabric/services";
 import {Router} from "@angular/router";
 
@@ -18,7 +17,7 @@ export class SnapshotOverviewPanelComponent extends HasConfirmationDialogMixin i
 
   constructor(
       public modalService: ModalService,
-      private service: DashboardService,
+      private service: SnapshotsService,
       private systemDescriptionService : SystemDescriptionService,
       private commandControllerService: CommandControllerService,
       private _router: Router

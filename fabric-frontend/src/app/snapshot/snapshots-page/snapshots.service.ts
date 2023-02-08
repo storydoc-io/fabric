@@ -11,7 +11,7 @@ interface DashboardStoreState {
 @Injectable({
     providedIn: 'root'
 })
-export class DashboardService implements OnDestroy {
+export class SnapshotsService implements OnDestroy {
 
     constructor(private snapshotControllerService: SnapshotControllerService) {
         this.init()

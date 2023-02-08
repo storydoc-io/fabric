@@ -2,14 +2,14 @@ import {Component, Input, OnInit} from '@angular/core';
 import {EnvironmentDto, SystemComponentDto, SystemDescriptionDto, SystemTypeDescriptorDto} from "@fabric/models";
 import {HasConfirmationDialogMixin, ModalService} from "@fabric/common";
 import {SettingRow, SystemDescriptionService, SystemDescriptionWrapper} from "../../system-description.service";
-import {SettingsDialogSpec} from "./settings-dialog/settings-dialog.component";
+import {SettingsDialogSpec} from "./connection-settings-dialog/connection-settings-dialog.component";
 
 @Component({
   selector: 'app-settings-panel',
-  templateUrl: './settings-panel.component.html',
-  styleUrls: ['./settings-panel.component.scss']
+  templateUrl: './connection-settings-panel.component.html',
+  styleUrls: ['./connection-settings-panel.component.scss']
 })
-export class SettingsPanelComponent extends HasConfirmationDialogMixin implements OnInit {
+export class ConnectionSettingsPanelComponent extends HasConfirmationDialogMixin implements OnInit {
 
   constructor(modalService: ModalService, private service: SystemDescriptionService) {
     super(modalService);

@@ -50,10 +50,10 @@ class SettingsDialogSpecWrapper {
 
 @Component({
     selector: 'app-settings-dialog',
-    templateUrl: './settings-dialog.component.html',
-    styleUrls: ['./settings-dialog.component.scss']
+    templateUrl: './connection-settings-dialog.component.html',
+    styleUrls: ['./connection-settings-dialog.component.scss']
 })
-export class SettingsDialogComponent implements OnInit {
+export class ConnectionSettingsDialogComponent implements OnInit {
 
     constructor(private service: SystemDescriptionService) {}
 

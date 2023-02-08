@@ -7,10 +7,10 @@ import {RoutingService} from "../../common/routing.service";
 
 @Component({
   selector: 'app-settings-page',
-  templateUrl: './settings-page.component.html',
-  styleUrls: ['./settings-page.component.scss']
+  templateUrl: './connection-settings-page.component.html',
+  styleUrls: ['./connection-settings-page.component.scss']
 })
-export class SettingsPageComponent implements OnInit {
+export class ConnectionSettingsPageComponent implements OnInit {
 
   constructor(private activatedRoute: ActivatedRoute, private systemDescriptionService: SystemDescriptionService, private routingService : RoutingService) {}
 

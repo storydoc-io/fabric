@@ -14,9 +14,9 @@ import {MetaModelDialogComponent} from './meta-model-page/meta-model-panel/meta-
 import {MongoMetamodelPanelComponent} from './meta-model-page/meta-model-panel/mongo-metamodel-panel/mongo-metamodel-panel.component';
 import {MetaModelViewComponent} from './meta-model-page/meta-model-panel/meta-model-view/meta-model-view.component';
 import {MetaModelPageComponent} from './meta-model-page/meta-model-page.component';
-import {SettingsDialogComponent} from './settings-page/settings-panel/settings-dialog/settings-dialog.component';
-import {SettingsPanelComponent} from './settings-page/settings-panel/settings-panel.component';
-import {SettingsPageComponent} from './settings-page/settings-page.component';
+import {ConnectionSettingsDialogComponent} from './connection-settings-page/connection-settings-panel/connection-settings-dialog/connection-settings-dialog.component';
+import {ConnectionSettingsPanelComponent} from './connection-settings-page/connection-settings-panel/connection-settings-panel.component';
+import {ConnectionSettingsPageComponent} from './connection-settings-page/connection-settings-page.component';
 
 @NgModule({
     declarations: [
@@ -24,14 +24,14 @@ import {SettingsPageComponent} from './settings-page/settings-page.component';
         SystemComponentDialogComponent,
         EnvironmentPanelComponent,
         EnvironmentDialogComponent,
-        SettingsPanelComponent,
-        SettingsDialogComponent,
+        ConnectionSettingsPanelComponent,
+        ConnectionSettingsDialogComponent,
         MetaModelPanelComponent,
         MetaModelDialogComponent,
         MongoMetamodelPanelComponent,
         MetaModelViewComponent,
         MetaModelPageComponent,
-        SettingsPageComponent,
+        ConnectionSettingsPageComponent,
         EnvironmentsPageComponent,
         DataSourcesPageComponent,
     ],

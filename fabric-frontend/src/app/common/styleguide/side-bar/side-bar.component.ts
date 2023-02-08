@@ -10,7 +10,7 @@ interface ActionSpec {
     level: number
 }
 
-type PageId = 'settings' | 'environments'| 'datasources' | 'dashboard' | 'console' | 'navigation'
+type PageId = 'settings' | 'environments'| 'datasources' | 'snapshots' | 'console' | 'navigation'
 
 @Component({
     selector: 'app-side-bar',
@@ -48,6 +48,13 @@ export class SideBarComponent {
             label: 'Console',
             route: this.routingService.consolePageRoute(),
             level: 0
+        },
+        {
+            id: 'snapshots',
+            label: 'Snapshots',
+            level: 0,
+            route: this.routingService.snapshotsPageroute(),
+
         },
 
     ]
