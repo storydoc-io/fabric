@@ -10,10 +10,9 @@ import { Observable } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 
 import { ConsoleDescriptorDto } from '../models/console-descriptor-dto';
-import { ConsoleRequestDto } from '../models/console-request-dto';
-import { ConsoleResponseItemDto } from '../models/console-response-item-dto';
 import { NavItem } from '../models/nav-item';
 import { NavigationRequest } from '../models/navigation-request';
+import { QueryCompositeDto } from '../models/query-composite-dto';
 import { SnippetDto } from '../models/snippet-dto';
 
 
@@ -163,8 +162,8 @@ export class ConsoleControllerService extends BaseService {
    * This method sends `application/json` and handles request body of type `application/json`.
    */
   runRequestUsingPost$Response(params?: {
-    body?: ConsoleRequestDto
-  }): Observable<StrictHttpResponse<ConsoleResponseItemDto>> {
+    body?: QueryCompositeDto
+  }): Observable<StrictHttpResponse<QueryCompositeDto>> {
 
     const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.RunRequestUsingPostPath, 'post');
     if (params) {
@@ -177,7 +176,7 @@ export class ConsoleControllerService extends BaseService {
     })).pipe(
       filter((r: any) => r instanceof HttpResponse),
       map((r: HttpResponse<any>) => {
-        return r as StrictHttpResponse<ConsoleResponseItemDto>;
+        return r as StrictHttpResponse<QueryCompositeDto>;
       })
     );
   }
@@ -193,11 +192,11 @@ export class ConsoleControllerService extends BaseService {
    * This method sends `application/json` and handles request body of type `application/json`.
    */
   runRequestUsingPost(params?: {
-    body?: ConsoleRequestDto
-  }): Observable<ConsoleResponseItemDto> {
+    body?: QueryCompositeDto
+  }): Observable<QueryCompositeDto> {
 
     return this.runRequestUsingPost$Response(params).pipe(
-      map((r: StrictHttpResponse<ConsoleResponseItemDto>) => r.body as ConsoleResponseItemDto)
+      map((r: StrictHttpResponse<QueryCompositeDto>) => r.body as QueryCompositeDto)
     );
   }
 

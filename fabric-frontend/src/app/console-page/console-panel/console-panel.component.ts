@@ -3,7 +3,7 @@ import {FormArray, FormControl, FormGroup} from "@angular/forms";
 import {faPlay, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {HasConfirmationDialogMixin, ModalService} from "@fabric/common";
 import {DataSourceSelection} from "@fabric/component";
-import {ConsoleDescriptorDto, NavItem, Row, SnippetDto, TabularResponse} from "@fabric/models";
+import {ConsoleDescriptorDto, NavItem, QueryCompositeDto, QueryDto, SnippetDto} from "@fabric/models";
 import {ConsoleService} from "../console.service";
 import {HistoryItem} from "./history-panel/history-panel.component";
 import {SnippetDialogData, SnippetDialogSpec} from "./snippet-dialog/snippet-dialog.component";
@@ -59,41 +59,25 @@ export class ConsolePanelComponent extends HasConfirmationDialogMixin implements
         )
     }
 
+    selection$ = this.service.selection$
+    root$ = this.service.root$
+
     doQuery() {
         let attributes = {}
         this.fieldsControl.value.forEach((fieldValue, i) => {
             attributes[this.descriptor.items[i].name] = fieldValue
         })
-        this.service.runRequest(
-            this.dataSource.environment.key,
-            this.dataSource.systemComponent.key,
+        let query: QueryDto = {
+            environmentKey: this.dataSource.environment.key,
+            systemComponentKey: this.dataSource.systemComponent.key,
             attributes,
-            this.currentNavItem
-        ).then((response) => {
-            this.clearOutput();
-            switch (response.consoleOutputType) {
-                case 'JSON': {
-                    this.jsonOutput = JSON.parse(response.content)
-                    break
-                }
-                case 'STACKTRACE': {
-                    this.stackTraceOutput = response.content
-                    break
-                }
-                case 'TABULAR' : {
-                    this.tabularResponse = response.tabular
-                }
-            }
-            if (response.consoleOutputType != 'STACKTRACE') {
-                this.addHistoryItem(attributes)
-            }
-        })
-    }
+            navItem: this.currentNavItem
+        }
+        let queryComposite: QueryCompositeDto = {
+            query,
+        }
 
-    private clearOutput() {
-        this.jsonOutput = null
-        this.stackTraceOutput = null
-        this.tabularResponse = null
+        this.service.runRequest(queryComposite)
     }
 
     clear() {
@@ -101,7 +85,7 @@ export class ConsolePanelComponent extends HasConfirmationDialogMixin implements
                 this.fieldControl(index).setValue(null)
             }
         )
-        this.clearOutput()
+        this.service.clearOutput()
     }
 
     // tabs history/snippet
@@ -283,14 +267,7 @@ export class ConsolePanelComponent extends HasConfirmationDialogMixin implements
 
 
     // output
-
-    jsonOutput: string
-    stackTraceOutput: string
-    tabularResponse: TabularResponse
-
-    selectTableRow(row: Row) {
-        console.log('selected: ', row)
-    }
+    output$ = this.service.output$
 
 
 }

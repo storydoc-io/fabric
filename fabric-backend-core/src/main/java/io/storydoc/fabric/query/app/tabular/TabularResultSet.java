@@ -1,4 +1,4 @@
-package io.storydoc.fabric.console.app.query;
+package io.storydoc.fabric.query.app.tabular;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TabularResponse {
+public class TabularResultSet {
     private String tableName;
     private List<Row> rows;
     private List<Column> columns;

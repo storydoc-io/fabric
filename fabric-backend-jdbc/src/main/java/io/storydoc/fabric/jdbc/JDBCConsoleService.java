@@ -3,16 +3,16 @@ package io.storydoc.fabric.jdbc;
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorDTO;
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorItemDTO;
 import io.storydoc.fabric.console.app.describe.ConsoleInputType;
-import io.storydoc.fabric.console.app.describe.ConsoleOutputType;
 import io.storydoc.fabric.console.app.navigation.NavItem;
 import io.storydoc.fabric.console.app.navigation.NavigationRequest;
-import io.storydoc.fabric.console.app.query.ConsoleRequestDTO;
-import io.storydoc.fabric.console.app.query.ConsoleResponseItemDTO;
 import io.storydoc.fabric.console.domain.ConsoleHandler;
 import io.storydoc.fabric.jdbc.connection.JDBCConnectionDetails;
 import io.storydoc.fabric.jdbc.connection.JDBCConnectionManager;
 import io.storydoc.fabric.jdbc.metadata.DBMetaData;
 import io.storydoc.fabric.jdbc.request.JDBCResultSet2TabularResponseMapper;
+import io.storydoc.fabric.query.app.QueryDTO;
+import io.storydoc.fabric.query.app.ResultDTO;
+import io.storydoc.fabric.query.app.ResultType;
 import io.storydoc.fabric.systemdescription.domain.SystemComponentCoordinate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -51,7 +51,7 @@ public class JDBCConsoleService extends JDBCServiceBase implements ConsoleHandle
     }
 
     @Override
-    public ConsoleResponseItemDTO runRequest(ConsoleRequestDTO requestDTO, Map<String, String> settings) {
+    public ResultDTO runRequest(QueryDTO requestDTO, Map<String, String> settings) {
         try {
             String query = requestDTO.getAttributes().get(CONSOLE_FIELD_SQL_QUERY);
             JDBCConnectionDetails connectionDetails = toSettings(settings);
@@ -60,9 +60,9 @@ public class JDBCConsoleService extends JDBCServiceBase implements ConsoleHandle
             try (Statement stmt = connection.createStatement()) {
                 ResultSet resultSet = stmt.executeQuery(query);
                 JDBCResultSet2TabularResponseMapper resultSetMapper = new JDBCResultSet2TabularResponseMapper();
-                return ConsoleResponseItemDTO.builder()
+                return ResultDTO.builder()
                     .systemType(systemType())
-                    .consoleOutputType(ConsoleOutputType.TABULAR)
+                    .resultType(ResultType.TABULAR)
                     .tabular(resultSetMapper.tabularResponse(resultSet))
 /*
                     .navItems(getNavigation(NavigationRequest.builder()
@@ -75,9 +75,9 @@ public class JDBCConsoleService extends JDBCServiceBase implements ConsoleHandle
             }
         } catch (Exception e) {
             log.info("error executing query", e);
-            return ConsoleResponseItemDTO.builder()
+            return ResultDTO.builder()
                     .systemType(systemType())
-                    .consoleOutputType(ConsoleOutputType.STACKTRACE)
+                    .resultType(ResultType.STACKTRACE)
                     .content(e.getMessage())
                     .build();
         }

@@ -7,13 +7,13 @@ import com.mongodb.client.MongoDatabase;
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorDTO;
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorItemDTO;
 import io.storydoc.fabric.console.app.describe.ConsoleInputType;
-import io.storydoc.fabric.console.app.describe.ConsoleOutputType;
 import io.storydoc.fabric.console.app.navigation.NavItem;
 import io.storydoc.fabric.console.app.navigation.NavigationRequest;
-import io.storydoc.fabric.console.app.query.ConsoleRequestDTO;
-import io.storydoc.fabric.console.app.query.ConsoleResponseItemDTO;
 import io.storydoc.fabric.console.domain.ConsoleHandler;
 import io.storydoc.fabric.mongo.settings.MongoSettings;
+import io.storydoc.fabric.query.app.QueryDTO;
+import io.storydoc.fabric.query.app.ResultDTO;
+import io.storydoc.fabric.query.app.ResultType;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -48,7 +48,7 @@ public class MongoConsoleService extends MongoServiceBase implements ConsoleHand
     }
 
     @Override
-    public ConsoleResponseItemDTO runRequest(ConsoleRequestDTO requestDTO, Map<String, String> settings) {
+    public ResultDTO runRequest(QueryDTO requestDTO, Map<String, String> settings) {
         String systemComponentKey = requestDTO.getSystemComponentKey();
         MongoSettings mongoSettings = toMongoSettings(settings);
         MongoClient mongoClient = getMongoClient(mongoSettings);
@@ -78,9 +78,9 @@ public class MongoConsoleService extends MongoServiceBase implements ConsoleHand
         }
         contentBuilder.append("\n]");
 
-        return ConsoleResponseItemDTO.builder()
+        return ResultDTO.builder()
                 .systemType(systemType())
-                .consoleOutputType(ConsoleOutputType.JSON)
+                .resultType(ResultType.JSON)
                 .content(contentBuilder.toString())
                 .build();
 

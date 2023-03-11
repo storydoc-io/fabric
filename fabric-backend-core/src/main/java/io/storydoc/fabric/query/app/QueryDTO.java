@@ -1,4 +1,4 @@
-package io.storydoc.fabric.console.app.query;
+package io.storydoc.fabric.query.app;
 
 import io.storydoc.fabric.console.app.navigation.NavItem;
 import lombok.AllArgsConstructor;
@@ -12,7 +12,7 @@ import java.util.Map;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ConsoleRequestDTO {
+public class QueryDTO {
 
     private String environmentKey;
     private String systemComponentKey;

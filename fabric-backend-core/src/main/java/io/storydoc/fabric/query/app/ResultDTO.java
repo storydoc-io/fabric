@@ -1,7 +1,8 @@
-package io.storydoc.fabric.console.app.query;
+package io.storydoc.fabric.query.app;
 
-import io.storydoc.fabric.console.app.describe.ConsoleOutputType;
 import io.storydoc.fabric.console.app.navigation.NavItem;
+import io.storydoc.fabric.query.app.tabular.TabularResultSet;
+import io.storydoc.fabric.query.app.tabular.TabularResultSetMetaDataDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,11 +14,11 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ConsoleResponseItemDTO {
+public class ResultDTO {
     private String systemType;
-    private ConsoleOutputType consoleOutputType;
-    private ConsoleResponseDescriptionDTO description;
+    private ResultType resultType;
+    private TabularResultSetMetaDataDTO description;
     private String content;
-    private TabularResponse tabular;
+    private TabularResultSet tabular;
     private List<NavItem> navItems;
 }

@@ -1,6 +1,6 @@
 package io.storydoc.fabric.console.app.navigation;
 
-import io.storydoc.fabric.console.app.query.Row;
+import io.storydoc.fabric.query.app.tabular.Row;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

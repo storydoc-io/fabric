@@ -1,7 +1,7 @@
 /* tslint:disable */
 /* eslint-disable */
 import { NavItem } from './nav-item';
-export interface ConsoleRequestDto {
+export interface QueryDto {
   attributes?: { [key: string]: string };
   environmentKey?: string;
   navItem?: NavItem;

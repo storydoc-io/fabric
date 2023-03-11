@@ -3,9 +3,9 @@ package io.storydoc.fabric.testinfra.mock.mockdb;
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorDTO;
 import io.storydoc.fabric.console.app.navigation.NavItem;
 import io.storydoc.fabric.console.app.navigation.NavigationRequest;
-import io.storydoc.fabric.console.app.query.ConsoleRequestDTO;
-import io.storydoc.fabric.console.app.query.ConsoleResponseItemDTO;
 import io.storydoc.fabric.console.domain.ConsoleHandler;
+import io.storydoc.fabric.query.app.QueryDTO;
+import io.storydoc.fabric.query.app.ResultDTO;
 import io.storydoc.fabric.testinfra.mock.TestConstants;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import java.util.Map;
 public class MockDBConsoleHandler implements ConsoleHandler {
 
     @Override
-    public ConsoleResponseItemDTO runRequest(ConsoleRequestDTO consoleRequestDTO, Map<String, String> settings) {
+    public ResultDTO runRequest(QueryDTO queryDTO, Map<String, String> settings) {
         return null;
     }
 

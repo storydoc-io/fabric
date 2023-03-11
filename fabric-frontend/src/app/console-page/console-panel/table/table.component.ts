@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Row, TabularResponse} from "@fabric/models";
+import {Row, TabularResultSet} from "@fabric/models";
 
 @Component({
     selector: 'app-table',
@@ -18,7 +18,7 @@ export class TableComponent implements OnInit {
     onRowSelect: EventEmitter<Row> = new EventEmitter<Row>();
 
     @Input()
-    tabular: TabularResponse
+    tabular: TabularResultSet
 
     selected: Row
 

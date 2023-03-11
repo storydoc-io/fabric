@@ -1,8 +1,8 @@
 package io.storydoc.fabric.jdbc.request;
 
-import io.storydoc.fabric.console.app.query.Column;
-import io.storydoc.fabric.console.app.query.Row;
-import io.storydoc.fabric.console.app.query.TabularResponse;
+import io.storydoc.fabric.query.app.tabular.Column;
+import io.storydoc.fabric.query.app.tabular.Row;
+import io.storydoc.fabric.query.app.tabular.TabularResultSet;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -12,8 +12,8 @@ import java.util.List;
 
 public class JDBCResultSet2TabularResponseMapper {
 
-    public TabularResponse tabularResponse(ResultSet resultSet) throws SQLException {
-        return TabularResponse.builder()
+    public TabularResultSet tabularResponse(ResultSet resultSet) throws SQLException {
+        return TabularResultSet.builder()
                 .rows(getRows(resultSet))
                 .columns(getColumns(resultSet))
                 .build();

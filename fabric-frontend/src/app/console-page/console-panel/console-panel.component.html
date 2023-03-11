@@ -55,20 +55,8 @@
             </app-panel>
         </div>
         <div class="col-md-9">
-            <app-panel>
-                <div style="min-height: 80vh; max-height: 80vh; overflow: auto">
-                    <ng-container *ngIf="jsonOutput">
-                        <pre>{{jsonOutput | json}}</pre>
-                    </ng-container>
-                    <ng-container *ngIf="stackTraceOutput" >
-                        <div class="bg-warning">
-                            {{stackTraceOutput}}
-                        </div>
-                    </ng-container>
-                    <ng-container *ngIf="tabularResponse">
-                        <app-table [tabular]="tabularResponse" (onRowSelect)="selectTableRow($event)"></app-table>
-                    </ng-container>
-                </div>
+            <app-panel *ngIf="output$ | async as output">
+                <app-output-panel [output] = output ></app-output-panel>
             </app-panel>
         </div>
     </div>

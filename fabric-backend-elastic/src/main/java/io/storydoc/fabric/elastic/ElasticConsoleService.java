@@ -6,13 +6,13 @@ import io.storydoc.fabric.connection.domain.ConnectionHandler;
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorDTO;
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorItemDTO;
 import io.storydoc.fabric.console.app.describe.ConsoleInputType;
-import io.storydoc.fabric.console.app.describe.ConsoleOutputType;
 import io.storydoc.fabric.console.app.navigation.NavItem;
 import io.storydoc.fabric.console.app.navigation.NavigationRequest;
-import io.storydoc.fabric.console.app.query.ConsoleRequestDTO;
-import io.storydoc.fabric.console.app.query.ConsoleResponseItemDTO;
 import io.storydoc.fabric.console.domain.ConsoleHandler;
 import io.storydoc.fabric.elastic.settings.ElasticSettings;
+import io.storydoc.fabric.query.app.QueryDTO;
+import io.storydoc.fabric.query.app.ResultDTO;
+import io.storydoc.fabric.query.app.ResultType;
 import lombok.SneakyThrows;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Request;
@@ -72,7 +72,7 @@ public class ElasticConsoleService extends ElasticServiceBase implements Connect
 
     @Override
     @SneakyThrows
-    public ConsoleResponseItemDTO runRequest(ConsoleRequestDTO requestDTO, Map<String, String> settings) {
+    public ResultDTO runRequest(QueryDTO requestDTO, Map<String, String> settings) {
         try {
             ElasticSettings elasticSettings = toSettings(settings);
             RestHighLevelClient client = getClient(elasticSettings);
@@ -86,13 +86,13 @@ public class ElasticConsoleService extends ElasticServiceBase implements Connect
                 request.setJsonEntity(requestBody);
             }
             Response response = client.getLowLevelClient().performRequest(request);
-            return ConsoleResponseItemDTO.builder()
-                    .consoleOutputType(ConsoleOutputType.JSON)
+            return ResultDTO.builder()
+                    .resultType(ResultType.JSON)
                     .content(EntityUtils.toString(response.getEntity()))
                     .build();
         } catch (Exception e ) {
-            return ConsoleResponseItemDTO.builder()
-                    .consoleOutputType(ConsoleOutputType.STACKTRACE)
+            return ResultDTO.builder()
+                    .resultType(ResultType.STACKTRACE)
                     .content(e.getMessage())
                     .build();
         }

@@ -241,7 +241,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConsoleRequestDTO"
+                "$ref": "#/components/schemas/QueryCompositeDTO"
               }
             }
           }
@@ -252,7 +252,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConsoleResponseItemDTO"
+                  "$ref": "#/components/schemas/QueryCompositeDTO"
                 }
               }
             }
@@ -1516,84 +1516,6 @@
           }
         }
       },
-      "ConsoleRequestDTO": {
-        "title": "ConsoleRequestDTO",
-        "type": "object",
-        "properties": {
-          "attributes": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "environmentKey": {
-            "type": "string"
-          },
-          "navItem": {
-            "$ref": "#/components/schemas/NavItem"
-          },
-          "systemComponentKey": {
-            "type": "string"
-          }
-        }
-      },
-      "ConsoleResponseDescriptionDTO": {
-        "title": "ConsoleResponseDescriptionDTO",
-        "type": "object",
-        "properties": {
-          "attributes": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "children": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ConsoleResponseDescriptionDTO"
-            }
-          },
-          "responseDescriptionType": {
-            "type": "string"
-          },
-          "systemType": {
-            "type": "string"
-          }
-        }
-      },
-      "ConsoleResponseItemDTO": {
-        "title": "ConsoleResponseItemDTO",
-        "type": "object",
-        "properties": {
-          "consoleOutputType": {
-            "type": "string",
-            "enum": [
-              "JSON",
-              "MESSAGE",
-              "STACKTRACE",
-              "TABULAR"
-            ]
-          },
-          "content": {
-            "type": "string"
-          },
-          "description": {
-            "$ref": "#/components/schemas/ConsoleResponseDescriptionDTO"
-          },
-          "navItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NavItem"
-            }
-          },
-          "systemType": {
-            "type": "string"
-          },
-          "tabular": {
-            "$ref": "#/components/schemas/TabularResponse"
-          }
-        }
-      },
       "EntityDTO": {
         "title": "EntityDTO",
         "type": "object",
@@ -1829,6 +1751,81 @@
           },
           "root": {
             "$ref": "#/components/schemas/Path"
+          }
+        }
+      },
+      "QueryCompositeDTO": {
+        "title": "QueryCompositeDTO",
+        "type": "object",
+        "properties": {
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QueryCompositeDTO"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "query": {
+            "$ref": "#/components/schemas/QueryDTO"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ResultDTO"
+          }
+        }
+      },
+      "QueryDTO": {
+        "title": "QueryDTO",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "environmentKey": {
+            "type": "string"
+          },
+          "navItem": {
+            "$ref": "#/components/schemas/NavItem"
+          },
+          "systemComponentKey": {
+            "type": "string"
+          }
+        }
+      },
+      "ResultDTO": {
+        "title": "ResultDTO",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "description": {
+            "$ref": "#/components/schemas/TabularResultSetMetaDataDTO"
+          },
+          "navItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NavItem"
+            }
+          },
+          "resultType": {
+            "type": "string",
+            "enum": [
+              "JSON",
+              "MESSAGE",
+              "STACKTRACE",
+              "TABULAR"
+            ]
+          },
+          "systemType": {
+            "type": "string"
+          },
+          "tabular": {
+            "$ref": "#/components/schemas/TabularResultSet"
           }
         }
       },
@@ -2072,8 +2069,8 @@
           }
         }
       },
-      "TabularResponse": {
-        "title": "TabularResponse",
+      "TabularResultSet": {
+        "title": "TabularResultSet",
         "type": "object",
         "properties": {
           "columns": {
@@ -2095,6 +2092,15 @@
             }
           },
           "tableName": {
+            "type": "string"
+          }
+        }
+      },
+      "TabularResultSetMetaDataDTO": {
+        "title": "TabularResultSetMetaDataDTO",
+        "type": "object",
+        "properties": {
+          "systemType": {
             "type": "string"
           }
         }

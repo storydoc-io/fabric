@@ -1,27 +1,137 @@
 import {Injectable} from '@angular/core';
 import {ConsoleControllerService} from "@fabric/services";
-import {ConsoleDescriptorDto, ConsoleResponseItemDto, NavItem, SnippetDto} from "@fabric/models";
+import {ConsoleDescriptorDto, NavItem, QueryCompositeDto, SnippetDto, TabularResultSet} from "@fabric/models";
+import {BehaviorSubject} from "rxjs";
+import {distinctUntilChanged, map} from "rxjs/operators";
+import {logChangesToObservable} from "@fabric/common";
+
+export interface Output {
+    jsonOutput: string
+    stackTraceOutput: string
+    tabularResponse: TabularResultSet
+}
+
+interface ConsoleState {
+    rootQueryComposite: QueryCompositeDto
+    selection: QueryCompositeDto
+    output: Output
+
+}
+
+
 
 @Injectable()
 export class ConsoleService {
 
     constructor(private consoleControllerService: ConsoleControllerService) {
+        this.init()
     }
+
+    subscriptions = []
+
+    init() {
+        this.subscriptions.push(logChangesToObservable('store::output$ >>', this.output$))
+    }
+
+    private store = new BehaviorSubject<ConsoleState>(this.initialConsoleState())
+
+    root$ = this.store.pipe(
+        map(state => state.rootQueryComposite),
+        distinctUntilChanged(),
+    )
+
+    selection$ = this.store.pipe(
+        map(state => state.selection),
+        distinctUntilChanged(),
+    )
+
+    output$ = this.store.pipe(
+        map(state => state.output),
+        distinctUntilChanged(),
+    )
+
+    private initialConsoleState(): ConsoleState  {
+         let rootQueryComposite = this.createQueryComposite()
+         return {
+             rootQueryComposite,
+             selection: rootQueryComposite,
+             output: {
+                 jsonOutput: null,
+                 stackTraceOutput: null,
+                 tabularResponse: null
+             }
+         }
+    }
+
+    private idCounter: 0
+
+    private createQueryComposite(): QueryCompositeDto {
+        return {
+            id: "" + this.idCounter++,
+            children: []
+        }
+    }
+
+    addQuery() {
+    }
+
+    clearOutput() {
+        this.store.next({
+            ... this.store.value,
+            output: {
+                jsonOutput: null,
+                stackTraceOutput: null,
+                tabularResponse: null
+            }
+        })
+    }
+
 
     loadDescriptor(systemType: string) : Promise<ConsoleDescriptorDto>{
         return this.consoleControllerService.getDescriptorUsingGet({systemType})
             .toPromise()
     }
 
-    runRequest(environmentKey: string, systemComponentKey: string, attributes, navItem: NavItem): Promise<ConsoleResponseItemDto> {
+    runRequest(queryComposite: QueryCompositeDto) {
+        this.clearOutput();
         return this.consoleControllerService.runRequestUsingPost({
-            body: {
-                environmentKey,
-                systemComponentKey,
-                attributes,
-                navItem
+            body: queryComposite
+        }).subscribe((dto)=> {
+
+            this.store.value.selection.result = dto.result
+
+            let result = dto.result
+            let output
+            switch (result.resultType) {
+                case 'JSON': {
+                    output = {
+                        jsonOutput : JSON.parse(result.content)
+                    }
+                    break
+                }
+                case 'STACKTRACE': {
+                    output = {
+                        stackTraceOutput : result.content
+                    }
+                    break
+                }
+                case 'TABULAR' : {
+                    output = {
+                        tabularResponse : result.tabular
+                    }
+                }
             }
-        }).toPromise()
+            this.store.next({
+                ... this.store.value,
+                output
+            })
+
+            if (result.resultType != 'STACKTRACE') {
+                // this.addHistoryItem(attributes)
+            }
+
+
+        })
     }
 
     loadSnippets(systemType:string): Promise<SnippetDto[]> {

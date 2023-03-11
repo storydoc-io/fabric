@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { Column } from './column';
 import { Row } from './row';
-export interface TabularResponse {
+export interface TabularResultSet {
   columns?: Array<Column>;
   pkColumns?: Array<Column>;
   rows?: Array<Row>;

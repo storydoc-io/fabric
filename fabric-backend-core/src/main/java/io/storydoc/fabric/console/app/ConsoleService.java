@@ -3,13 +3,14 @@ package io.storydoc.fabric.console.app;
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorDTO;
 import io.storydoc.fabric.console.app.navigation.NavItem;
 import io.storydoc.fabric.console.app.navigation.NavigationRequest;
-import io.storydoc.fabric.console.app.query.ConsoleRequestDTO;
-import io.storydoc.fabric.console.app.query.ConsoleResponseItemDTO;
 import io.storydoc.fabric.console.app.snippet.SnippetDTO;
 import io.storydoc.fabric.console.domain.ConsoleHandler;
 import io.storydoc.fabric.console.domain.ConsoleHandlerRegistry;
 import io.storydoc.fabric.console.domain.SnippetStorage;
 import io.storydoc.fabric.console.infra.Snippet;
+import io.storydoc.fabric.query.app.QueryDTO;
+import io.storydoc.fabric.query.app.ResultDTO;
+import io.storydoc.fabric.query.app.composite.QueryCompositeDTO;
 import io.storydoc.fabric.systemdescription.app.SystemComponentDTO;
 import io.storydoc.fabric.systemdescription.app.SystemDescriptionService;
 import org.springframework.stereotype.Component;
@@ -40,10 +41,16 @@ public class ConsoleService {
         return handlerRegistry.getHandler(systemType);
     }
 
-    public ConsoleResponseItemDTO runRequest(ConsoleRequestDTO request) {
-        SystemComponentDTO systemComponentDTO = getSystemComponentDTO(request.getSystemComponentKey());
-        Map<String, String> settings = systemDescriptionService.getSettings(request.getSystemComponentKey(), request.getEnvironmentKey());
-        return getHandler(systemComponentDTO.getSystemType()).runRequest(request, settings);
+    public QueryCompositeDTO runRequest(QueryCompositeDTO composite) {
+        QueryDTO query = composite.getQuery();
+        SystemComponentDTO systemComponentDTO = getSystemComponentDTO(query.getSystemComponentKey());
+        Map<String, String> settings = systemDescriptionService.getSettings(query.getSystemComponentKey(), query.getEnvironmentKey());
+        ResultDTO result = getHandler(systemComponentDTO.getSystemType()).runRequest(query, settings);
+        return QueryCompositeDTO.builder()
+                .id(composite.getId())
+                .query(query)
+                .result(result)
+                .build();
     }
 
 
