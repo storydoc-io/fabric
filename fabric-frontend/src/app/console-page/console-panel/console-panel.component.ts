@@ -3,25 +3,31 @@ import {FormArray, FormControl, FormGroup} from "@angular/forms";
 import {faPlay, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {HasConfirmationDialogMixin, ModalService} from "@fabric/common";
 import {DataSourceSelection} from "@fabric/component";
-import {ConsoleDescriptorDto, NavItem, QueryCompositeDto, QueryDto, SnippetDto} from "@fabric/models";
-import {ConsoleService} from "../console.service";
+import {ConsoleDescriptorDto, NavItem, PagingDto, QueryDto, SnippetDto} from "@fabric/models";
+import {ConsoleServiceOld} from "../console.service-old";
 import {HistoryItem} from "./history-panel/history-panel.component";
 import {SnippetDialogData, SnippetDialogSpec} from "./snippet-dialog/snippet-dialog.component";
+import {QueryPanelState} from "./query-panel/query-panel.component";
 
 type TabState = 'HISTORY' | 'SNIPPETS'
+
+export interface QueryPanelSpec {
+    state: QueryPanelState
+    selectPage: (page: PagingDto) => void
+}
 
 @Component({
     selector: 'app-console-panel',
     templateUrl: './console-panel.component.html',
     styleUrls: ['./console-panel.component.scss'],
-    providers: [ConsoleService]
+    providers: [ConsoleServiceOld]
 })
 export class ConsolePanelComponent extends HasConfirmationDialogMixin implements OnChanges {
 
     faPlay = faPlay
     faTimes = faTimes
 
-    constructor(protected modalService: ModalService, private service: ConsoleService) {
+    constructor(protected modalService: ModalService, private service: ConsoleServiceOld) {
         super(modalService)
     }
 
@@ -59,25 +65,24 @@ export class ConsolePanelComponent extends HasConfirmationDialogMixin implements
         )
     }
 
-    selection$ = this.service.selection$
-    root$ = this.service.root$
-
     doQuery() {
         let attributes = {}
         this.fieldsControl.value.forEach((fieldValue, i) => {
             attributes[this.descriptor.items[i].name] = fieldValue
         })
-        let query: QueryDto = {
+        let paging: PagingDto = {
+            pageNr: 1,
+            pageSize: 5
+        }
+        let query: QueryDto = <QueryDto>{
             environmentKey: this.dataSource.environment.key,
             systemComponentKey: this.dataSource.systemComponent.key,
             attributes,
-            navItem: this.currentNavItem
-        }
-        let queryComposite: QueryCompositeDto = {
-            query,
+            navItem: this.currentNavItem,
+            paging
         }
 
-        this.service.runRequest(queryComposite)
+        this.service.runQuery(query)
     }
 
     clear() {
@@ -87,6 +92,24 @@ export class ConsolePanelComponent extends HasConfirmationDialogMixin implements
         )
         this.service.clearOutput()
     }
+
+    // output panel
+
+    // output
+    output$ = this.service.output$
+
+    getKeys(map): string[]{
+        if (map) return Object.keys(map)
+        return []
+    }
+
+    getQueryPanelSpec(queryPanelState: QueryPanelState, queryPanelId: string): QueryPanelSpec {
+        return {
+            state: queryPanelState,
+            selectPage: (page: PagingDto) => this.service.selectPage(queryPanelId, page)
+        }
+    }
+
 
     // tabs history/snippet
 
@@ -263,11 +286,5 @@ export class ConsolePanelComponent extends HasConfirmationDialogMixin implements
     }
 
     confirmationDialogSpec: any;
-
-
-
-    // output
-    output$ = this.service.output$
-
 
 }

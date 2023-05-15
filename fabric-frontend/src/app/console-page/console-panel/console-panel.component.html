@@ -20,9 +20,9 @@
                                 </ng-container>
                             </ng-container>
                         </ng-container>
-                            <button type="button" class="btn btn-outline-secondary" (click)="doQuery()">
-                                <fa-icon [icon]="faPlay"></fa-icon>
-                            </button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="doQuery()">
+                            <fa-icon [icon]="faPlay"></fa-icon>
+                        </button>
                         <button type="button" class="btn btn-outline-secondary" (click)="clear()">
                             <fa-icon [icon]="faTimes"></fa-icon>
                         </button>
@@ -45,9 +45,9 @@
                     </ng-container>
                     <ng-container *ngIf="tabState==='HISTORY'">
                         <app-history-panel [historyItems]="historyItems"
-                           (onConvert)="convertHistoryItemToSnippet($event)"
-                           (onSelect)="selectHistoryItem($event)"
-                           (onDelete)="deleteHistoryItem($event)"
+                                           (onConvert)="convertHistoryItemToSnippet($event)"
+                                           (onSelect)="selectHistoryItem($event)"
+                                           (onDelete)="deleteHistoryItem($event)"
                         >
                         </app-history-panel>
                     </ng-container>
@@ -55,8 +55,11 @@
             </app-panel>
         </div>
         <div class="col-md-9">
-            <app-panel *ngIf="output$ | async as output">
-                <app-output-panel [output] = output ></app-output-panel>
+            <app-panel *ngIf="output$ | async as queryPanelStates">
+                <ng-container *ngFor="let queryPanelId of getKeys(queryPanelStates)">
+                    <app-query-panel [spec]="getQueryPanelSpec(queryPanelStates[queryPanelId], queryPanelId)">
+                    </app-query-panel>
+                </ng-container>
             </app-panel>
         </div>
     </div>

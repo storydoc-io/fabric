@@ -12,10 +12,10 @@ import java.util.List;
 
 public class JDBCResultSet2TabularResponseMapper {
 
-    public TabularResultSet tabularResponse(ResultSet resultSet) throws SQLException {
+    public TabularResultSet tabularResponse(ResultSet pageResultSet) throws SQLException {
         return TabularResultSet.builder()
-                .rows(getRows(resultSet))
-                .columns(getColumns(resultSet))
+                .rows(getRows(pageResultSet))
+                .columns(getColumns(pageResultSet))
                 .build();
     }
 

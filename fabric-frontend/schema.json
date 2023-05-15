@@ -241,7 +241,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/QueryCompositeDTO"
+                "$ref": "#/components/schemas/QueryDTO"
               }
             }
           }
@@ -252,7 +252,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/QueryCompositeDTO"
+                  "$ref": "#/components/schemas/ResultDTO"
                 }
               }
             }
@@ -1729,6 +1729,24 @@
           }
         }
       },
+      "PagingDTO": {
+        "title": "PagingDTO",
+        "type": "object",
+        "properties": {
+          "nrOfResults": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageNr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "Path": {
         "title": "Path",
         "type": "object",
@@ -1754,27 +1772,6 @@
           }
         }
       },
-      "QueryCompositeDTO": {
-        "title": "QueryCompositeDTO",
-        "type": "object",
-        "properties": {
-          "children": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/QueryCompositeDTO"
-            }
-          },
-          "id": {
-            "type": "string"
-          },
-          "query": {
-            "$ref": "#/components/schemas/QueryDTO"
-          },
-          "result": {
-            "$ref": "#/components/schemas/ResultDTO"
-          }
-        }
-      },
       "QueryDTO": {
         "title": "QueryDTO",
         "type": "object",
@@ -1790,6 +1787,9 @@
           },
           "navItem": {
             "$ref": "#/components/schemas/NavItem"
+          },
+          "paging": {
+            "$ref": "#/components/schemas/PagingDTO"
           },
           "systemComponentKey": {
             "type": "string"
@@ -2078,6 +2078,9 @@
             "items": {
               "$ref": "#/components/schemas/Column"
             }
+          },
+          "pagingInfo": {
+            "$ref": "#/components/schemas/PagingDTO"
           },
           "pkColumns": {
             "type": "array",

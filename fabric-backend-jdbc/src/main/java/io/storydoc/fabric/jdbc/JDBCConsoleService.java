@@ -10,6 +10,7 @@ import io.storydoc.fabric.jdbc.connection.JDBCConnectionDetails;
 import io.storydoc.fabric.jdbc.connection.JDBCConnectionManager;
 import io.storydoc.fabric.jdbc.metadata.DBMetaData;
 import io.storydoc.fabric.jdbc.request.JDBCResultSet2TabularResponseMapper;
+import io.storydoc.fabric.query.app.PagingDTO;
 import io.storydoc.fabric.query.app.QueryDTO;
 import io.storydoc.fabric.query.app.ResultDTO;
 import io.storydoc.fabric.query.app.ResultType;
@@ -51,28 +52,52 @@ public class JDBCConsoleService extends JDBCServiceBase implements ConsoleHandle
     }
 
     @Override
-    public ResultDTO runRequest(QueryDTO requestDTO, Map<String, String> settings) {
-        try {
-            String query = requestDTO.getAttributes().get(CONSOLE_FIELD_SQL_QUERY);
-            JDBCConnectionDetails connectionDetails = toSettings(settings);
-            DataSource dataSource = getDataSource(connectionDetails);
-            Connection connection = dataSource.getConnection();
-            try (Statement stmt = connection.createStatement()) {
-                ResultSet resultSet = stmt.executeQuery(query);
+    public ResultDTO runRequest(QueryDTO queryDTO, Map<String, String> settings) {
+        JDBCConnectionDetails connectionDetails = toSettings(settings);
+        DataSource dataSource = getDataSource(connectionDetails);
+        try(Connection connection = dataSource.getConnection();) {
+            String query = queryDTO.getAttributes().get(CONSOLE_FIELD_SQL_QUERY);
+
+
+            String pagedQuery = null;
+
+            if (queryDTO.getPaging() != null) {
+                PagingDTO paging = queryDTO.getPaging();
+                pagedQuery = String.format("%s OFFSET %d ROWS FETCH NEXT %d ROWS ONLY", query, (paging.getPageNr()-1)*paging.getPageSize(), paging.getPageSize());
+            }
+
+            String countQuery = String.format("select count(*) from (%s)", query);
+
+            log.info("paged query: " + pagedQuery);
+            log.info("count query: " + countQuery);
+
+            try (Statement pagedQueryStmt = connection.createStatement(); Statement countQueryStmt = connection.createStatement()) {
+
+                ResultSet countResult = countQueryStmt.executeQuery(countQuery);
+                countResult.next();
+                long count = countResult.getLong(1);
+
+                ResultSet pageResult = pagedQueryStmt.executeQuery(pagedQuery);
                 JDBCResultSet2TabularResponseMapper resultSetMapper = new JDBCResultSet2TabularResponseMapper();
-                return ResultDTO.builder()
+                ResultDTO resultDTO = ResultDTO.builder()
                     .systemType(systemType())
                     .resultType(ResultType.TABULAR)
-                    .tabular(resultSetMapper.tabularResponse(resultSet))
-/*
-                    .navItems(getNavigation(NavigationRequest.builder()
-                            .systemComponentKey(requestDTO.getSystemComponentKey())
-                            .navItem(requestDTO.getNavItem())
-                            .build()))
-
- */
+                    .tabular(resultSetMapper.tabularResponse(pageResult))
                     .build();
+
+                if (queryDTO.getPaging() != null) {
+                    PagingDTO paging = queryDTO.getPaging();
+                    resultDTO.getTabular().setPagingInfo(
+                        PagingDTO.builder()
+                            .pageNr(paging.getPageNr())
+                            .pageSize(paging.getPageSize())
+                            .nrOfResults(count)
+                            .build()
+                    );
+                }
+                return resultDTO;
             }
+
         } catch (Exception e) {
             log.info("error executing query", e);
             return ResultDTO.builder()

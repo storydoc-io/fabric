@@ -2,7 +2,7 @@
 
     <div class="table-container">
         <div class="title-section">
-            ttt
+            <app-pager [paging]="tabular.pagingInfo" (onPageSelected)="selectPage($event)"></app-pager>
         </div>
         <div class="table-section">
             <table class="table table-bordered table-hover">

@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class QueryCompositeDTO {
+class QueryCompositeDTO {
 
     private String id;
     private QueryDTO query;

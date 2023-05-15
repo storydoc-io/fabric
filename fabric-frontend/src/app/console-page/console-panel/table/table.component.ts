@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Row, TabularResultSet} from "@fabric/models";
+import {PagingDto, Row, TabularResultSet} from "@fabric/models";
 
 @Component({
     selector: 'app-table',
@@ -17,6 +17,9 @@ export class TableComponent implements OnInit {
     @Output()
     onRowSelect: EventEmitter<Row> = new EventEmitter<Row>();
 
+    @Output()
+    onPageSelect: EventEmitter<PagingDto> = new EventEmitter<PagingDto>();
+
     @Input()
     tabular: TabularResultSet
 
@@ -26,4 +29,9 @@ export class TableComponent implements OnInit {
         this.selected = row
         this.onRowSelect.emit(row)
     }
+
+    selectPage(pagingInfo: PagingDto) {
+        this.onPageSelect.emit(pagingInfo)
+    }
+
 }

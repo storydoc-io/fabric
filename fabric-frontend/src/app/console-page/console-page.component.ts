@@ -5,6 +5,10 @@ import {HealthCheckService} from "../common/health-check.service";
 import {SystemDescriptionService} from "../settings/system-description.service";
 import {RoutingService} from "../common/routing.service";
 
+export interface ConsoleItem {
+
+}
+
 @Component({
     selector: 'app-console-page',
     templateUrl: './console-page.component.html',

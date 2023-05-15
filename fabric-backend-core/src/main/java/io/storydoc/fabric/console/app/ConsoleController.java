@@ -4,7 +4,8 @@ import io.storydoc.fabric.console.app.describe.ConsoleDescriptorDTO;
 import io.storydoc.fabric.console.app.navigation.NavItem;
 import io.storydoc.fabric.console.app.navigation.NavigationRequest;
 import io.storydoc.fabric.console.app.snippet.SnippetDTO;
-import io.storydoc.fabric.query.app.composite.QueryCompositeDTO;
+import io.storydoc.fabric.query.app.QueryDTO;
+import io.storydoc.fabric.query.app.ResultDTO;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +27,7 @@ public class ConsoleController {
     }
 
     @PostMapping(value="/run", produces = MediaType.APPLICATION_JSON_VALUE)
-    public QueryCompositeDTO runRequest(@RequestBody QueryCompositeDTO queryDTO) {
+    public ResultDTO runRequest(@RequestBody QueryDTO queryDTO) {
         return consoleService.runRequest(queryDTO);
     }
 

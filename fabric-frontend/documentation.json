@@ -634,167 +634,40 @@
             "methods": []
         },
         {
-            "name": "ConsoleRequestDto",
-            "id": "interface-ConsoleRequestDto-e30765880a533bdbf16d2bad3988b1d50a538f3a604fe927808f5bc9fa6693f30e9b738290134569d31546ee2f99c83725f6a302b9704c6568c9a38a33389168",
-            "file": "src/app/api/models/console-request-dto.ts",
+            "name": "ConsoleState",
+            "id": "interface-ConsoleState-f013a931eee25b4e1ca8769ee6d3958e59718c6f20956ae479af7449a367dab6ffa0a3eeabb05798ec961163e0fc32fcf00df639f7b4279f0a15a26543f982af",
+            "file": "src/app/console-page/console.service.ts",
             "deprecated": false,
             "deprecationMessage": "",
             "type": "interface",
-            "sourceCode": "import { NavItem } from './nav-item';\nexport interface ConsoleRequestDto {\n  attributes?: { [key: string]: string };\n  environmentKey?: string;\n  navItem?: NavItem;\n  systemComponentKey?: string;\n}\n",
+            "sourceCode": "import {Injectable} from '@angular/core';\nimport {ConsoleControllerService} from \"@fabric/services\";\nimport {ConsoleDescriptorDto, NavItem, QueryCompositeDto, SnippetDto, TabularResultSet} from \"@fabric/models\";\nimport {BehaviorSubject} from \"rxjs\";\nimport {distinctUntilChanged, map} from \"rxjs/operators\";\nimport {logChangesToObservable} from \"@fabric/common\";\n\nexport interface Output {\n    jsonOutput: string\n    stackTraceOutput: string\n    tabularResponse: TabularResultSet\n}\n\ninterface ConsoleState {\n    rootQueryComposite: QueryCompositeDto\n    selection: QueryCompositeDto\n    output: Output\n\n}\n\n\n\n@Injectable()\nexport class ConsoleService {\n\n    constructor(private consoleControllerService: ConsoleControllerService) {\n        this.init()\n    }\n\n    subscriptions = []\n\n    init() {\n        this.subscriptions.push(logChangesToObservable('store::output$ >>', this.output$))\n    }\n\n    private store = new BehaviorSubject<ConsoleState>(this.initialConsoleState())\n\n    root$ = this.store.pipe(\n        map(state => state.rootQueryComposite),\n        distinctUntilChanged(),\n    )\n\n    selection$ = this.store.pipe(\n        map(state => state.selection),\n        distinctUntilChanged(),\n    )\n\n    output$ = this.store.pipe(\n        map(state => state.output),\n        distinctUntilChanged(),\n    )\n\n    private initialConsoleState(): ConsoleState  {\n         let rootQueryComposite = this.createQueryComposite()\n         return {\n             rootQueryComposite,\n             selection: rootQueryComposite,\n             output: {\n                 jsonOutput: null,\n                 stackTraceOutput: null,\n                 tabularResponse: null\n             }\n         }\n    }\n\n    private idCounter: 0\n\n    private createQueryComposite(): QueryCompositeDto {\n        return {\n            id: \"\" + this.idCounter++,\n            children: []\n        }\n    }\n\n    addQuery() {\n    }\n\n    clearOutput() {\n        this.store.next({\n            ... this.store.value,\n            output: {\n                jsonOutput: null,\n                stackTraceOutput: null,\n                tabularResponse: null\n            }\n        })\n    }\n\n\n    loadDescriptor(systemType: string) : Promise<ConsoleDescriptorDto>{\n        return this.consoleControllerService.getDescriptorUsingGet({systemType})\n            .toPromise()\n    }\n\n    runRequest(queryComposite: QueryCompositeDto) {\n        this.clearOutput();\n        return this.consoleControllerService.runRequestUsingPost({\n            body: queryComposite\n        }).subscribe((dto)=> {\n\n            this.store.value.selection.result = dto.result\n\n            let result = dto.result\n            let output\n            switch (result.resultType) {\n                case 'JSON': {\n                    output = {\n                        jsonOutput : JSON.parse(result.content)\n                    }\n                    break\n                }\n                case 'STACKTRACE': {\n                    output = {\n                        stackTraceOutput : result.content\n                    }\n                    break\n                }\n                case 'TABULAR' : {\n                    output = {\n                        tabularResponse : result.tabular\n                    }\n                }\n            }\n            this.store.next({\n                ... this.store.value,\n                output\n            })\n\n            if (result.resultType != 'STACKTRACE') {\n                // this.addHistoryItem(attributes)\n            }\n\n\n        })\n    }\n\n    loadSnippets(systemType:string): Promise<SnippetDto[]> {\n        return this.consoleControllerService.getSnippetsUsingGet({systemType}).toPromise()\n    }\n\n    addSnippet(title: string, systemType: string, attributes: {}): Promise<SnippetDto[]> {\n        return this.consoleControllerService.createSnippetUsingPost({\n            systemType,\n            body: {\n                title,\n                attributes\n            }\n        }).toPromise().then(()=> this.loadSnippets(systemType))\n\n    }\n\n    editSnippet(id: string, title: string, systemType: string, attributes: {}) {\n        return this.consoleControllerService.updateSnippetUsingPut({\n            systemType,\n            body: {\n                id,\n                title,\n                attributes\n            }\n        }).toPromise().then(()=> this.loadSnippets(systemType))\n    }\n\n    deleteSnippet(id: string, systemType: string) {\n        return this.consoleControllerService.deleteSnippetUsingDelete({\n            systemType,\n            id\n        }).toPromise().then(()=> this.loadSnippets(systemType))\n    }\n\n    loadNavItems(systemComponentKey: string): Promise<NavItem[]>  {\n        return this.consoleControllerService.getNavigationUsingPost({body: {\n            systemComponentKey,\n        }}).toPromise()\n    }\n\n}\n",
             "properties": [
                 {
-                    "name": "attributes",
+                    "name": "output",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "type": "literal type",
-                    "optional": true,
+                    "type": "Output",
+                    "optional": false,
                     "description": "",
-                    "line": 5
+                    "line": 17
                 },
                 {
-                    "name": "environmentKey",
+                    "name": "rootQueryComposite",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "type": "string",
-                    "optional": true,
+                    "type": "QueryCompositeDto",
+                    "optional": false,
                     "description": "",
-                    "line": 6
+                    "line": 15
                 },
                 {
-                    "name": "navItem",
+                    "name": "selection",
                     "deprecated": false,
                     "deprecationMessage": "",
-                    "type": "NavItem",
-                    "optional": true,
+                    "type": "QueryCompositeDto",
+                    "optional": false,
                     "description": "",
-                    "line": 7
-                },
-                {
-                    "name": "systemComponentKey",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "string",
-                    "optional": true,
-                    "description": "",
-                    "line": 8
-                }
-            ],
-            "indexSignatures": [],
-            "kind": 165,
-            "methods": []
-        },
-        {
-            "name": "ConsoleResponseDescriptionDto",
-            "id": "interface-ConsoleResponseDescriptionDto-6cdafd578fbd8b823d433d9ebf7be7c201bea1fe4ac6aef457a6ebe77851f82caf72298f9f1c36615411793d44451a11189ad5049eb4551a3821bd4aa6ffdc3f",
-            "file": "src/app/api/models/console-response-description-dto.ts",
-            "deprecated": false,
-            "deprecationMessage": "",
-            "type": "interface",
-            "sourceCode": "export interface ConsoleResponseDescriptionDto {\n  attributes?: { [key: string]: string };\n  children?: Array<ConsoleResponseDescriptionDto>;\n  responseDescriptionType?: string;\n  systemType?: string;\n}\n",
-            "properties": [
-                {
-                    "name": "attributes",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "literal type",
-                    "optional": true,
-                    "description": "",
-                    "line": 4
-                },
-                {
-                    "name": "children",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "Array<ConsoleResponseDescriptionDto>",
-                    "optional": true,
-                    "description": "",
-                    "line": 5
-                },
-                {
-                    "name": "responseDescriptionType",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "string",
-                    "optional": true,
-                    "description": "",
-                    "line": 6
-                },
-                {
-                    "name": "systemType",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "string",
-                    "optional": true,
-                    "description": "",
-                    "line": 7
-                }
-            ],
-            "indexSignatures": [],
-            "kind": 165,
-            "methods": []
-        },
-        {
-            "name": "ConsoleResponseItemDto",
-            "id": "interface-ConsoleResponseItemDto-6858bd1f27d983a532f4a00989f71b6ead4a1d778ea9c748958240a2696d91137dd0c47c6416f48f467dba519eea7c7a67498558e1471b2e7c9c074e53ac592a",
-            "file": "src/app/api/models/console-response-item-dto.ts",
-            "deprecated": false,
-            "deprecationMessage": "",
-            "type": "interface",
-            "sourceCode": "import { ConsoleResponseDescriptionDto } from './console-response-description-dto';\nimport { NavItem } from './nav-item';\nimport { TabularResponse } from './tabular-response';\nexport interface ConsoleResponseItemDto {\n  consoleOutputType?: 'JSON' | 'MESSAGE' | 'STACKTRACE' | 'TABULAR';\n  content?: string;\n  description?: ConsoleResponseDescriptionDto;\n  navItems?: Array<NavItem>;\n  systemType?: string;\n  tabular?: TabularResponse;\n}\n",
-            "properties": [
-                {
-                    "name": "consoleOutputType",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "\"JSON\" | \"MESSAGE\" | \"STACKTRACE\" | \"TABULAR\"",
-                    "optional": true,
-                    "description": "",
-                    "line": 7
-                },
-                {
-                    "name": "content",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "string",
-                    "optional": true,
-                    "description": "",
-                    "line": 8
-                },
-                {
-                    "name": "description",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "ConsoleResponseDescriptionDto",
-                    "optional": true,
-                    "description": "",
-                    "line": 9
-                },
-                {
-                    "name": "navItems",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "Array<NavItem>",
-                    "optional": true,
-                    "description": "",
-                    "line": 10
-                },
-                {
-                    "name": "systemType",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "string",
-                    "optional": true,
-                    "description": "",
-                    "line": 11
-                },
-                {
-                    "name": "tabular",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "TabularResponse",
-                    "optional": true,
-                    "description": "",
-                    "line": 12
+                    "line": 16
                 }
             ],
             "indexSignatures": [],
@@ -1981,6 +1854,88 @@
             "methods": []
         },
         {
+            "name": "Output",
+            "id": "interface-Output-f013a931eee25b4e1ca8769ee6d3958e59718c6f20956ae479af7449a367dab6ffa0a3eeabb05798ec961163e0fc32fcf00df639f7b4279f0a15a26543f982af",
+            "file": "src/app/console-page/console.service.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "import {Injectable} from '@angular/core';\nimport {ConsoleControllerService} from \"@fabric/services\";\nimport {ConsoleDescriptorDto, NavItem, QueryCompositeDto, SnippetDto, TabularResultSet} from \"@fabric/models\";\nimport {BehaviorSubject} from \"rxjs\";\nimport {distinctUntilChanged, map} from \"rxjs/operators\";\nimport {logChangesToObservable} from \"@fabric/common\";\n\nexport interface Output {\n    jsonOutput: string\n    stackTraceOutput: string\n    tabularResponse: TabularResultSet\n}\n\ninterface ConsoleState {\n    rootQueryComposite: QueryCompositeDto\n    selection: QueryCompositeDto\n    output: Output\n\n}\n\n\n\n@Injectable()\nexport class ConsoleService {\n\n    constructor(private consoleControllerService: ConsoleControllerService) {\n        this.init()\n    }\n\n    subscriptions = []\n\n    init() {\n        this.subscriptions.push(logChangesToObservable('store::output$ >>', this.output$))\n    }\n\n    private store = new BehaviorSubject<ConsoleState>(this.initialConsoleState())\n\n    root$ = this.store.pipe(\n        map(state => state.rootQueryComposite),\n        distinctUntilChanged(),\n    )\n\n    selection$ = this.store.pipe(\n        map(state => state.selection),\n        distinctUntilChanged(),\n    )\n\n    output$ = this.store.pipe(\n        map(state => state.output),\n        distinctUntilChanged(),\n    )\n\n    private initialConsoleState(): ConsoleState  {\n         let rootQueryComposite = this.createQueryComposite()\n         return {\n             rootQueryComposite,\n             selection: rootQueryComposite,\n             output: {\n                 jsonOutput: null,\n                 stackTraceOutput: null,\n                 tabularResponse: null\n             }\n         }\n    }\n\n    private idCounter: 0\n\n    private createQueryComposite(): QueryCompositeDto {\n        return {\n            id: \"\" + this.idCounter++,\n            children: []\n        }\n    }\n\n    addQuery() {\n    }\n\n    clearOutput() {\n        this.store.next({\n            ... this.store.value,\n            output: {\n                jsonOutput: null,\n                stackTraceOutput: null,\n                tabularResponse: null\n            }\n        })\n    }\n\n\n    loadDescriptor(systemType: string) : Promise<ConsoleDescriptorDto>{\n        return this.consoleControllerService.getDescriptorUsingGet({systemType})\n            .toPromise()\n    }\n\n    runRequest(queryComposite: QueryCompositeDto) {\n        this.clearOutput();\n        return this.consoleControllerService.runRequestUsingPost({\n            body: queryComposite\n        }).subscribe((dto)=> {\n\n            this.store.value.selection.result = dto.result\n\n            let result = dto.result\n            let output\n            switch (result.resultType) {\n                case 'JSON': {\n                    output = {\n                        jsonOutput : JSON.parse(result.content)\n                    }\n                    break\n                }\n                case 'STACKTRACE': {\n                    output = {\n                        stackTraceOutput : result.content\n                    }\n                    break\n                }\n                case 'TABULAR' : {\n                    output = {\n                        tabularResponse : result.tabular\n                    }\n                }\n            }\n            this.store.next({\n                ... this.store.value,\n                output\n            })\n\n            if (result.resultType != 'STACKTRACE') {\n                // this.addHistoryItem(attributes)\n            }\n\n\n        })\n    }\n\n    loadSnippets(systemType:string): Promise<SnippetDto[]> {\n        return this.consoleControllerService.getSnippetsUsingGet({systemType}).toPromise()\n    }\n\n    addSnippet(title: string, systemType: string, attributes: {}): Promise<SnippetDto[]> {\n        return this.consoleControllerService.createSnippetUsingPost({\n            systemType,\n            body: {\n                title,\n                attributes\n            }\n        }).toPromise().then(()=> this.loadSnippets(systemType))\n\n    }\n\n    editSnippet(id: string, title: string, systemType: string, attributes: {}) {\n        return this.consoleControllerService.updateSnippetUsingPut({\n            systemType,\n            body: {\n                id,\n                title,\n                attributes\n            }\n        }).toPromise().then(()=> this.loadSnippets(systemType))\n    }\n\n    deleteSnippet(id: string, systemType: string) {\n        return this.consoleControllerService.deleteSnippetUsingDelete({\n            systemType,\n            id\n        }).toPromise().then(()=> this.loadSnippets(systemType))\n    }\n\n    loadNavItems(systemComponentKey: string): Promise<NavItem[]>  {\n        return this.consoleControllerService.getNavigationUsingPost({body: {\n            systemComponentKey,\n        }}).toPromise()\n    }\n\n}\n",
+            "properties": [
+                {
+                    "name": "jsonOutput",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 9
+                },
+                {
+                    "name": "stackTraceOutput",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": false,
+                    "description": "",
+                    "line": 10
+                },
+                {
+                    "name": "tabularResponse",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "TabularResultSet",
+                    "optional": false,
+                    "description": "",
+                    "line": 11
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 165,
+            "methods": []
+        },
+        {
+            "name": "PagingDto",
+            "id": "interface-PagingDto-146d905263c5a55fd2443495d5c38072a81266a2d705b399e2f719a876c733f9a32097ddce57e2302b595ccb2fcd029e29cf821a296b54fcdaffa2d2e1917bfb",
+            "file": "src/app/api/models/paging-dto.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "export interface PagingDto {\n  nrOfResults?: number;\n  pageNr?: number;\n  pageSize?: number;\n}\n",
+            "properties": [
+                {
+                    "name": "nrOfResults",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "number",
+                    "optional": true,
+                    "description": "",
+                    "line": 4
+                },
+                {
+                    "name": "pageNr",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "number",
+                    "optional": true,
+                    "description": "",
+                    "line": 5
+                },
+                {
+                    "name": "pageSize",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "number",
+                    "optional": true,
+                    "description": "",
+                    "line": 6
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 165,
+            "methods": []
+        },
+        {
             "name": "ParameterOptions",
             "id": "interface-ParameterOptions-62f20f5c8b85d72ad476b49db8ce315f5ec5ffdd6a279c5d254c249d178c6447edec0397039d5f03ee6bcc16ad887c7494b84bc6ca32d42de14024a800bb1fd1",
             "file": "src/app/api/request-builder.ts",
@@ -2108,6 +2063,183 @@
                     "optional": false,
                     "description": "",
                     "line": 7
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 165,
+            "methods": []
+        },
+        {
+            "name": "QueryCompositeDto",
+            "id": "interface-QueryCompositeDto-3cc174824ebf96d605a2052c4cf5ae82680db710e58598e72de97445ec4870e4ce1c822909c3425c0dea318883ab0b6dd09bce5dd9a3503f3970befd591be779",
+            "file": "src/app/api/models/query-composite-dto.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "import { QueryDto } from './query-dto';\nimport { ResultDto } from './result-dto';\nexport interface QueryCompositeDto {\n  children?: Array<QueryCompositeDto>;\n  id?: string;\n  query?: QueryDto;\n  result?: ResultDto;\n}\n",
+            "properties": [
+                {
+                    "name": "children",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Array<QueryCompositeDto>",
+                    "optional": true,
+                    "description": "",
+                    "line": 6
+                },
+                {
+                    "name": "id",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 7
+                },
+                {
+                    "name": "query",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "QueryDto",
+                    "optional": true,
+                    "description": "",
+                    "line": 8
+                },
+                {
+                    "name": "result",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "ResultDto",
+                    "optional": true,
+                    "description": "",
+                    "line": 9
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 165,
+            "methods": []
+        },
+        {
+            "name": "QueryDto",
+            "id": "interface-QueryDto-790784ea1b293b41e9aa4648fa6283b1f56166449cf8fbdef7c0fc5eaf55dd142590fb4029110d2a518842a887f0f4290666c6b010cf8fa77748955fc9be133f",
+            "file": "src/app/api/models/query-dto.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "import { NavItem } from './nav-item';\nimport { PagingDto } from './paging-dto';\nexport interface QueryDto {\n  attributes?: { [key: string]: string };\n  environmentKey?: string;\n  navItem?: NavItem;\n  paging?: PagingDto;\n  systemComponentKey?: string;\n}\n",
+            "properties": [
+                {
+                    "name": "attributes",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "literal type",
+                    "optional": true,
+                    "description": "",
+                    "line": 6
+                },
+                {
+                    "name": "environmentKey",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 7
+                },
+                {
+                    "name": "navItem",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "NavItem",
+                    "optional": true,
+                    "description": "",
+                    "line": 8
+                },
+                {
+                    "name": "paging",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "PagingDto",
+                    "optional": true,
+                    "description": "",
+                    "line": 9
+                },
+                {
+                    "name": "systemComponentKey",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 10
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 165,
+            "methods": []
+        },
+        {
+            "name": "ResultDto",
+            "id": "interface-ResultDto-043680964d0b9e557dccc645594b087e9cf42b820da74d3992763a5450e347476a6d93c1dfe93650e2cdc556f1bf72b0692fb9cdad33a2e01c87492bb3982a9e",
+            "file": "src/app/api/models/result-dto.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "import { NavItem } from './nav-item';\nimport { TabularResultSet } from './tabular-result-set';\nimport { TabularResultSetMetaDataDto } from './tabular-result-set-meta-data-dto';\nexport interface ResultDto {\n  content?: string;\n  description?: TabularResultSetMetaDataDto;\n  navItems?: Array<NavItem>;\n  resultType?: 'JSON' | 'MESSAGE' | 'STACKTRACE' | 'TABULAR';\n  systemType?: string;\n  tabular?: TabularResultSet;\n}\n",
+            "properties": [
+                {
+                    "name": "content",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 7
+                },
+                {
+                    "name": "description",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "TabularResultSetMetaDataDto",
+                    "optional": true,
+                    "description": "",
+                    "line": 8
+                },
+                {
+                    "name": "navItems",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Array<NavItem>",
+                    "optional": true,
+                    "description": "",
+                    "line": 9
+                },
+                {
+                    "name": "resultType",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "\"JSON\" | \"MESSAGE\" | \"STACKTRACE\" | \"TABULAR\"",
+                    "optional": true,
+                    "description": "",
+                    "line": 10
+                },
+                {
+                    "name": "systemType",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 11
+                },
+                {
+                    "name": "tabular",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "TabularResultSet",
+                    "optional": true,
+                    "description": "",
+                    "line": 12
                 }
             ],
             "indexSignatures": [],
@@ -3369,13 +3501,13 @@
             "methods": []
         },
         {
-            "name": "TabularResponse",
-            "id": "interface-TabularResponse-16622a211363c64be69f65c94776db6841c7a3e840e0c332848ed5c496012df81c0e2bf57163081c7999a263be7b4b36e777d0da90233b6aa4b23c3e72f1f270",
-            "file": "src/app/api/models/tabular-response.ts",
+            "name": "TabularResultSet",
+            "id": "interface-TabularResultSet-4ad2e6a1bab9543ac1e4a335c415f665262fb50173da9d7df0be34002926753bd9145ea4b1e16043b47fc187a6574bf13dc5eefa578329dfef8aeb12d64e6195",
+            "file": "src/app/api/models/tabular-result-set.ts",
             "deprecated": false,
             "deprecationMessage": "",
             "type": "interface",
-            "sourceCode": "import { Column } from './column';\nimport { Row } from './row';\nexport interface TabularResponse {\n  columns?: Array<Column>;\n  pkColumns?: Array<Column>;\n  rows?: Array<Row>;\n  tableName?: string;\n}\n",
+            "sourceCode": "import { Column } from './column';\nimport { PagingDto } from './paging-dto';\nimport { Row } from './row';\nexport interface TabularResultSet {\n  columns?: Array<Column>;\n  pagingInfo?: PagingDto;\n  pkColumns?: Array<Column>;\n  rows?: Array<Row>;\n  tableName?: string;\n}\n",
             "properties": [
                 {
                     "name": "columns",
@@ -3384,7 +3516,16 @@
                     "type": "Array<Column>",
                     "optional": true,
                     "description": "",
-                    "line": 6
+                    "line": 7
+                },
+                {
+                    "name": "pagingInfo",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "PagingDto",
+                    "optional": true,
+                    "description": "",
+                    "line": 8
                 },
                 {
                     "name": "pkColumns",
@@ -3393,7 +3534,7 @@
                     "type": "Array<Column>",
                     "optional": true,
                     "description": "",
-                    "line": 7
+                    "line": 9
                 },
                 {
                     "name": "rows",
@@ -3402,7 +3543,7 @@
                     "type": "Array<Row>",
                     "optional": true,
                     "description": "",
-                    "line": 8
+                    "line": 10
                 },
                 {
                     "name": "tableName",
@@ -3411,7 +3552,30 @@
                     "type": "string",
                     "optional": true,
                     "description": "",
-                    "line": 9
+                    "line": 11
+                }
+            ],
+            "indexSignatures": [],
+            "kind": 165,
+            "methods": []
+        },
+        {
+            "name": "TabularResultSetMetaDataDto",
+            "id": "interface-TabularResultSetMetaDataDto-35a4db879f0527f1ea06a99ed0fac6fbfb92afe210f09399476f2df053d0e7f851e0a30813f7c840e74f5ab4e73d60f906c6f7980352e80f29a54e1728630558",
+            "file": "src/app/api/models/tabular-result-set-meta-data-dto.ts",
+            "deprecated": false,
+            "deprecationMessage": "",
+            "type": "interface",
+            "sourceCode": "export interface TabularResultSetMetaDataDto {\n  systemType?: string;\n}\n",
+            "properties": [
+                {
+                    "name": "systemType",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "string",
+                    "optional": true,
+                    "description": "",
+                    "line": 4
                 }
             ],
             "indexSignatures": [],
@@ -4007,7 +4171,7 @@
         },
         {
             "name": "ConsoleControllerService",
-            "id": "injectable-ConsoleControllerService-fcb60d2db5d9ec8b0288db82425f634df489d0b76ec93cd78bdff206398553a1d32eaee7ca0479300457c17de74b48eabf77af8002284e2b6ecd97bc13d69678",
+            "id": "injectable-ConsoleControllerService-59223679118447658dcaa213464539634fdfdc052ad7db7dd14d08bde128da5b86a538ee2a384bd9a37c690b9d2c341b8572c81c898c4f8d634d3a100d2005b5",
             "file": "src/app/api/services/console-controller.service.ts",
             "properties": [
                 {
@@ -4018,7 +4182,7 @@
                     "type": "string",
                     "optional": false,
                     "description": "<p>Path part for operation createSnippetUsingPost</p>\n",
-                    "line": 272,
+                    "line": 271,
                     "rawdescription": "\n\nPath part for operation createSnippetUsingPost\n",
                     "modifierKind": [
                         124,
@@ -4033,7 +4197,7 @@
                     "type": "string",
                     "optional": false,
                     "description": "<p>Path part for operation deleteSnippetUsingDelete</p>\n",
-                    "line": 337,
+                    "line": 336,
                     "rawdescription": "\n\nPath part for operation deleteSnippetUsingDelete\n",
                     "modifierKind": [
                         124,
@@ -4048,7 +4212,7 @@
                     "type": "string",
                     "optional": false,
                     "description": "<p>Path part for operation getDescriptorUsingGet</p>\n",
-                    "line": 37,
+                    "line": 36,
                     "rawdescription": "\n\nPath part for operation getDescriptorUsingGet\n",
                     "modifierKind": [
                         124,
@@ -4063,7 +4227,7 @@
                     "type": "string",
                     "optional": false,
                     "description": "<p>Path part for operation getNavigationUsingPost</p>\n",
-                    "line": 99,
+                    "line": 98,
                     "rawdescription": "\n\nPath part for operation getNavigationUsingPost\n",
                     "modifierKind": [
                         124,
@@ -4078,7 +4242,7 @@
                     "type": "string",
                     "optional": false,
                     "description": "<p>Path part for operation getSnippetsUsingGet</p>\n",
-                    "line": 410,
+                    "line": 409,
                     "rawdescription": "\n\nPath part for operation getSnippetsUsingGet\n",
                     "modifierKind": [
                         124,
@@ -4093,7 +4257,7 @@
                     "type": "string",
                     "optional": false,
                     "description": "<p>Path part for operation runRequestUsingPost</p>\n",
-                    "line": 153,
+                    "line": 152,
                     "rawdescription": "\n\nPath part for operation runRequestUsingPost\n",
                     "modifierKind": [
                         124,
@@ -4108,7 +4272,7 @@
                     "type": "string",
                     "optional": false,
                     "description": "<p>Path part for operation updateSnippetUsingPut</p>\n",
-                    "line": 207,
+                    "line": 206,
                     "rawdescription": "\n\nPath part for operation updateSnippetUsingPut\n",
                     "modifierKind": [
                         124,
@@ -4147,7 +4311,7 @@
                     "optional": false,
                     "returnType": "Observable<void>",
                     "typeParameters": [],
-                    "line": 320,
+                    "line": 319,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\ncreateSnippet.\n\n\n\nThis method provides access to only to the response body.\nTo access the full response (for headers, for example), `createSnippetUsingPost$Response()` instead.\n\nThis method sends `application/json` and handles request body of type `application/json`.\n",
@@ -4179,7 +4343,7 @@
                     "optional": false,
                     "returnType": "Observable<StrictHttpResponse<void>>",
                     "typeParameters": [],
-                    "line": 284,
+                    "line": 283,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\ncreateSnippet.\n\n\n\nThis method provides access to the full `HttpResponse`, allowing access to response headers.\nTo access only the response body, use `createSnippetUsingPost()` instead.\n\nThis method sends `application/json` and handles request body of type `application/json`.\n",
@@ -4211,7 +4375,7 @@
                     "optional": false,
                     "returnType": "Observable<void>",
                     "typeParameters": [],
-                    "line": 389,
+                    "line": 388,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\ndeleteSnippet.\n\n\n\nThis method provides access to only to the response body.\nTo access the full response (for headers, for example), `deleteSnippetUsingDelete$Response()` instead.\n\nThis method doesn't expect any request body.\n",
@@ -4243,7 +4407,7 @@
                     "optional": false,
                     "returnType": "Observable<StrictHttpResponse<void>>",
                     "typeParameters": [],
-                    "line": 349,
+                    "line": 348,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\ndeleteSnippet.\n\n\n\nThis method provides access to the full `HttpResponse`, allowing access to response headers.\nTo access only the response body, use `deleteSnippetUsingDelete()` instead.\n\nThis method doesn't expect any request body.\n",
@@ -4275,7 +4439,7 @@
                     "optional": false,
                     "returnType": "Observable<ConsoleDescriptorDto>",
                     "typeParameters": [],
-                    "line": 83,
+                    "line": 82,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\ngetDescriptor.\n\n\n\nThis method provides access to only to the response body.\nTo access the full response (for headers, for example), `getDescriptorUsingGet$Response()` instead.\n\nThis method doesn't expect any request body.\n",
@@ -4307,7 +4471,7 @@
                     "optional": false,
                     "returnType": "Observable<StrictHttpResponse<ConsoleDescriptorDto>>",
                     "typeParameters": [],
-                    "line": 49,
+                    "line": 48,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\ngetDescriptor.\n\n\n\nThis method provides access to the full `HttpResponse`, allowing access to response headers.\nTo access only the response body, use `getDescriptorUsingGet()` instead.\n\nThis method doesn't expect any request body.\n",
@@ -4339,7 +4503,7 @@
                     "optional": false,
                     "returnType": "Observable<Array<NavItem>>",
                     "typeParameters": [],
-                    "line": 141,
+                    "line": 140,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\ngetNavigation.\n\n\n\nThis method provides access to only to the response body.\nTo access the full response (for headers, for example), `getNavigationUsingPost$Response()` instead.\n\nThis method sends `application/json` and handles request body of type `application/json`.\n",
@@ -4371,7 +4535,7 @@
                     "optional": false,
                     "returnType": "Observable<StrictHttpResponse<Array<NavItem>>>",
                     "typeParameters": [],
-                    "line": 111,
+                    "line": 110,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\ngetNavigation.\n\n\n\nThis method provides access to the full `HttpResponse`, allowing access to response headers.\nTo access only the response body, use `getNavigationUsingPost()` instead.\n\nThis method sends `application/json` and handles request body of type `application/json`.\n",
@@ -4403,7 +4567,7 @@
                     "optional": false,
                     "returnType": "Observable<Array<SnippetDto>>",
                     "typeParameters": [],
-                    "line": 456,
+                    "line": 455,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\ngetSnippets.\n\n\n\nThis method provides access to only to the response body.\nTo access the full response (for headers, for example), `getSnippetsUsingGet$Response()` instead.\n\nThis method doesn't expect any request body.\n",
@@ -4435,7 +4599,7 @@
                     "optional": false,
                     "returnType": "Observable<StrictHttpResponse<Array<SnippetDto>>>",
                     "typeParameters": [],
-                    "line": 422,
+                    "line": 421,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\ngetSnippets.\n\n\n\nThis method provides access to the full `HttpResponse`, allowing access to response headers.\nTo access only the response body, use `getSnippetsUsingGet()` instead.\n\nThis method doesn't expect any request body.\n",
@@ -4465,9 +4629,9 @@
                         }
                     ],
                     "optional": false,
-                    "returnType": "Observable<ConsoleResponseItemDto>",
+                    "returnType": "Observable<QueryCompositeDto>",
                     "typeParameters": [],
-                    "line": 195,
+                    "line": 194,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\nrunRequest.\n\n\n\nThis method provides access to only to the response body.\nTo access the full response (for headers, for example), `runRequestUsingPost$Response()` instead.\n\nThis method sends `application/json` and handles request body of type `application/json`.\n",
@@ -4497,9 +4661,9 @@
                         }
                     ],
                     "optional": false,
-                    "returnType": "Observable<StrictHttpResponse<ConsoleResponseItemDto>>",
+                    "returnType": "Observable<StrictHttpResponse<QueryCompositeDto>>",
                     "typeParameters": [],
-                    "line": 165,
+                    "line": 164,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\nrunRequest.\n\n\n\nThis method provides access to the full `HttpResponse`, allowing access to response headers.\nTo access only the response body, use `runRequestUsingPost()` instead.\n\nThis method sends `application/json` and handles request body of type `application/json`.\n",
@@ -4531,7 +4695,7 @@
                     "optional": false,
                     "returnType": "Observable<void>",
                     "typeParameters": [],
-                    "line": 255,
+                    "line": 254,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\nupdateSnippet.\n\n\n\nThis method provides access to only to the response body.\nTo access the full response (for headers, for example), `updateSnippetUsingPut$Response()` instead.\n\nThis method sends `application/json` and handles request body of type `application/json`.\n",
@@ -4563,7 +4727,7 @@
                     "optional": false,
                     "returnType": "Observable<StrictHttpResponse<void>>",
                     "typeParameters": [],
-                    "line": 219,
+                    "line": 218,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "rawdescription": "\n\nupdateSnippet.\n\n\n\nThis method provides access to the full `HttpResponse`, allowing access to response headers.\nTo access only the response body, use `updateSnippetUsingPut()` instead.\n\nThis method sends `application/json` and handles request body of type `application/json`.\n",
@@ -4586,7 +4750,7 @@
             "deprecationMessage": "",
             "description": "<p>Console Controller</p>\n",
             "rawdescription": "\n\nConsole Controller\n",
-            "sourceCode": "import { Injectable } from '@angular/core';\nimport { HttpClient, HttpResponse } from '@angular/common/http';\nimport { BaseService } from '../base-service';\nimport { ApiConfiguration } from '../api-configuration';\nimport { StrictHttpResponse } from '../strict-http-response';\nimport { RequestBuilder } from '../request-builder';\nimport { Observable } from 'rxjs';\nimport { map, filter } from 'rxjs/operators';\n\nimport { ConsoleDescriptorDto } from '../models/console-descriptor-dto';\nimport { ConsoleRequestDto } from '../models/console-request-dto';\nimport { ConsoleResponseItemDto } from '../models/console-response-item-dto';\nimport { NavItem } from '../models/nav-item';\nimport { NavigationRequest } from '../models/navigation-request';\nimport { SnippetDto } from '../models/snippet-dto';\n\n\n/**\n * Console Controller\n */\n@Injectable({\n  providedIn: 'root',\n})\nexport class ConsoleControllerService extends BaseService {\n  constructor(\n    config: ApiConfiguration,\n    http: HttpClient\n  ) {\n    super(config, http);\n  }\n\n  /**\n   * Path part for operation getDescriptorUsingGet\n   */\n  static readonly GetDescriptorUsingGetPath = '/api/console/descriptor';\n\n  /**\n   * getDescriptor.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `getDescriptorUsingGet()` instead.\n   *\n   * This method doesn't expect any request body.\n   */\n  getDescriptorUsingGet$Response(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n  }): Observable<StrictHttpResponse<ConsoleDescriptorDto>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.GetDescriptorUsingGetPath, 'get');\n    if (params) {\n      rb.query('systemType', params.systemType, {\"style\":\"form\"});\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'json',\n      accept: 'application/json'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return r as StrictHttpResponse<ConsoleDescriptorDto>;\n      })\n    );\n  }\n\n  /**\n   * getDescriptor.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `getDescriptorUsingGet$Response()` instead.\n   *\n   * This method doesn't expect any request body.\n   */\n  getDescriptorUsingGet(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n  }): Observable<ConsoleDescriptorDto> {\n\n    return this.getDescriptorUsingGet$Response(params).pipe(\n      map((r: StrictHttpResponse<ConsoleDescriptorDto>) => r.body as ConsoleDescriptorDto)\n    );\n  }\n\n  /**\n   * Path part for operation getNavigationUsingPost\n   */\n  static readonly GetNavigationUsingPostPath = '/api/console/navigation';\n\n  /**\n   * getNavigation.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `getNavigationUsingPost()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  getNavigationUsingPost$Response(params?: {\n    body?: NavigationRequest\n  }): Observable<StrictHttpResponse<Array<NavItem>>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.GetNavigationUsingPostPath, 'post');\n    if (params) {\n      rb.body(params.body, 'application/json');\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'json',\n      accept: 'application/json'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return r as StrictHttpResponse<Array<NavItem>>;\n      })\n    );\n  }\n\n  /**\n   * getNavigation.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `getNavigationUsingPost$Response()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  getNavigationUsingPost(params?: {\n    body?: NavigationRequest\n  }): Observable<Array<NavItem>> {\n\n    return this.getNavigationUsingPost$Response(params).pipe(\n      map((r: StrictHttpResponse<Array<NavItem>>) => r.body as Array<NavItem>)\n    );\n  }\n\n  /**\n   * Path part for operation runRequestUsingPost\n   */\n  static readonly RunRequestUsingPostPath = '/api/console/run';\n\n  /**\n   * runRequest.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `runRequestUsingPost()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  runRequestUsingPost$Response(params?: {\n    body?: ConsoleRequestDto\n  }): Observable<StrictHttpResponse<ConsoleResponseItemDto>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.RunRequestUsingPostPath, 'post');\n    if (params) {\n      rb.body(params.body, 'application/json');\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'json',\n      accept: 'application/json'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return r as StrictHttpResponse<ConsoleResponseItemDto>;\n      })\n    );\n  }\n\n  /**\n   * runRequest.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `runRequestUsingPost$Response()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  runRequestUsingPost(params?: {\n    body?: ConsoleRequestDto\n  }): Observable<ConsoleResponseItemDto> {\n\n    return this.runRequestUsingPost$Response(params).pipe(\n      map((r: StrictHttpResponse<ConsoleResponseItemDto>) => r.body as ConsoleResponseItemDto)\n    );\n  }\n\n  /**\n   * Path part for operation updateSnippetUsingPut\n   */\n  static readonly UpdateSnippetUsingPutPath = '/api/console/snippet';\n\n  /**\n   * updateSnippet.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `updateSnippetUsingPut()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  updateSnippetUsingPut$Response(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n    body?: SnippetDto\n  }): Observable<StrictHttpResponse<void>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.UpdateSnippetUsingPutPath, 'put');\n    if (params) {\n      rb.query('systemType', params.systemType, {\"style\":\"form\"});\n      rb.body(params.body, 'application/json');\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'text',\n      accept: '*/*'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;\n      })\n    );\n  }\n\n  /**\n   * updateSnippet.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `updateSnippetUsingPut$Response()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  updateSnippetUsingPut(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n    body?: SnippetDto\n  }): Observable<void> {\n\n    return this.updateSnippetUsingPut$Response(params).pipe(\n      map((r: StrictHttpResponse<void>) => r.body as void)\n    );\n  }\n\n  /**\n   * Path part for operation createSnippetUsingPost\n   */\n  static readonly CreateSnippetUsingPostPath = '/api/console/snippet';\n\n  /**\n   * createSnippet.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `createSnippetUsingPost()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  createSnippetUsingPost$Response(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n    body?: SnippetDto\n  }): Observable<StrictHttpResponse<void>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.CreateSnippetUsingPostPath, 'post');\n    if (params) {\n      rb.query('systemType', params.systemType, {\"style\":\"form\"});\n      rb.body(params.body, 'application/json');\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'text',\n      accept: '*/*'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;\n      })\n    );\n  }\n\n  /**\n   * createSnippet.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `createSnippetUsingPost$Response()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  createSnippetUsingPost(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n    body?: SnippetDto\n  }): Observable<void> {\n\n    return this.createSnippetUsingPost$Response(params).pipe(\n      map((r: StrictHttpResponse<void>) => r.body as void)\n    );\n  }\n\n  /**\n   * Path part for operation deleteSnippetUsingDelete\n   */\n  static readonly DeleteSnippetUsingDeletePath = '/api/console/snippet';\n\n  /**\n   * deleteSnippet.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `deleteSnippetUsingDelete()` instead.\n   *\n   * This method doesn't expect any request body.\n   */\n  deleteSnippetUsingDelete$Response(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n\n    /**\n     * id\n     */\n    id?: string;\n  }): Observable<StrictHttpResponse<void>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.DeleteSnippetUsingDeletePath, 'delete');\n    if (params) {\n      rb.query('systemType', params.systemType, {\"style\":\"form\"});\n      rb.query('id', params.id, {\"style\":\"form\"});\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'text',\n      accept: '*/*'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;\n      })\n    );\n  }\n\n  /**\n   * deleteSnippet.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `deleteSnippetUsingDelete$Response()` instead.\n   *\n   * This method doesn't expect any request body.\n   */\n  deleteSnippetUsingDelete(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n\n    /**\n     * id\n     */\n    id?: string;\n  }): Observable<void> {\n\n    return this.deleteSnippetUsingDelete$Response(params).pipe(\n      map((r: StrictHttpResponse<void>) => r.body as void)\n    );\n  }\n\n  /**\n   * Path part for operation getSnippetsUsingGet\n   */\n  static readonly GetSnippetsUsingGetPath = '/api/console/snippets';\n\n  /**\n   * getSnippets.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `getSnippetsUsingGet()` instead.\n   *\n   * This method doesn't expect any request body.\n   */\n  getSnippetsUsingGet$Response(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n  }): Observable<StrictHttpResponse<Array<SnippetDto>>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.GetSnippetsUsingGetPath, 'get');\n    if (params) {\n      rb.query('systemType', params.systemType, {\"style\":\"form\"});\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'json',\n      accept: 'application/json'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return r as StrictHttpResponse<Array<SnippetDto>>;\n      })\n    );\n  }\n\n  /**\n   * getSnippets.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `getSnippetsUsingGet$Response()` instead.\n   *\n   * This method doesn't expect any request body.\n   */\n  getSnippetsUsingGet(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n  }): Observable<Array<SnippetDto>> {\n\n    return this.getSnippetsUsingGet$Response(params).pipe(\n      map((r: StrictHttpResponse<Array<SnippetDto>>) => r.body as Array<SnippetDto>)\n    );\n  }\n\n}\n",
+            "sourceCode": "import { Injectable } from '@angular/core';\nimport { HttpClient, HttpResponse } from '@angular/common/http';\nimport { BaseService } from '../base-service';\nimport { ApiConfiguration } from '../api-configuration';\nimport { StrictHttpResponse } from '../strict-http-response';\nimport { RequestBuilder } from '../request-builder';\nimport { Observable } from 'rxjs';\nimport { map, filter } from 'rxjs/operators';\n\nimport { ConsoleDescriptorDto } from '../models/console-descriptor-dto';\nimport { NavItem } from '../models/nav-item';\nimport { NavigationRequest } from '../models/navigation-request';\nimport { QueryCompositeDto } from '../models/query-composite-dto';\nimport { SnippetDto } from '../models/snippet-dto';\n\n\n/**\n * Console Controller\n */\n@Injectable({\n  providedIn: 'root',\n})\nexport class ConsoleControllerService extends BaseService {\n  constructor(\n    config: ApiConfiguration,\n    http: HttpClient\n  ) {\n    super(config, http);\n  }\n\n  /**\n   * Path part for operation getDescriptorUsingGet\n   */\n  static readonly GetDescriptorUsingGetPath = '/api/console/descriptor';\n\n  /**\n   * getDescriptor.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `getDescriptorUsingGet()` instead.\n   *\n   * This method doesn't expect any request body.\n   */\n  getDescriptorUsingGet$Response(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n  }): Observable<StrictHttpResponse<ConsoleDescriptorDto>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.GetDescriptorUsingGetPath, 'get');\n    if (params) {\n      rb.query('systemType', params.systemType, {\"style\":\"form\"});\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'json',\n      accept: 'application/json'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return r as StrictHttpResponse<ConsoleDescriptorDto>;\n      })\n    );\n  }\n\n  /**\n   * getDescriptor.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `getDescriptorUsingGet$Response()` instead.\n   *\n   * This method doesn't expect any request body.\n   */\n  getDescriptorUsingGet(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n  }): Observable<ConsoleDescriptorDto> {\n\n    return this.getDescriptorUsingGet$Response(params).pipe(\n      map((r: StrictHttpResponse<ConsoleDescriptorDto>) => r.body as ConsoleDescriptorDto)\n    );\n  }\n\n  /**\n   * Path part for operation getNavigationUsingPost\n   */\n  static readonly GetNavigationUsingPostPath = '/api/console/navigation';\n\n  /**\n   * getNavigation.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `getNavigationUsingPost()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  getNavigationUsingPost$Response(params?: {\n    body?: NavigationRequest\n  }): Observable<StrictHttpResponse<Array<NavItem>>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.GetNavigationUsingPostPath, 'post');\n    if (params) {\n      rb.body(params.body, 'application/json');\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'json',\n      accept: 'application/json'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return r as StrictHttpResponse<Array<NavItem>>;\n      })\n    );\n  }\n\n  /**\n   * getNavigation.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `getNavigationUsingPost$Response()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  getNavigationUsingPost(params?: {\n    body?: NavigationRequest\n  }): Observable<Array<NavItem>> {\n\n    return this.getNavigationUsingPost$Response(params).pipe(\n      map((r: StrictHttpResponse<Array<NavItem>>) => r.body as Array<NavItem>)\n    );\n  }\n\n  /**\n   * Path part for operation runRequestUsingPost\n   */\n  static readonly RunRequestUsingPostPath = '/api/console/run';\n\n  /**\n   * runRequest.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `runRequestUsingPost()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  runRequestUsingPost$Response(params?: {\n    body?: QueryCompositeDto\n  }): Observable<StrictHttpResponse<QueryCompositeDto>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.RunRequestUsingPostPath, 'post');\n    if (params) {\n      rb.body(params.body, 'application/json');\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'json',\n      accept: 'application/json'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return r as StrictHttpResponse<QueryCompositeDto>;\n      })\n    );\n  }\n\n  /**\n   * runRequest.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `runRequestUsingPost$Response()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  runRequestUsingPost(params?: {\n    body?: QueryCompositeDto\n  }): Observable<QueryCompositeDto> {\n\n    return this.runRequestUsingPost$Response(params).pipe(\n      map((r: StrictHttpResponse<QueryCompositeDto>) => r.body as QueryCompositeDto)\n    );\n  }\n\n  /**\n   * Path part for operation updateSnippetUsingPut\n   */\n  static readonly UpdateSnippetUsingPutPath = '/api/console/snippet';\n\n  /**\n   * updateSnippet.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `updateSnippetUsingPut()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  updateSnippetUsingPut$Response(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n    body?: SnippetDto\n  }): Observable<StrictHttpResponse<void>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.UpdateSnippetUsingPutPath, 'put');\n    if (params) {\n      rb.query('systemType', params.systemType, {\"style\":\"form\"});\n      rb.body(params.body, 'application/json');\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'text',\n      accept: '*/*'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;\n      })\n    );\n  }\n\n  /**\n   * updateSnippet.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `updateSnippetUsingPut$Response()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  updateSnippetUsingPut(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n    body?: SnippetDto\n  }): Observable<void> {\n\n    return this.updateSnippetUsingPut$Response(params).pipe(\n      map((r: StrictHttpResponse<void>) => r.body as void)\n    );\n  }\n\n  /**\n   * Path part for operation createSnippetUsingPost\n   */\n  static readonly CreateSnippetUsingPostPath = '/api/console/snippet';\n\n  /**\n   * createSnippet.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `createSnippetUsingPost()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  createSnippetUsingPost$Response(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n    body?: SnippetDto\n  }): Observable<StrictHttpResponse<void>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.CreateSnippetUsingPostPath, 'post');\n    if (params) {\n      rb.query('systemType', params.systemType, {\"style\":\"form\"});\n      rb.body(params.body, 'application/json');\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'text',\n      accept: '*/*'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;\n      })\n    );\n  }\n\n  /**\n   * createSnippet.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `createSnippetUsingPost$Response()` instead.\n   *\n   * This method sends `application/json` and handles request body of type `application/json`.\n   */\n  createSnippetUsingPost(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n    body?: SnippetDto\n  }): Observable<void> {\n\n    return this.createSnippetUsingPost$Response(params).pipe(\n      map((r: StrictHttpResponse<void>) => r.body as void)\n    );\n  }\n\n  /**\n   * Path part for operation deleteSnippetUsingDelete\n   */\n  static readonly DeleteSnippetUsingDeletePath = '/api/console/snippet';\n\n  /**\n   * deleteSnippet.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `deleteSnippetUsingDelete()` instead.\n   *\n   * This method doesn't expect any request body.\n   */\n  deleteSnippetUsingDelete$Response(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n\n    /**\n     * id\n     */\n    id?: string;\n  }): Observable<StrictHttpResponse<void>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.DeleteSnippetUsingDeletePath, 'delete');\n    if (params) {\n      rb.query('systemType', params.systemType, {\"style\":\"form\"});\n      rb.query('id', params.id, {\"style\":\"form\"});\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'text',\n      accept: '*/*'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return (r as HttpResponse<any>).clone({ body: undefined }) as StrictHttpResponse<void>;\n      })\n    );\n  }\n\n  /**\n   * deleteSnippet.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `deleteSnippetUsingDelete$Response()` instead.\n   *\n   * This method doesn't expect any request body.\n   */\n  deleteSnippetUsingDelete(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n\n    /**\n     * id\n     */\n    id?: string;\n  }): Observable<void> {\n\n    return this.deleteSnippetUsingDelete$Response(params).pipe(\n      map((r: StrictHttpResponse<void>) => r.body as void)\n    );\n  }\n\n  /**\n   * Path part for operation getSnippetsUsingGet\n   */\n  static readonly GetSnippetsUsingGetPath = '/api/console/snippets';\n\n  /**\n   * getSnippets.\n   *\n   *\n   *\n   * This method provides access to the full `HttpResponse`, allowing access to response headers.\n   * To access only the response body, use `getSnippetsUsingGet()` instead.\n   *\n   * This method doesn't expect any request body.\n   */\n  getSnippetsUsingGet$Response(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n  }): Observable<StrictHttpResponse<Array<SnippetDto>>> {\n\n    const rb = new RequestBuilder(this.rootUrl, ConsoleControllerService.GetSnippetsUsingGetPath, 'get');\n    if (params) {\n      rb.query('systemType', params.systemType, {\"style\":\"form\"});\n    }\n\n    return this.http.request(rb.build({\n      responseType: 'json',\n      accept: 'application/json'\n    })).pipe(\n      filter((r: any) => r instanceof HttpResponse),\n      map((r: HttpResponse<any>) => {\n        return r as StrictHttpResponse<Array<SnippetDto>>;\n      })\n    );\n  }\n\n  /**\n   * getSnippets.\n   *\n   *\n   *\n   * This method provides access to only to the response body.\n   * To access the full response (for headers, for example), `getSnippetsUsingGet$Response()` instead.\n   *\n   * This method doesn't expect any request body.\n   */\n  getSnippetsUsingGet(params?: {\n\n    /**\n     * systemType\n     */\n    systemType?: string;\n  }): Observable<Array<SnippetDto>> {\n\n    return this.getSnippetsUsingGet$Response(params).pipe(\n      map((r: StrictHttpResponse<Array<SnippetDto>>) => r.body as Array<SnippetDto>)\n    );\n  }\n\n}\n",
             "constructorObj": {
                 "name": "constructor",
                 "description": "",
@@ -4606,7 +4770,7 @@
                         "deprecationMessage": ""
                     }
                 ],
-                "line": 26,
+                "line": 25,
                 "jsdoctags": [
                     {
                         "name": "config",
@@ -4633,10 +4797,86 @@
         },
         {
             "name": "ConsoleService",
-            "id": "injectable-ConsoleService-aef0493210923e82778b280a02e1e609ccb973d130d46f79c6f9a76d6c26196074c111880eecd3dcb4eefe0f9eef5469ce4e64497ceb3616aa1baf7c9ef4135b",
+            "id": "injectable-ConsoleService-f013a931eee25b4e1ca8769ee6d3958e59718c6f20956ae479af7449a367dab6ffa0a3eeabb05798ec961163e0fc32fcf00df639f7b4279f0a15a26543f982af",
             "file": "src/app/console-page/console.service.ts",
-            "properties": [],
+            "properties": [
+                {
+                    "name": "idCounter",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 66,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "output$",
+                    "defaultValue": "this.store.pipe(\n        map(state => state.output),\n        distinctUntilChanged(),\n    )",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 48
+                },
+                {
+                    "name": "root$",
+                    "defaultValue": "this.store.pipe(\n        map(state => state.rootQueryComposite),\n        distinctUntilChanged(),\n    )",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 38
+                },
+                {
+                    "name": "selection$",
+                    "defaultValue": "this.store.pipe(\n        map(state => state.selection),\n        distinctUntilChanged(),\n    )",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 43
+                },
+                {
+                    "name": "store",
+                    "defaultValue": "new BehaviorSubject<ConsoleState>(this.initialConsoleState())",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 36,
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
+                    "name": "subscriptions",
+                    "defaultValue": "[]",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "[]",
+                    "optional": false,
+                    "description": "",
+                    "line": 30
+                }
+            ],
             "methods": [
+                {
+                    "name": "addQuery",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 75,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
                 {
                     "name": "addSnippet",
                     "args": [
@@ -4662,7 +4902,7 @@
                     "optional": false,
                     "returnType": "Promise<SnippetDto[]>",
                     "typeParameters": [],
-                    "line": 31,
+                    "line": 141,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -4696,6 +4936,29 @@
                     ]
                 },
                 {
+                    "name": "clearOutput",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 78,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "createQueryComposite",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "QueryCompositeDto",
+                    "typeParameters": [],
+                    "line": 68,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
                     "name": "deleteSnippet",
                     "args": [
                         {
@@ -4714,7 +4977,7 @@
                     "optional": false,
                     "returnType": "any",
                     "typeParameters": [],
-                    "line": 53,
+                    "line": 163,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -4769,7 +5032,7 @@
                     "optional": false,
                     "returnType": "any",
                     "typeParameters": [],
-                    "line": 42,
+                    "line": 152,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -4812,6 +5075,29 @@
                     ]
                 },
                 {
+                    "name": "init",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 32,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "initialConsoleState",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "ConsoleState",
+                    "typeParameters": [],
+                    "line": 53,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "modifierKind": [
+                        121
+                    ]
+                },
+                {
                     "name": "loadDescriptor",
                     "args": [
                         {
@@ -4824,7 +5110,7 @@
                     "optional": false,
                     "returnType": "Promise<ConsoleDescriptorDto>",
                     "typeParameters": [],
-                    "line": 11,
+                    "line": 90,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -4852,7 +5138,7 @@
                     "optional": false,
                     "returnType": "Promise<NavItem[]>",
                     "typeParameters": [],
-                    "line": 60,
+                    "line": 170,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -4880,7 +5166,7 @@
                     "optional": false,
                     "returnType": "Promise<SnippetDto[]>",
                     "typeParameters": [],
-                    "line": 27,
+                    "line": 137,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -4899,67 +5185,22 @@
                     "name": "runRequest",
                     "args": [
                         {
-                            "name": "environmentKey",
-                            "type": "string",
-                            "deprecated": false,
-                            "deprecationMessage": ""
-                        },
-                        {
-                            "name": "systemComponentKey",
-                            "type": "string",
-                            "deprecated": false,
-                            "deprecationMessage": ""
-                        },
-                        {
-                            "name": "attributes",
-                            "type": "",
-                            "deprecated": false,
-                            "deprecationMessage": ""
-                        },
-                        {
-                            "name": "navItem",
-                            "type": "NavItem",
+                            "name": "queryComposite",
+                            "type": "QueryCompositeDto",
                             "deprecated": false,
                             "deprecationMessage": ""
                         }
                     ],
                     "optional": false,
-                    "returnType": "Promise<ConsoleResponseItemDto>",
+                    "returnType": "any",
                     "typeParameters": [],
-                    "line": 16,
+                    "line": 95,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
                         {
-                            "name": "environmentKey",
-                            "type": "string",
-                            "deprecated": false,
-                            "deprecationMessage": "",
-                            "tagName": {
-                                "text": "param"
-                            }
-                        },
-                        {
-                            "name": "systemComponentKey",
-                            "type": "string",
-                            "deprecated": false,
-                            "deprecationMessage": "",
-                            "tagName": {
-                                "text": "param"
-                            }
-                        },
-                        {
-                            "name": "attributes",
-                            "type": "",
-                            "deprecated": false,
-                            "deprecationMessage": "",
-                            "tagName": {
-                                "text": "param"
-                            }
-                        },
-                        {
-                            "name": "navItem",
-                            "type": "NavItem",
+                            "name": "queryComposite",
+                            "type": "QueryCompositeDto",
                             "deprecated": false,
                             "deprecationMessage": "",
                             "tagName": {
@@ -4973,7 +5214,7 @@
             "deprecationMessage": "",
             "description": "",
             "rawdescription": "\n",
-            "sourceCode": "import {Injectable} from '@angular/core';\nimport {ConsoleControllerService} from \"@fabric/services\";\nimport {ConsoleDescriptorDto, ConsoleResponseItemDto, NavItem, SnippetDto} from \"@fabric/models\";\n\n@Injectable()\nexport class ConsoleService {\n\n    constructor(private consoleControllerService: ConsoleControllerService) {\n    }\n\n    loadDescriptor(systemType: string) : Promise<ConsoleDescriptorDto>{\n        return this.consoleControllerService.getDescriptorUsingGet({systemType})\n            .toPromise()\n    }\n\n    runRequest(environmentKey: string, systemComponentKey: string, attributes, navItem: NavItem): Promise<ConsoleResponseItemDto> {\n        return this.consoleControllerService.runRequestUsingPost({\n            body: {\n                environmentKey,\n                systemComponentKey,\n                attributes,\n                navItem\n            }\n        }).toPromise()\n    }\n\n    loadSnippets(systemType:string): Promise<SnippetDto[]> {\n        return this.consoleControllerService.getSnippetsUsingGet({systemType}).toPromise()\n    }\n\n    addSnippet(title: string, systemType: string, attributes: {}): Promise<SnippetDto[]> {\n        return this.consoleControllerService.createSnippetUsingPost({\n            systemType,\n            body: {\n                title,\n                attributes\n            }\n        }).toPromise().then(()=> this.loadSnippets(systemType))\n\n    }\n\n    editSnippet(id: string, title: string, systemType: string, attributes: {}) {\n        return this.consoleControllerService.updateSnippetUsingPut({\n            systemType,\n            body: {\n                id,\n                title,\n                attributes\n            }\n        }).toPromise().then(()=> this.loadSnippets(systemType))\n    }\n\n    deleteSnippet(id: string, systemType: string) {\n        return this.consoleControllerService.deleteSnippetUsingDelete({\n            systemType,\n            id\n        }).toPromise().then(()=> this.loadSnippets(systemType))\n    }\n\n    loadNavItems(systemComponentKey: string): Promise<NavItem[]>  {\n        return this.consoleControllerService.getNavigationUsingPost({body: {\n            systemComponentKey,\n        }}).toPromise()\n    }\n\n}\n",
+            "sourceCode": "import {Injectable} from '@angular/core';\nimport {ConsoleControllerService} from \"@fabric/services\";\nimport {ConsoleDescriptorDto, NavItem, QueryCompositeDto, SnippetDto, TabularResultSet} from \"@fabric/models\";\nimport {BehaviorSubject} from \"rxjs\";\nimport {distinctUntilChanged, map} from \"rxjs/operators\";\nimport {logChangesToObservable} from \"@fabric/common\";\n\nexport interface Output {\n    jsonOutput: string\n    stackTraceOutput: string\n    tabularResponse: TabularResultSet\n}\n\ninterface ConsoleState {\n    rootQueryComposite: QueryCompositeDto\n    selection: QueryCompositeDto\n    output: Output\n\n}\n\n\n\n@Injectable()\nexport class ConsoleService {\n\n    constructor(private consoleControllerService: ConsoleControllerService) {\n        this.init()\n    }\n\n    subscriptions = []\n\n    init() {\n        this.subscriptions.push(logChangesToObservable('store::output$ >>', this.output$))\n    }\n\n    private store = new BehaviorSubject<ConsoleState>(this.initialConsoleState())\n\n    root$ = this.store.pipe(\n        map(state => state.rootQueryComposite),\n        distinctUntilChanged(),\n    )\n\n    selection$ = this.store.pipe(\n        map(state => state.selection),\n        distinctUntilChanged(),\n    )\n\n    output$ = this.store.pipe(\n        map(state => state.output),\n        distinctUntilChanged(),\n    )\n\n    private initialConsoleState(): ConsoleState  {\n         let rootQueryComposite = this.createQueryComposite()\n         return {\n             rootQueryComposite,\n             selection: rootQueryComposite,\n             output: {\n                 jsonOutput: null,\n                 stackTraceOutput: null,\n                 tabularResponse: null\n             }\n         }\n    }\n\n    private idCounter: 0\n\n    private createQueryComposite(): QueryCompositeDto {\n        return {\n            id: \"\" + this.idCounter++,\n            children: []\n        }\n    }\n\n    addQuery() {\n    }\n\n    clearOutput() {\n        this.store.next({\n            ... this.store.value,\n            output: {\n                jsonOutput: null,\n                stackTraceOutput: null,\n                tabularResponse: null\n            }\n        })\n    }\n\n\n    loadDescriptor(systemType: string) : Promise<ConsoleDescriptorDto>{\n        return this.consoleControllerService.getDescriptorUsingGet({systemType})\n            .toPromise()\n    }\n\n    runRequest(queryComposite: QueryCompositeDto) {\n        this.clearOutput();\n        return this.consoleControllerService.runRequestUsingPost({\n            body: queryComposite\n        }).subscribe((dto)=> {\n\n            this.store.value.selection.result = dto.result\n\n            let result = dto.result\n            let output\n            switch (result.resultType) {\n                case 'JSON': {\n                    output = {\n                        jsonOutput : JSON.parse(result.content)\n                    }\n                    break\n                }\n                case 'STACKTRACE': {\n                    output = {\n                        stackTraceOutput : result.content\n                    }\n                    break\n                }\n                case 'TABULAR' : {\n                    output = {\n                        tabularResponse : result.tabular\n                    }\n                }\n            }\n            this.store.next({\n                ... this.store.value,\n                output\n            })\n\n            if (result.resultType != 'STACKTRACE') {\n                // this.addHistoryItem(attributes)\n            }\n\n\n        })\n    }\n\n    loadSnippets(systemType:string): Promise<SnippetDto[]> {\n        return this.consoleControllerService.getSnippetsUsingGet({systemType}).toPromise()\n    }\n\n    addSnippet(title: string, systemType: string, attributes: {}): Promise<SnippetDto[]> {\n        return this.consoleControllerService.createSnippetUsingPost({\n            systemType,\n            body: {\n                title,\n                attributes\n            }\n        }).toPromise().then(()=> this.loadSnippets(systemType))\n\n    }\n\n    editSnippet(id: string, title: string, systemType: string, attributes: {}) {\n        return this.consoleControllerService.updateSnippetUsingPut({\n            systemType,\n            body: {\n                id,\n                title,\n                attributes\n            }\n        }).toPromise().then(()=> this.loadSnippets(systemType))\n    }\n\n    deleteSnippet(id: string, systemType: string) {\n        return this.consoleControllerService.deleteSnippetUsingDelete({\n            systemType,\n            id\n        }).toPromise().then(()=> this.loadSnippets(systemType))\n    }\n\n    loadNavItems(systemComponentKey: string): Promise<NavItem[]>  {\n        return this.consoleControllerService.getNavigationUsingPost({body: {\n            systemComponentKey,\n        }}).toPromise()\n    }\n\n}\n",
             "constructorObj": {
                 "name": "constructor",
                 "description": "",
@@ -4987,7 +5228,7 @@
                         "deprecationMessage": ""
                     }
                 ],
-                "line": 6,
+                "line": 24,
                 "jsdoctags": [
                     {
                         "name": "consoleControllerService",
@@ -14330,7 +14571,7 @@
         },
         {
             "name": "ConsolePanelComponent",
-            "id": "component-ConsolePanelComponent-7a6f1e63ecf63f4639c29e9e6a36f5dc545fb93fba494ef4fdc43c3d3e6b529a9baf01a7fc8ea1a3c1b5db520576d2127d3a0b26ce969f3a3cd3005ad5d9abb2",
+            "id": "component-ConsolePanelComponent-365e2ec319a351fdd0dbeb3f62c3c58d0f01c5017df9dadd7948529552bfeeff56e3ae07eef8a061b13c5793ec49af9d2ba95ced04646fb875bc795cc05275c6",
             "file": "src/app/console-page/console-panel/console-panel.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -14369,7 +14610,7 @@
                     "type": "any",
                     "optional": false,
                     "description": "",
-                    "line": 281,
+                    "line": 270,
                     "inheritance": {
                         "file": "HasConfirmationDialogMixin"
                     }
@@ -14381,7 +14622,7 @@
                     "type": "NavItem",
                     "optional": false,
                     "description": "",
-                    "line": 118
+                    "line": 107
                 },
                 {
                     "name": "descriptor",
@@ -14430,16 +14671,7 @@
                     "type": "HistoryItem[]",
                     "optional": false,
                     "description": "",
-                    "line": 137
-                },
-                {
-                    "name": "jsonOutput",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "string",
-                    "optional": false,
-                    "description": "",
-                    "line": 287
+                    "line": 126
                 },
                 {
                     "name": "navItems",
@@ -14448,7 +14680,37 @@
                     "type": "NavItem[]",
                     "optional": false,
                     "description": "",
-                    "line": 117
+                    "line": 106
+                },
+                {
+                    "name": "output$",
+                    "defaultValue": "this.service.output$",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 275
+                },
+                {
+                    "name": "root$",
+                    "defaultValue": "this.service.root$",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 63
+                },
+                {
+                    "name": "selection$",
+                    "defaultValue": "this.service.selection$",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 62
                 },
                 {
                     "name": "snippetDialogSpec",
@@ -14457,7 +14719,7 @@
                     "type": "SnippetDialogSpec",
                     "optional": false,
                     "description": "",
-                    "line": 263
+                    "line": 252
                 },
                 {
                     "name": "snippets",
@@ -14466,16 +14728,7 @@
                     "type": "SnippetDto[]",
                     "optional": false,
                     "description": "",
-                    "line": 182
-                },
-                {
-                    "name": "stackTraceOutput",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "string",
-                    "optional": false,
-                    "description": "",
-                    "line": 288
+                    "line": 171
                 },
                 {
                     "name": "tabState",
@@ -14485,16 +14738,7 @@
                     "type": "TabState",
                     "optional": false,
                     "description": "",
-                    "line": 109
-                },
-                {
-                    "name": "tabularResponse",
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "type": "TabularResponse",
-                    "optional": false,
-                    "description": "",
-                    "line": 289
+                    "line": 98
                 }
             ],
             "methodsClass": [
@@ -14511,7 +14755,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 139,
+                    "line": 128,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -14548,7 +14792,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 223,
+                    "line": 212,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -14594,7 +14838,7 @@
                     "optional": false,
                     "returnType": "{}",
                     "typeParameters": [],
-                    "line": 231,
+                    "line": 220,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -14627,22 +14871,9 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 99,
+                    "line": 88,
                     "deprecated": false,
                     "deprecationMessage": ""
-                },
-                {
-                    "name": "clearOutput",
-                    "args": [],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 93,
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "modifierKind": [
-                        121
-                    ]
                 },
                 {
                     "name": "closeSnippetDialog",
@@ -14650,7 +14881,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 270,
+                    "line": 259,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -14663,7 +14894,7 @@
                     "optional": false,
                     "returnType": "string",
                     "typeParameters": [],
-                    "line": 277,
+                    "line": 266,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "inheritance": {
@@ -14683,7 +14914,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 156,
+                    "line": 145,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -14711,7 +14942,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 145,
+                    "line": 134,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -14739,7 +14970,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 248,
+                    "line": 237,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -14763,7 +14994,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 62,
+                    "line": 65,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -14801,7 +15032,7 @@
                     "optional": false,
                     "returnType": "string",
                     "typeParameters": [],
-                    "line": 152,
+                    "line": 141,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -14849,7 +15080,7 @@
                     "optional": false,
                     "returnType": "{}",
                     "typeParameters": [],
-                    "line": 120,
+                    "line": 109,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -14880,7 +15111,7 @@
                     "optional": false,
                     "returnType": "{}",
                     "typeParameters": [],
-                    "line": 184,
+                    "line": 173,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -14911,7 +15142,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 124,
+                    "line": 113,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -14967,7 +15198,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 265,
+                    "line": 254,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -14998,7 +15229,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 171,
+                    "line": 160,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -15026,41 +15257,13 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 111,
+                    "line": 100,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
                         {
                             "name": "tabState",
                             "type": "TabState",
-                            "deprecated": false,
-                            "deprecationMessage": "",
-                            "tagName": {
-                                "text": "param"
-                            }
-                        }
-                    ]
-                },
-                {
-                    "name": "selectTableRow",
-                    "args": [
-                        {
-                            "name": "row",
-                            "type": "Row",
-                            "deprecated": false,
-                            "deprecationMessage": ""
-                        }
-                    ],
-                    "optional": false,
-                    "returnType": "void",
-                    "typeParameters": [],
-                    "line": 291,
-                    "deprecated": false,
-                    "deprecationMessage": "",
-                    "jsdoctags": [
-                        {
-                            "name": "row",
-                            "type": "Row",
                             "deprecated": false,
                             "deprecationMessage": "",
                             "tagName": {
@@ -15082,7 +15285,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 213,
+                    "line": 202,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -15103,7 +15306,7 @@
                     "optional": false,
                     "returnType": "string",
                     "typeParameters": [],
-                    "line": 259,
+                    "line": 248,
                     "deprecated": false,
                     "deprecationMessage": ""
                 },
@@ -15120,7 +15323,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 195,
+                    "line": 184,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -15148,7 +15351,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 188,
+                    "line": 177,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "jsdoctags": [
@@ -15182,7 +15385,7 @@
                     "optional": false,
                     "returnType": "void",
                     "typeParameters": [],
-                    "line": 239,
+                    "line": 228,
                     "deprecated": false,
                     "deprecationMessage": "",
                     "modifierKind": [
@@ -15261,7 +15464,7 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';\nimport {FormArray, FormControl, FormGroup} from \"@angular/forms\";\nimport {faPlay, faTimes} from '@fortawesome/free-solid-svg-icons';\nimport {HasConfirmationDialogMixin, ModalService} from \"@fabric/common\";\nimport {DataSourceSelection} from \"@fabric/component\";\nimport {ConsoleDescriptorDto, NavItem, Row, SnippetDto, TabularResponse} from \"@fabric/models\";\nimport {ConsoleService} from \"../console.service\";\nimport {HistoryItem} from \"./history-panel/history-panel.component\";\nimport {SnippetDialogData, SnippetDialogSpec} from \"./snippet-dialog/snippet-dialog.component\";\n\ntype TabState = 'HISTORY' | 'SNIPPETS'\n\n@Component({\n    selector: 'app-console-panel',\n    templateUrl: './console-panel.component.html',\n    styleUrls: ['./console-panel.component.scss'],\n    providers: [ConsoleService]\n})\nexport class ConsolePanelComponent extends HasConfirmationDialogMixin implements OnChanges {\n\n    faPlay = faPlay\n    faTimes = faTimes\n\n    constructor(protected modalService: ModalService, private service: ConsoleService) {\n        super(modalService)\n    }\n\n    @Input()\n    dataSource: DataSourceSelection\n\n    ngOnChanges(changes: SimpleChanges) {\n        let systemType = this.dataSource.systemComponent.systemType;\n        //this.service.loadNavItems(systemComponentKey).then(navItems => this.initNavItems(navItems))\n        this.service.loadDescriptor(systemType).then(descriptor => this.initForm(descriptor))\n        this.service.loadSnippets(systemType).then(snippets => this.initSnippets(snippets))\n    }\n\n    descriptor: ConsoleDescriptorDto\n\n    // input query\n\n    formGroup: FormGroup = new FormGroup({\n        fields: new FormArray([])\n    })\n\n    get fieldsControl(): FormArray {\n        return <FormArray>this.formGroup.get('fields')\n    }\n\n    fieldControl(i: number): FormControl {\n        return <FormControl>this.fieldsControl.controls[i]\n    }\n\n    private initForm(descriptorDto: ConsoleDescriptorDto) {\n        this.descriptor = descriptorDto\n        this.fieldsControl.controls = []\n        this.descriptor.items.forEach(item =>\n            this.fieldsControl.push(new FormControl(null))\n        )\n    }\n\n    doQuery() {\n        let attributes = {}\n        this.fieldsControl.value.forEach((fieldValue, i) => {\n            attributes[this.descriptor.items[i].name] = fieldValue\n        })\n        this.service.runRequest(\n            this.dataSource.environment.key,\n            this.dataSource.systemComponent.key,\n            attributes,\n            this.currentNavItem\n        ).then((response) => {\n            this.clearOutput();\n            switch (response.consoleOutputType) {\n                case 'JSON': {\n                    this.jsonOutput = JSON.parse(response.content)\n                    break\n                }\n                case 'STACKTRACE': {\n                    this.stackTraceOutput = response.content\n                    break\n                }\n                case 'TABULAR' : {\n                    this.tabularResponse = response.tabular\n                }\n            }\n            if (response.consoleOutputType != 'STACKTRACE') {\n                this.addHistoryItem(attributes)\n            }\n        })\n    }\n\n    private clearOutput() {\n        this.jsonOutput = null\n        this.stackTraceOutput = null\n        this.tabularResponse = null\n    }\n\n    clear() {\n        this.descriptor.items.forEach((descriptorItem, index) => {\n                this.fieldControl(index).setValue(null)\n            }\n        )\n        this.clearOutput()\n    }\n\n    // tabs history/snippet\n\n    tabState: TabState = 'SNIPPETS'\n\n    selectTab(tabState: TabState) {\n        this.tabState = tabState\n    }\n\n    // navitems\n\n    navItems: NavItem[]\n    currentNavItem: NavItem\n\n    private initNavItems(navItems: NavItem[]) {\n        return this.navItems = navItems;\n    }\n\n    navItemSelected(navItem: NavItem) {\n        this.currentNavItem = navItem\n        this.descriptor.items.forEach((descriptorItem, index) => {\n                let value = navItem.attributes[descriptorItem.name]\n                this.fieldControl(index).setValue(value)\n            }\n        )\n        this.doQuery()\n    }\n\n\n    // history\n\n    historyItems: HistoryItem[] = []\n\n    private addHistoryItem(attributes: {}) {\n        this.historyItems.push({\n            attributes\n        })\n    }\n\n    deleteHistoryItem(item: HistoryItem) {\n        const index = this.historyItems.indexOf(item, 0);\n        if (index > -1) {\n            this.historyItems.splice(index, 1);\n        }\n    }\n\n    historyCount(): string {\n        return this.historyItems.length == 0 ? '' : `(${this.historyItems.length})`\n    }\n\n    convertHistoryItemToSnippet(historyItem: HistoryItem) {\n        this.openSnippetDialog({\n            mode: 'NEW',\n            descriptor: this.descriptor,\n            data: {\n                attributes: historyItem.attributes\n            },\n            cancel: () => this.closeSnippetDialog(),\n            confirm: (data) => {\n                this.addSnippet(this.descriptor, data);\n                this.closeSnippetDialog()\n            }\n        })\n    }\n\n    selectHistoryItem(historyItem: HistoryItem) {\n        this.descriptor.items.forEach((descriptorItem, index) => {\n                let value = historyItem.attributes[descriptorItem.name]\n                this.fieldControl(index).setValue(value)\n            }\n        )\n    }\n\n\n    // snippets\n\n    snippets: SnippetDto[]\n\n    private initSnippets(snippets: SnippetDto[]) {\n        return this.snippets = snippets;\n    }\n\n    snippetSelected(snippet: SnippetDto) {\n        this.descriptor.items.forEach((item, index) => {\n            let value = snippet.attributes[item.name]\n            this.fieldControl(index).setValue(value)\n        })\n    }\n\n    snippetEdit(snippet: SnippetDto) {\n        this.openSnippetDialog({\n            mode: 'EDIT',\n            descriptor: this.descriptor,\n            data: {\n                id: snippet.id,\n                title: snippet.title,\n                attributes: snippet.attributes\n            },\n            cancel: () => this.closeSnippetDialog(),\n            confirm: (data) => {\n                this.updateSnippet(this.descriptor, data);\n                this.closeSnippetDialog()\n            }\n        })\n\n    }\n\n    snippetDelete(snippet: SnippetDto) {\n        this.openConfirmationDialog({\n            title: 'Confirm Delete Snippet',\n            message:  `Delete snippet '${snippet.title}'?`,\n            cancel: () => this.closeConfirmationDialog(),\n            confirm: () => { this.deleteSnippet(snippet); this.closeConfirmationDialog() }\n        })\n    }\n\n\n    private addSnippet(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {\n        let attributes = this.attributeMap(descriptor, data);\n        this.service.addSnippet(data.title, this.dataSource.systemComponent.systemType, attributes)\n            .then((snippets) => {\n                this.snippets = snippets\n            })\n    }\n\n    private attributeMap(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {\n        let attributes = {}\n        descriptor.items.forEach((item, index) => {\n            attributes[item.name] = data.fields[index]\n        })\n        return attributes;\n    }\n\n    private updateSnippet(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {\n        let attributes = this.attributeMap(descriptor, data);\n        this.service.editSnippet(data.id, data.title, this.dataSource.systemComponent.systemType, attributes)\n            .then((snippets) => {\n                this.snippets = snippets\n            })\n\n    }\n\n    private deleteSnippet(data: SnippetDialogData) {\n        this.service.deleteSnippet(data.id, this.dataSource.systemComponent.systemType)\n            .then((snippets) => {\n                this.snippets = snippets\n            })\n\n    }\n\n\n    // snippet dialog\n\n    snippetDialogId(): string {\n        return 'snippet-dialog-id'\n    }\n\n    snippetDialogSpec: SnippetDialogSpec;\n\n    private openSnippetDialog(spec: SnippetDialogSpec) {\n        this.snippetDialogSpec = spec\n        this.modalService.open(this.snippetDialogId())\n    }\n\n    private closeSnippetDialog() {\n        this.snippetDialogSpec = null\n        this.modalService.close(this.snippetDialogId())\n    }\n\n    // snippet deletion confirmation\n\n    confirmationDialogId() {\n        return \"confirm-snippet-delete\"\n    }\n\n    confirmationDialogSpec: any;\n\n\n\n    // output\n\n    jsonOutput: string\n    stackTraceOutput: string\n    tabularResponse: TabularResponse\n\n    selectTableRow(row: Row) {\n        console.log('selected: ', row)\n    }\n\n\n}\n",
+            "sourceCode": "import {Component, Input, OnChanges, SimpleChanges} from '@angular/core';\nimport {FormArray, FormControl, FormGroup} from \"@angular/forms\";\nimport {faPlay, faTimes} from '@fortawesome/free-solid-svg-icons';\nimport {HasConfirmationDialogMixin, ModalService} from \"@fabric/common\";\nimport {DataSourceSelection} from \"@fabric/component\";\nimport {ConsoleDescriptorDto, NavItem, PagingDto, QueryCompositeDto, QueryDto, SnippetDto} from \"@fabric/models\";\nimport {ConsoleService} from \"../console.service\";\nimport {HistoryItem} from \"./history-panel/history-panel.component\";\nimport {SnippetDialogData, SnippetDialogSpec} from \"./snippet-dialog/snippet-dialog.component\";\n\ntype TabState = 'HISTORY' | 'SNIPPETS'\n\n@Component({\n    selector: 'app-console-panel',\n    templateUrl: './console-panel.component.html',\n    styleUrls: ['./console-panel.component.scss'],\n    providers: [ConsoleService]\n})\nexport class ConsolePanelComponent extends HasConfirmationDialogMixin implements OnChanges {\n\n    faPlay = faPlay\n    faTimes = faTimes\n\n    constructor(protected modalService: ModalService, private service: ConsoleService) {\n        super(modalService)\n    }\n\n    @Input()\n    dataSource: DataSourceSelection\n\n    ngOnChanges(changes: SimpleChanges) {\n        let systemType = this.dataSource.systemComponent.systemType;\n        //this.service.loadNavItems(systemComponentKey).then(navItems => this.initNavItems(navItems))\n        this.service.loadDescriptor(systemType).then(descriptor => this.initForm(descriptor))\n        this.service.loadSnippets(systemType).then(snippets => this.initSnippets(snippets))\n    }\n\n    descriptor: ConsoleDescriptorDto\n\n    // input query\n\n    formGroup: FormGroup = new FormGroup({\n        fields: new FormArray([])\n    })\n\n    get fieldsControl(): FormArray {\n        return <FormArray>this.formGroup.get('fields')\n    }\n\n    fieldControl(i: number): FormControl {\n        return <FormControl>this.fieldsControl.controls[i]\n    }\n\n    private initForm(descriptorDto: ConsoleDescriptorDto) {\n        this.descriptor = descriptorDto\n        this.fieldsControl.controls = []\n        this.descriptor.items.forEach(item =>\n            this.fieldsControl.push(new FormControl(null))\n        )\n    }\n\n    selection$ = this.service.selection$\n    root$ = this.service.root$\n\n    doQuery() {\n        let attributes = {}\n        this.fieldsControl.value.forEach((fieldValue, i) => {\n            attributes[this.descriptor.items[i].name] = fieldValue\n        })\n        let paging: PagingDto = {\n            pageNr: 0,\n            pageSize: 5\n        }\n        let query: QueryDto = {\n            environmentKey: this.dataSource.environment.key,\n            systemComponentKey: this.dataSource.systemComponent.key,\n            attributes,\n            navItem: this.currentNavItem,\n            paging\n        }\n        let queryComposite: QueryCompositeDto = {\n            query,\n        }\n\n        this.service.runRequest(queryComposite)\n    }\n\n    clear() {\n        this.descriptor.items.forEach((descriptorItem, index) => {\n                this.fieldControl(index).setValue(null)\n            }\n        )\n        this.service.clearOutput()\n    }\n\n    // tabs history/snippet\n\n    tabState: TabState = 'SNIPPETS'\n\n    selectTab(tabState: TabState) {\n        this.tabState = tabState\n    }\n\n    // navitems\n\n    navItems: NavItem[]\n    currentNavItem: NavItem\n\n    private initNavItems(navItems: NavItem[]) {\n        return this.navItems = navItems;\n    }\n\n    navItemSelected(navItem: NavItem) {\n        this.currentNavItem = navItem\n        this.descriptor.items.forEach((descriptorItem, index) => {\n                let value = navItem.attributes[descriptorItem.name]\n                this.fieldControl(index).setValue(value)\n            }\n        )\n        this.doQuery()\n    }\n\n\n    // history\n\n    historyItems: HistoryItem[] = []\n\n    private addHistoryItem(attributes: {}) {\n        this.historyItems.push({\n            attributes\n        })\n    }\n\n    deleteHistoryItem(item: HistoryItem) {\n        const index = this.historyItems.indexOf(item, 0);\n        if (index > -1) {\n            this.historyItems.splice(index, 1);\n        }\n    }\n\n    historyCount(): string {\n        return this.historyItems.length == 0 ? '' : `(${this.historyItems.length})`\n    }\n\n    convertHistoryItemToSnippet(historyItem: HistoryItem) {\n        this.openSnippetDialog({\n            mode: 'NEW',\n            descriptor: this.descriptor,\n            data: {\n                attributes: historyItem.attributes\n            },\n            cancel: () => this.closeSnippetDialog(),\n            confirm: (data) => {\n                this.addSnippet(this.descriptor, data);\n                this.closeSnippetDialog()\n            }\n        })\n    }\n\n    selectHistoryItem(historyItem: HistoryItem) {\n        this.descriptor.items.forEach((descriptorItem, index) => {\n                let value = historyItem.attributes[descriptorItem.name]\n                this.fieldControl(index).setValue(value)\n            }\n        )\n    }\n\n\n    // snippets\n\n    snippets: SnippetDto[]\n\n    private initSnippets(snippets: SnippetDto[]) {\n        return this.snippets = snippets;\n    }\n\n    snippetSelected(snippet: SnippetDto) {\n        this.descriptor.items.forEach((item, index) => {\n            let value = snippet.attributes[item.name]\n            this.fieldControl(index).setValue(value)\n        })\n    }\n\n    snippetEdit(snippet: SnippetDto) {\n        this.openSnippetDialog({\n            mode: 'EDIT',\n            descriptor: this.descriptor,\n            data: {\n                id: snippet.id,\n                title: snippet.title,\n                attributes: snippet.attributes\n            },\n            cancel: () => this.closeSnippetDialog(),\n            confirm: (data) => {\n                this.updateSnippet(this.descriptor, data);\n                this.closeSnippetDialog()\n            }\n        })\n\n    }\n\n    snippetDelete(snippet: SnippetDto) {\n        this.openConfirmationDialog({\n            title: 'Confirm Delete Snippet',\n            message:  `Delete snippet '${snippet.title}'?`,\n            cancel: () => this.closeConfirmationDialog(),\n            confirm: () => { this.deleteSnippet(snippet); this.closeConfirmationDialog() }\n        })\n    }\n\n\n    private addSnippet(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {\n        let attributes = this.attributeMap(descriptor, data);\n        this.service.addSnippet(data.title, this.dataSource.systemComponent.systemType, attributes)\n            .then((snippets) => {\n                this.snippets = snippets\n            })\n    }\n\n    private attributeMap(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {\n        let attributes = {}\n        descriptor.items.forEach((item, index) => {\n            attributes[item.name] = data.fields[index]\n        })\n        return attributes;\n    }\n\n    private updateSnippet(descriptor: ConsoleDescriptorDto, data: SnippetDialogData) {\n        let attributes = this.attributeMap(descriptor, data);\n        this.service.editSnippet(data.id, data.title, this.dataSource.systemComponent.systemType, attributes)\n            .then((snippets) => {\n                this.snippets = snippets\n            })\n\n    }\n\n    private deleteSnippet(data: SnippetDialogData) {\n        this.service.deleteSnippet(data.id, this.dataSource.systemComponent.systemType)\n            .then((snippets) => {\n                this.snippets = snippets\n            })\n\n    }\n\n\n    // snippet dialog\n\n    snippetDialogId(): string {\n        return 'snippet-dialog-id'\n    }\n\n    snippetDialogSpec: SnippetDialogSpec;\n\n    private openSnippetDialog(spec: SnippetDialogSpec) {\n        this.snippetDialogSpec = spec\n        this.modalService.open(this.snippetDialogId())\n    }\n\n    private closeSnippetDialog() {\n        this.snippetDialogSpec = null\n        this.modalService.close(this.snippetDialogId())\n    }\n\n    // snippet deletion confirmation\n\n    confirmationDialogId() {\n        return \"confirm-snippet-delete\"\n    }\n\n    confirmationDialogSpec: any;\n\n\n\n    // output\n    output$ = this.service.output$\n\n\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
@@ -15326,7 +15529,7 @@
                     }
                 }
             },
-            "templateData": "<div *ngIf=\"descriptor\" class=\"container-fluid\">\n    <div class=\"row\">\n        <div class=\"col-md-3\">\n            <app-panel>\n                <div style=\"min-height: 80vh\">\n                    <form [formGroup]=\"formGroup\">\n                        <ng-container formArrayName=\"fields\">\n                            <ng-container *ngFor=\"let item of descriptor.items; let i=index\">\n                                <ng-container *ngIf=\"item.inputType==='TEXT'\">\n                                    <input type=\"text\" class=\"form-control\" [formControl]=\"fieldControl(i)\" [placeholder]=\"item.placeholder\" >\n                                </ng-container>\n                                <ng-container *ngIf=\"item.inputType==='TEXTAREA'\">\n                                    <textarea rows=\"12\" class=\"form-control\" [formControl]=\"fieldControl(i)\" [placeholder]=\"item.placeholder\" ></textarea>\n                                </ng-container>\n                                <ng-container *ngIf=\"item.inputType==='SELECT'\">\n                                    <select class=\"form-control\" [formControl]=\"fieldControl(i)\">\n                                        <option *ngFor=\"let selectValue of item.selectValues\"\n                                                [ngValue]=\"selectValue\">{{selectValue}}</option>\n                                    </select>\n                                </ng-container>\n                            </ng-container>\n                        </ng-container>\n                            <button type=\"button\" class=\"btn btn-outline-secondary\" (click)=\"doQuery()\">\n                                <fa-icon [icon]=\"faPlay\"></fa-icon>\n                            </button>\n                        <button type=\"button\" class=\"btn btn-outline-secondary\" (click)=\"clear()\">\n                            <fa-icon [icon]=\"faTimes\"></fa-icon>\n                        </button>\n                    </form>\n\n                    <ul class=\"nav nav-tabs\">\n                        <li class=\"nav-item\">\n                            <a class=\"nav-link\" [class.active]=\"tabState==='SNIPPETS'\" (click)=\"selectTab('SNIPPETS')\" href=\"javascript:void(0);\">\n                                Snippets\n                            </a>\n                        </li>\n                        <li class=\"nav-item\">\n                            <a class=\"nav-link\" [class.active]=\"tabState==='HISTORY'\" (click)=\"selectTab('HISTORY')\" href=\"javascript:void(0);\">\n                                History {{historyCount()}}\n                            </a>\n                        </li>\n                    </ul>\n                    <ng-container *ngIf=\"tabState==='SNIPPETS'\">\n                        <app-snippet-panel [snippets]=\"snippets\" (onSelect)=\"snippetSelected($event)\" (onEdit)=\"snippetEdit($event)\" (onDelete)=\"snippetDelete($event)\"></app-snippet-panel>\n                    </ng-container>\n                    <ng-container *ngIf=\"tabState==='HISTORY'\">\n                        <app-history-panel [historyItems]=\"historyItems\"\n                           (onConvert)=\"convertHistoryItemToSnippet($event)\"\n                           (onSelect)=\"selectHistoryItem($event)\"\n                           (onDelete)=\"deleteHistoryItem($event)\"\n                        >\n                        </app-history-panel>\n                    </ng-container>\n                </div>\n            </app-panel>\n        </div>\n        <div class=\"col-md-9\">\n            <app-panel>\n                <div style=\"min-height: 80vh; max-height: 80vh; overflow: auto\">\n                    <ng-container *ngIf=\"jsonOutput\">\n                        <pre>{{jsonOutput | json}}</pre>\n                    </ng-container>\n                    <ng-container *ngIf=\"stackTraceOutput\" >\n                        <div class=\"bg-warning\">\n                            {{stackTraceOutput}}\n                        </div>\n                    </ng-container>\n                    <ng-container *ngIf=\"tabularResponse\">\n                        <app-table [tabular]=\"tabularResponse\" (onRowSelect)=\"selectTableRow($event)\"></app-table>\n                    </ng-container>\n                </div>\n            </app-panel>\n        </div>\n    </div>\n\n</div>\n\n<jw-modal [id]=\"snippetDialogId()\">\n    <app-snippet-dialog [spec]=\"snippetDialogSpec\"></app-snippet-dialog>\n</jw-modal>\n\n<jw-modal [id]=\"confirmationDialogId()\">\n    <app-confirmation-dialog [spec]=\"confirmationDialogSpec\"></app-confirmation-dialog>\n</jw-modal>\n"
+            "templateData": "<div *ngIf=\"descriptor\" class=\"container-fluid\">\n    <div class=\"row\">\n        <div class=\"col-md-3\">\n            <app-panel>\n                <div style=\"min-height: 80vh\">\n                    <form [formGroup]=\"formGroup\">\n                        <ng-container formArrayName=\"fields\">\n                            <ng-container *ngFor=\"let item of descriptor.items; let i=index\">\n                                <ng-container *ngIf=\"item.inputType==='TEXT'\">\n                                    <input type=\"text\" class=\"form-control\" [formControl]=\"fieldControl(i)\" [placeholder]=\"item.placeholder\" >\n                                </ng-container>\n                                <ng-container *ngIf=\"item.inputType==='TEXTAREA'\">\n                                    <textarea rows=\"12\" class=\"form-control\" [formControl]=\"fieldControl(i)\" [placeholder]=\"item.placeholder\" ></textarea>\n                                </ng-container>\n                                <ng-container *ngIf=\"item.inputType==='SELECT'\">\n                                    <select class=\"form-control\" [formControl]=\"fieldControl(i)\">\n                                        <option *ngFor=\"let selectValue of item.selectValues\"\n                                                [ngValue]=\"selectValue\">{{selectValue}}</option>\n                                    </select>\n                                </ng-container>\n                            </ng-container>\n                        </ng-container>\n                            <button type=\"button\" class=\"btn btn-outline-secondary\" (click)=\"doQuery()\">\n                                <fa-icon [icon]=\"faPlay\"></fa-icon>\n                            </button>\n                        <button type=\"button\" class=\"btn btn-outline-secondary\" (click)=\"clear()\">\n                            <fa-icon [icon]=\"faTimes\"></fa-icon>\n                        </button>\n                    </form>\n\n                    <ul class=\"nav nav-tabs\">\n                        <li class=\"nav-item\">\n                            <a class=\"nav-link\" [class.active]=\"tabState==='SNIPPETS'\" (click)=\"selectTab('SNIPPETS')\" href=\"javascript:void(0);\">\n                                Snippets\n                            </a>\n                        </li>\n                        <li class=\"nav-item\">\n                            <a class=\"nav-link\" [class.active]=\"tabState==='HISTORY'\" (click)=\"selectTab('HISTORY')\" href=\"javascript:void(0);\">\n                                History {{historyCount()}}\n                            </a>\n                        </li>\n                    </ul>\n                    <ng-container *ngIf=\"tabState==='SNIPPETS'\">\n                        <app-snippet-panel [snippets]=\"snippets\" (onSelect)=\"snippetSelected($event)\" (onEdit)=\"snippetEdit($event)\" (onDelete)=\"snippetDelete($event)\"></app-snippet-panel>\n                    </ng-container>\n                    <ng-container *ngIf=\"tabState==='HISTORY'\">\n                        <app-history-panel [historyItems]=\"historyItems\"\n                           (onConvert)=\"convertHistoryItemToSnippet($event)\"\n                           (onSelect)=\"selectHistoryItem($event)\"\n                           (onDelete)=\"deleteHistoryItem($event)\"\n                        >\n                        </app-history-panel>\n                    </ng-container>\n                </div>\n            </app-panel>\n        </div>\n        <div class=\"col-md-9\">\n            <app-panel *ngIf=\"output$ | async as output\">\n                <app-output-panel [output] = output >\n\n                </app-output-panel>\n            </app-panel>\n        </div>\n    </div>\n\n</div>\n\n<jw-modal [id]=\"snippetDialogId()\">\n    <app-snippet-dialog [spec]=\"snippetDialogSpec\"></app-snippet-dialog>\n</jw-modal>\n\n<jw-modal [id]=\"confirmationDialogId()\">\n    <app-confirmation-dialog [spec]=\"confirmationDialogSpec\"></app-confirmation-dialog>\n</jw-modal>\n"
         },
         {
             "name": "DataSourceSelectionPanelComponent",
@@ -19521,6 +19724,370 @@
             "templateData": "<div class=\"item-container\">\n<ng-container *ngIf=\"item.root\">\n    <div class=\"navigation-section\">\n        <fa-icon [icon]=\"selectIcon\"></fa-icon>\n        &nbsp;\n        <select *ngIf=\"item.navItems\" [ngModel]=\"item.navItems\" class=\"form-select navigation-select\"  (ngModelChange)=\"selectNav($event)\">\n            <option>-- select --</option>\n            <option [ngValue]=\"navItem\" *ngFor=\"let navItem of item.navItems\">\n                {{navItem.label}}\n            </option>\n        </select>\n    </div>\n</ng-container>\n<ng-container *ngIf=\"!item.root\">\n    <div class=\"table-container\">\n        <div class=\"title-section\">\n            {{item.label}}\n        </div>\n        <div class=\"table-section\">\n            <table class=\"table table-bordered\">\n                <thead>\n                <tr>\n                    <th *ngFor=\"let column of item.columns\">{{column}}</th>\n                </tr>\n                </thead>\n                <tbody>\n                <tr *ngFor=\"let row of item.rows\">\n                    <td *ngFor=\"let value of row.values\">\n                        {{value}}\n                    </td>\n                </tr>\n                </tbody>\n            </table>\n        </div>\n        <div *ngIf=\"item.navItems\" class=\"navigation-section\">\n            <fa-icon [icon]=\"selectIcon\"></fa-icon>\n            <select class=\"form-select navigation-select\" *ngIf=\"item.navItems\">\n                <option *ngFor=\"let navItem of item.navItems\">\n                    {{navItem.label}}\n                </option>\n            </select>\n        </div>\n    </div>\n</ng-container>\n<ng-container *ngIf=\"item.children\">\n    <div class=\"children-container\">\n        <ng-container *ngFor=\"let child of item.children\">\n            <div class=\"child-container\">\n                <app-navigation-tree-item [item]=\"child\" [depth]=\"depth+1\"></app-navigation-tree-item>\n            </div>\n        </ng-container>\n    </div>\n</ng-container>\n</div>\n"
         },
         {
+            "name": "OutputPanelComponent",
+            "id": "component-OutputPanelComponent-4083b1f733b922ba6f426c94cc2197d9b4f1ebcda1fce3f932b450dc6701386b4c253364c11157c4309da247eb15a1198c67df41fc707274c49dfdd2f3f5463d",
+            "file": "src/app/console-page/console-panel/output-panel/output-panel.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-output-panel",
+            "styleUrls": [
+                "./output-panel.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./output-panel.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "output",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 15,
+                    "type": "Output",
+                    "decorators": []
+                }
+            ],
+            "outputsClass": [],
+            "propertiesClass": [],
+            "methodsClass": [
+                {
+                    "name": "ngOnInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 22,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "selectTableRow",
+                    "args": [
+                        {
+                            "name": "row",
+                            "type": "Row",
+                            "deprecated": false,
+                            "deprecationMessage": ""
+                        }
+                    ],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 17,
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "jsdoctags": [
+                        {
+                            "name": "row",
+                            "type": "Row",
+                            "deprecated": false,
+                            "deprecationMessage": "",
+                            "tagName": {
+                                "text": "param"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import {Component, Input, OnInit} from '@angular/core';\nimport {Output} from \"../../console.service\";\nimport {Row} from \"@fabric/models\";\n\n@Component({\n  selector: 'app-output-panel',\n  templateUrl: './output-panel.component.html',\n  styleUrls: ['./output-panel.component.scss']\n})\nexport class OutputPanelComponent implements OnInit {\n\n  constructor() { }\n\n  @Input()\n  output: Output\n\n  selectTableRow(row: Row) {\n    console.log('selected: ', row)\n  }\n\n\n  ngOnInit(): void {\n  }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": "",
+                    "styleUrl": "./output-panel.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [],
+                "line": 10
+            },
+            "implements": [
+                "OnInit"
+            ],
+            "templateData": "<div style=\"min-height: 80vh; max-height: 80vh; overflow: auto\">\n    <ng-container *ngIf=\"output.jsonOutput\">\n        <pre>{{output.jsonOutput | json}}</pre>\n    </ng-container>\n    <ng-container *ngIf=\"output.stackTraceOutput\" >\n        <div class=\"bg-warning\">\n            {{output.stackTraceOutput}}\n        </div>\n    </ng-container>\n    <ng-container *ngIf=\"output.tabularResponse\">\n        <app-table [tabular]=\"output.tabularResponse\" (onRowSelect)=\"selectTableRow($event)\"></app-table>\n    </ng-container>\n</div>\n"
+        },
+        {
+            "name": "PagerComponent",
+            "id": "component-PagerComponent-469f80539d50c1fcc374c75c752dd5c044e4871dcc0e355cc6775f7eb33c63a617f318adb733f1f25cac38c394e243a1869c7011e577e85546ee45388bcbad77",
+            "file": "src/app/common/pager/pager.component.ts",
+            "encapsulation": [],
+            "entryComponents": [],
+            "inputs": [],
+            "outputs": [],
+            "providers": [],
+            "selector": "app-pager",
+            "styleUrls": [
+                "./pager.component.scss"
+            ],
+            "styles": [],
+            "templateUrl": [
+                "./pager.component.html"
+            ],
+            "viewProviders": [],
+            "inputsClass": [
+                {
+                    "name": "paging",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 21,
+                    "type": "PagingDto",
+                    "decorators": []
+                }
+            ],
+            "outputsClass": [
+                {
+                    "name": "first",
+                    "defaultValue": "new EventEmitter()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 24,
+                    "type": "EventEmitter"
+                },
+                {
+                    "name": "last",
+                    "defaultValue": "new EventEmitter()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 33,
+                    "type": "EventEmitter"
+                },
+                {
+                    "name": "next",
+                    "defaultValue": "new EventEmitter()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 30,
+                    "type": "EventEmitter"
+                },
+                {
+                    "name": "previous",
+                    "defaultValue": "new EventEmitter()",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "line": 27,
+                    "type": "EventEmitter"
+                }
+            ],
+            "propertiesClass": [
+                {
+                    "name": "faFastBackward",
+                    "defaultValue": "faFastBackward",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 13
+                },
+                {
+                    "name": "faFastForward",
+                    "defaultValue": "faFastForward",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 16
+                },
+                {
+                    "name": "faStepBackward",
+                    "defaultValue": "faStepBackward",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 14
+                },
+                {
+                    "name": "faStepForward",
+                    "defaultValue": "faStepForward",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "optional": false,
+                    "description": "",
+                    "line": 15
+                }
+            ],
+            "methodsClass": [
+                {
+                    "name": "firstClicked",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 38,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "firstPage",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "boolean",
+                    "typeParameters": [],
+                    "line": 54,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "gapAfterMiddlePage",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "boolean",
+                    "typeParameters": [],
+                    "line": 70,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "gapBeforeMiddlePage",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "boolean",
+                    "typeParameters": [],
+                    "line": 66,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "gapBetweenFirstAndLastPage",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "boolean",
+                    "typeParameters": [],
+                    "line": 62,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "lastClicked",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 50,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "lastPage",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "boolean",
+                    "typeParameters": [],
+                    "line": 78,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "middlePage",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "boolean",
+                    "typeParameters": [],
+                    "line": 74,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "nextClicked",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 46,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "ngOnInit",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 35,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "pageCount",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "number",
+                    "typeParameters": [],
+                    "line": 82,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "previousClicked",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "void",
+                    "typeParameters": [],
+                    "line": 42,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                },
+                {
+                    "name": "secondPage",
+                    "args": [],
+                    "optional": false,
+                    "returnType": "boolean",
+                    "typeParameters": [],
+                    "line": 58,
+                    "deprecated": false,
+                    "deprecationMessage": ""
+                }
+            ],
+            "deprecated": false,
+            "deprecationMessage": "",
+            "hostBindings": [],
+            "hostListeners": [],
+            "description": "",
+            "rawdescription": "\n",
+            "type": "component",
+            "sourceCode": "import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';\n\nimport {faFastBackward, faFastForward, faStepBackward, faStepForward} from '@fortawesome/free-solid-svg-icons';\nimport {PagingDto} from \"@fabric/models\";\n\n@Component({\n  selector: 'app-pager',\n  templateUrl: './pager.component.html',\n  styleUrls: ['./pager.component.scss']\n})\nexport class PagerComponent implements OnInit {\n\n  faFastBackward=faFastBackward\n  faStepBackward=faStepBackward\n  faStepForward=faStepForward\n  faFastForward=faFastForward\n\n  constructor() { }\n\n  @Input()\n  private paging: PagingDto\n\n  @Output()\n  private first = new EventEmitter()\n\n  @Output()\n  private previous = new EventEmitter()\n\n  @Output()\n  private next = new EventEmitter()\n\n  @Output()\n  private last = new EventEmitter()\n\n  ngOnInit(): void {\n  }\n\n  firstClicked() {\n    this.first.emit()\n  }\n\n  previousClicked() {\n    this.previous.emit()\n  }\n\n  nextClicked() {\n    this.next.emit()\n  }\n\n  lastClicked() {\n    this.last.emit()\n  }\n\n  firstPage(): boolean {\n    return this.paging.pageNr == 1\n  }\n\n  secondPage(): boolean {\n    return this.paging.pageNr == 2\n  }\n\n  gapBetweenFirstAndLastPage():boolean {\n    return (this.firstPage() || this.lastPage()) && this.pageCount() > 2\n  }\n\n  gapBeforeMiddlePage():boolean {\n    return this.middlePage() && this.paging.pageNr > 2\n  }\n\n  gapAfterMiddlePage():boolean {\n    return this.middlePage() && this.paging.pageNr < this.pageCount() - 1\n  }\n\n  middlePage(): boolean {\n    return !this.firstPage() && !this.lastPage()\n  }\n\n  lastPage():boolean {\n    return this.paging.pageNr == this.pageCount()\n  }\n\n  pageCount(): number {\n    return Math.ceil(this.paging.nrOfResults/this.paging.pageSize)\n  }\n\n}\n",
+            "assetsDirs": [],
+            "styleUrlsData": [
+                {
+                    "data": "",
+                    "styleUrl": "./pager.component.scss"
+                }
+            ],
+            "stylesData": "",
+            "constructorObj": {
+                "name": "constructor",
+                "description": "",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "args": [],
+                "line": 16
+            },
+            "implements": [
+                "OnInit"
+            ],
+            "templateData": "\n<nav aria-label=\"Page navigation example\">\n    <ul class=\"pagination .pagination-sm\">\n        <li class=\"page-item\">\n            <a class=\"page-link\" href=\"javascript:void(0);\" aria-label=\"Previous\">\n                <span aria-hidden=\"true\">&laquo;</span>\n            </a>\n        </li>\n        <ng-container *ngIf=\"pageCount() <= 5\">\n            <li class=\"page-item\" [class.active]=\"paging.pageNr==1\"><a class=\"page-link\" href=\"javascript:void(0);\">1</a></li>\n            <li *ngIf=\"pageCount()>1\" class=\"page-item\" [class.active]=\"paging.pageNr==2\"><a class=\"page-link\" href=\"javascript:void(0);\">2</a></li>\n            <li *ngIf=\"pageCount()>2\" class=\"page-item\" [class.active]=\"paging.pageNr==3\"><a class=\"page-link\" href=\"javascript:void(0);\">3</a></li>\n            <li *ngIf=\"pageCount()>3\" class=\"page-item\" [class.active]=\"paging.pageNr==4\"><a class=\"page-link\" href=\"javascript:void(0);\">4</a></li>\n            <li *ngIf=\"pageCount()>4\" class=\"page-item\" [class.active]=\"paging.pageNr==5\"><a class=\"page-link\" href=\"javascript:void(0);\">5</a></li>\n        </ng-container>\n        <ng-container *ngIf=\"pageCount() > 5\">\n            <li class=\"page-item\" [class.active]=\"firstPage()\"><a class=\"page-link\" href=\"javascript:void(0);\">1</a></li>\n            <li *ngIf=\"gapBetweenFirstAndLastPage()\" class=\"page-item \">\n                <span class=\"page-link\">..</span>\n            </li>\n            <li *ngIf=\"gapBeforeMiddlePage()\" class=\"page-item \">\n                <span class=\"page-link\">..</span>\n            </li>\n            <li *ngIf=\"middlePage() \" class=\"page-item active\"><a class=\"page-link\" href=\"javascript:void(0);\">{{paging.pageNr}}</a></li>\n            <li *ngIf=\"gapAfterMiddlePage()\" class=\"page-item \">\n                <span class=\"page-link\">..</span>\n            </li>\n            <li class=\"page-item\" [class.active]=\"lastPage()\"><a class=\"page-link\" href=\"javascript:void(0);\">{{pageCount()}}</a></li>\n        </ng-container>\n        <li class=\"page-item\" >\n            <a class=\"page-link\" href=\"#\" aria-label=\"Next\">\n                <span aria-hidden=\"true\">&raquo;</span>\n            </a>\n        </li>\n    </ul>\n</nav>"
+        },
+        {
             "name": "PanelComponent",
             "id": "component-PanelComponent-a51a73e6ebaaf535727ea0fd30d54849385985825483bea89dfa0232aaa710ed6aebcbc5ba2fc4c03edd977ab4f24a4bbc850be2883fe473ba16c5c935736d81",
             "file": "src/app/common/styleguide/panel/panel.component.ts",
@@ -22493,7 +23060,7 @@
         },
         {
             "name": "TableComponent",
-            "id": "component-TableComponent-4d3cda5d8c456d076720d3dc47a13222b83bda436a5531a401c87639f0b28d2e14b97c00e32ad0fe32e68f1544d67252f1b8f817441416ab2a3346893b07a9f4",
+            "id": "component-TableComponent-bbc5f9f9200233df6c50fd641e6cfce77a7793a224e95991d8544d3ad6fe8fac7b99298fcc16ac2f545ac1a7fafa5deda38f0b418fd0e76758422083c8708ef7",
             "file": "src/app/console-page/console-panel/table/table.component.ts",
             "encapsulation": [],
             "entryComponents": [],
@@ -22515,7 +23082,7 @@
                     "deprecated": false,
                     "deprecationMessage": "",
                     "line": 21,
-                    "type": "TabularResponse",
+                    "type": "TabularResultSet",
                     "decorators": []
                 }
             ],
@@ -22587,11 +23154,11 @@
             "description": "",
             "rawdescription": "\n",
             "type": "component",
-            "sourceCode": "import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';\nimport {Row, TabularResponse} from \"@fabric/models\";\n\n@Component({\n    selector: 'app-table',\n    templateUrl: './table.component.html',\n    styleUrls: ['./table.component.scss']\n})\nexport class TableComponent implements OnInit {\n\n    constructor() {\n    }\n\n    ngOnInit(): void {\n    }\n\n    @Output()\n    onRowSelect: EventEmitter<Row> = new EventEmitter<Row>();\n\n    @Input()\n    tabular: TabularResponse\n\n    selected: Row\n\n    selectRow(row: Row) {\n        this.selected = row\n        this.onRowSelect.emit(row)\n    }\n}\n",
+            "sourceCode": "import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';\nimport {Row, TabularResultSet} from \"@fabric/models\";\n\n@Component({\n    selector: 'app-table',\n    templateUrl: './table.component.html',\n    styleUrls: ['./table.component.scss']\n})\nexport class TableComponent implements OnInit {\n\n    constructor() {\n    }\n\n    ngOnInit(): void {\n    }\n\n    @Output()\n    onRowSelect: EventEmitter<Row> = new EventEmitter<Row>();\n\n    @Input()\n    tabular: TabularResultSet\n\n    selected: Row\n\n    selectRow(row: Row) {\n        this.selected = row\n        this.onRowSelect.emit(row)\n    }\n}\n",
             "assetsDirs": [],
             "styleUrlsData": [
                 {
-                    "data": "",
+                    "data": ".table-container {\n  padding: 10px;\n  border: 1px solid steelblue;\n  border-radius: 10px;\n}\n\n.title-section {\n}\n\n.table-section {\n  padding-top: 10px;\n  overflow: auto;\n}\n",
                     "styleUrl": "./table.component.scss"
                 }
             ],
@@ -22607,7 +23174,7 @@
             "implements": [
                 "OnInit"
             ],
-            "templateData": "<ng-container *ngIf=\"tabular\">\n\n    <table class=\"table table-bordered table-hover\">\n        <thead>\n        <tr>\n            <th *ngFor=\"let column of tabular.columns\">\n                {{column.name}}\n            </th>\n        </tr>\n        </thead>\n        <tbody>\n        <tr *ngFor=\"let row of tabular.rows\" (click)=\"selectRow(row)\" [class.table-active]=\"row===selected\" style=\"cursor: pointer;\">\n            <td *ngFor=\"let column of tabular.columns; let idx = index\" >\n                {{row.values[idx]}}\n            </td>\n        </tr>\n        </tbody>\n    </table>\n</ng-container>\n"
+            "templateData": "<ng-container *ngIf=\"tabular\">\n\n    <div class=\"table-container\">\n        <div class=\"title-section\">\n            <app-pager [paging]=\"tabular.pagingInfo\"></app-pager>\n        </div>\n        <div class=\"table-section\">\n            <table class=\"table table-bordered table-hover\">\n                <thead>\n                <tr>\n                    <th *ngFor=\"let column of tabular.columns\">\n                        {{column.name}}\n                    </th>\n                </tr>\n                </thead>\n                <tbody>\n                <tr *ngFor=\"let row of tabular.rows\" (click)=\"selectRow(row)\" [class.table-active]=\"row===selected\" style=\"cursor: pointer;\">\n                    <td *ngFor=\"let column of tabular.columns; let idx = index\" >\n                        {{row.values[idx]}}\n                    </td>\n                </tr>\n                </tbody>\n            </table>\n        </div>\n    </div>\n</ng-container>\n"
         },
         {
             "name": "TitleComponent",
@@ -23188,13 +23755,13 @@
         },
         {
             "name": "ConsolePageModule",
-            "id": "module-ConsolePageModule-661a728e6a486b3ff6ef8187dce5d67583918234aed4089be308fd825ebd3804919d90af3f57bb91201d8a461b25293409e2c8a066cda91d99711363700da264",
+            "id": "module-ConsolePageModule-960f99c5a57713273b75bb05c7b318bf6648857658fac2f2345947bc318c8cd50d36cd272eab15c963f9479093ac665e14917f68bc7f03535a668e3bef81f085",
             "description": "",
             "deprecationMessage": "",
             "deprecated": false,
             "file": "src/app/console-page/console-page.module.ts",
             "methods": [],
-            "sourceCode": "import {NgModule} from \"@angular/core\";\nimport {CoreModule} from \"../core.module\";\nimport {FabricCommonModule} from \"../common/common.module\";\nimport {ConsolePageComponent} from \"./console-page.component\";\nimport {ConsolePanelComponent} from './console-panel/console-panel.component';\nimport {SnippetPanelComponent} from './console-panel/snippet-panel/snippet-panel.component';\nimport {HistoryPanelComponent} from './console-panel/history-panel/history-panel.component';\nimport {SnippetDialogComponent} from './console-panel/snippet-dialog/snippet-dialog.component';\nimport {TableComponent} from './console-panel/table/table.component';\nimport {ComponentModule} from \"../component/component.module\";\n\n@NgModule({\n    declarations: [\n        ConsolePageComponent,\n        ConsolePanelComponent,\n        SnippetPanelComponent,\n        HistoryPanelComponent,\n        SnippetDialogComponent,\n        TableComponent,\n    ],\n    imports: [\n        CoreModule,\n        FabricCommonModule,\n        ComponentModule\n    ],\n    exports: [\n        ConsolePageComponent\n    ]\n})\nexport class ConsolePageModule { }\n",
+            "sourceCode": "import {NgModule} from \"@angular/core\";\nimport {CoreModule} from \"../core.module\";\nimport {FabricCommonModule} from \"../common/common.module\";\nimport {ConsolePageComponent} from \"./console-page.component\";\nimport {ConsolePanelComponent} from './console-panel/console-panel.component';\nimport {SnippetPanelComponent} from './console-panel/snippet-panel/snippet-panel.component';\nimport {HistoryPanelComponent} from './console-panel/history-panel/history-panel.component';\nimport {SnippetDialogComponent} from './console-panel/snippet-dialog/snippet-dialog.component';\nimport {TableComponent} from './console-panel/table/table.component';\nimport {ComponentModule} from \"../component/component.module\";\nimport {OutputPanelComponent} from './console-panel/output-panel/output-panel.component';\n\n@NgModule({\n    declarations: [\n        ConsolePageComponent,\n        ConsolePanelComponent,\n        SnippetPanelComponent,\n        HistoryPanelComponent,\n        SnippetDialogComponent,\n        TableComponent,\n        OutputPanelComponent,\n    ],\n    imports: [\n        CoreModule,\n        FabricCommonModule,\n        ComponentModule\n    ],\n    exports: [\n        ConsolePageComponent\n    ]\n})\nexport class ConsolePageModule { }\n",
             "children": [
                 {
                     "type": "providers",
@@ -23211,6 +23778,9 @@
                         },
                         {
                             "name": "HistoryPanelComponent"
+                        },
+                        {
+                            "name": "OutputPanelComponent"
                         },
                         {
                             "name": "SnippetDialogComponent"
@@ -23301,13 +23871,13 @@
         },
         {
             "name": "FabricCommonModule",
-            "id": "module-FabricCommonModule-ea96135bbedaffafbd2163d96c8ce31faa09f73839512657eade3e13ea11a9925afdfd867ecca77101560fd5d48bc64d339f820f0ae3b52700fd97c12e4a33e1",
+            "id": "module-FabricCommonModule-454dc7ed996799428e8c3a6afbd607d9943337d05172735e117bc11a676b0f1446e7cbb8788ae5a5829e50d8c765faa57f03cc0080938cd5d71f0713ede7d2c5",
             "description": "",
             "deprecationMessage": "",
             "deprecated": false,
             "file": "src/app/common/common.module.ts",
             "methods": [],
-            "sourceCode": "import {NgModule} from \"@angular/core\";\n\nimport {CoreModule} from '../core.module';\n\nimport {PopupMenuComponent} from './popup-menu/popup-menu.component';\nimport {ModalComponent} from './modal/modal.component';\nimport {Layout1ColComponent} from \"./styleguide/layout-1col/layout-1col.component\";\nimport {BackButtonComponent} from \"./styleguide/back-button/back-button.component\";\nimport {PanelComponent} from \"./styleguide/panel/panel.component\";\nimport {ConfirmationDialogComponent} from \"./confirmation-dialog/confirmation-dialog.component\";\nimport {ValidationMessagesComponent} from './validation-messages/validation-messages.component';\nimport {TitleComponent} from './styleguide/title/title.component';\nimport {BreadcrumbComponent} from './styleguide/breadcrumb/breadcrumb.component';\nimport {ActionButtonsComponent} from './styleguide/action-buttons/action-buttons.component';\nimport {SideBarComponent} from './styleguide/side-bar/side-bar.component';\nimport {ModalHeaderComponent} from './styleguide/modal-header/modal-header.component';\nimport {ModalFooterComponent} from './styleguide/modal-footer/modal-footer.component';\nimport {HTTP_INTERCEPTORS} from \"@angular/common/http\";\nimport {HttpErrorInterceptor} from \"./connection-status/http-error.interceptor\";\nimport {ConnectionStatusComponent} from './connection-status/connection-status.component';\nimport {CommandProgressComponent} from './styleguide/command-progress/command-progress.component';\nimport {StatusComponent} from './styleguide/status/status.component';\nimport {NavComponent} from './styleguide/nav/nav.component';\nimport {IntroComponent} from './styleguide/intro/intro.component';\nimport {LoadingComponent} from './loading/loading.component';\nimport {ToastComponent} from './toast/toast.component';\nimport {InfoComponent} from './styleguide/info/info.component';\n\n@NgModule({\n    declarations: [\n        ModalComponent,\n        PopupMenuComponent,\n        Layout1ColComponent,\n        BackButtonComponent,\n        PanelComponent,\n        ConfirmationDialogComponent,\n        ValidationMessagesComponent,\n        TitleComponent,\n        BreadcrumbComponent,\n        ActionButtonsComponent,\n        SideBarComponent,\n        ModalHeaderComponent,\n        ModalFooterComponent,\n        ConnectionStatusComponent,\n        CommandProgressComponent,\n        StatusComponent,\n        NavComponent,\n        IntroComponent,\n        LoadingComponent,\n        ToastComponent,\n        InfoComponent,\n    ],\n    providers: [\n        {\n            provide: HTTP_INTERCEPTORS,\n            useClass: HttpErrorInterceptor,\n            multi: true\n        }\n    ],\n    imports: [\n        CoreModule,\n    ],\n    exports: [\n        ModalComponent,\n        PopupMenuComponent,\n        Layout1ColComponent,\n        BackButtonComponent,\n        PanelComponent,\n        ConfirmationDialogComponent,\n        ValidationMessagesComponent,\n        TitleComponent,\n        BreadcrumbComponent,\n        ActionButtonsComponent,\n        SideBarComponent,\n        ModalHeaderComponent,\n        ModalFooterComponent,\n        CommandProgressComponent,\n        NavComponent,\n        IntroComponent,\n        LoadingComponent,\n        InfoComponent,\n    ]\n})\nexport class FabricCommonModule {\n\n}\n",
+            "sourceCode": "import {NgModule} from \"@angular/core\";\n\nimport {CoreModule} from '../core.module';\n\nimport {PopupMenuComponent} from './popup-menu/popup-menu.component';\nimport {ModalComponent} from './modal/modal.component';\nimport {Layout1ColComponent} from \"./styleguide/layout-1col/layout-1col.component\";\nimport {BackButtonComponent} from \"./styleguide/back-button/back-button.component\";\nimport {PanelComponent} from \"./styleguide/panel/panel.component\";\nimport {ConfirmationDialogComponent} from \"./confirmation-dialog/confirmation-dialog.component\";\nimport {ValidationMessagesComponent} from './validation-messages/validation-messages.component';\nimport {TitleComponent} from './styleguide/title/title.component';\nimport {BreadcrumbComponent} from './styleguide/breadcrumb/breadcrumb.component';\nimport {ActionButtonsComponent} from './styleguide/action-buttons/action-buttons.component';\nimport {SideBarComponent} from './styleguide/side-bar/side-bar.component';\nimport {ModalHeaderComponent} from './styleguide/modal-header/modal-header.component';\nimport {ModalFooterComponent} from './styleguide/modal-footer/modal-footer.component';\nimport {HTTP_INTERCEPTORS} from \"@angular/common/http\";\nimport {HttpErrorInterceptor} from \"./connection-status/http-error.interceptor\";\nimport {ConnectionStatusComponent} from './connection-status/connection-status.component';\nimport {CommandProgressComponent} from './styleguide/command-progress/command-progress.component';\nimport {StatusComponent} from './styleguide/status/status.component';\nimport {NavComponent} from './styleguide/nav/nav.component';\nimport {IntroComponent} from './styleguide/intro/intro.component';\nimport {LoadingComponent} from './loading/loading.component';\nimport {ToastComponent} from './toast/toast.component';\nimport {InfoComponent} from './styleguide/info/info.component';\nimport {PagerComponent} from './pager/pager.component';\n\n@NgModule({\n    declarations: [\n        ModalComponent,\n        PopupMenuComponent,\n        Layout1ColComponent,\n        BackButtonComponent,\n        PanelComponent,\n        ConfirmationDialogComponent,\n        ValidationMessagesComponent,\n        TitleComponent,\n        BreadcrumbComponent,\n        ActionButtonsComponent,\n        SideBarComponent,\n        ModalHeaderComponent,\n        ModalFooterComponent,\n        ConnectionStatusComponent,\n        CommandProgressComponent,\n        StatusComponent,\n        NavComponent,\n        IntroComponent,\n        LoadingComponent,\n        ToastComponent,\n        InfoComponent,\n        PagerComponent\n    ],\n    providers: [\n        {\n            provide: HTTP_INTERCEPTORS,\n            useClass: HttpErrorInterceptor,\n            multi: true\n        }\n    ],\n    imports: [\n        CoreModule,\n    ],\n    exports: [\n        ModalComponent,\n        PopupMenuComponent,\n        Layout1ColComponent,\n        BackButtonComponent,\n        PanelComponent,\n        ConfirmationDialogComponent,\n        ValidationMessagesComponent,\n        TitleComponent,\n        BreadcrumbComponent,\n        ActionButtonsComponent,\n        SideBarComponent,\n        ModalHeaderComponent,\n        ModalFooterComponent,\n        CommandProgressComponent,\n        NavComponent,\n        IntroComponent,\n        LoadingComponent,\n        InfoComponent,\n        PagerComponent\n    ]\n})\nexport class FabricCommonModule {\n\n}\n",
             "children": [
                 {
                     "type": "providers",
@@ -23361,6 +23931,9 @@
                         },
                         {
                             "name": "NavComponent"
+                        },
+                        {
+                            "name": "PagerComponent"
                         },
                         {
                             "name": "PanelComponent"
@@ -23434,6 +24007,9 @@
                         },
                         {
                             "name": "NavComponent"
+                        },
+                        {
+                            "name": "PagerComponent"
                         },
                         {
                             "name": "PanelComponent"
@@ -23727,6 +24303,96 @@
     "miscellaneous": {
         "variables": [
             {
+                "name": "Case_1_10_1",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/pager/pager.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "PagerComponentStory.bind({})"
+            },
+            {
+                "name": "Case_2_10_1",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/pager/pager.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "PagerComponentStory.bind({})"
+            },
+            {
+                "name": "Case_40_10_1",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/pager/pager.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "PagerComponentStory.bind({})"
+            },
+            {
+                "name": "Case_40_10_3",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/pager/pager.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "PagerComponentStory.bind({})"
+            },
+            {
+                "name": "Case_55_10_1",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/pager/pager.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "PagerComponentStory.bind({})"
+            },
+            {
+                "name": "Case_55_10_2",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/pager/pager.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "PagerComponentStory.bind({})"
+            },
+            {
+                "name": "Case_55_10_3",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/pager/pager.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "PagerComponentStory.bind({})"
+            },
+            {
+                "name": "Case_55_10_5",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/pager/pager.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "PagerComponentStory.bind({})"
+            },
+            {
+                "name": "Case_55_10_6",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/pager/pager.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "",
+                "defaultValue": "PagerComponentStory.bind({})"
+            },
+            {
                 "name": "Case1",
                 "ctype": "miscellaneous",
                 "subtype": "variable",
@@ -23915,6 +24581,16 @@
                 "deprecationMessage": "",
                 "type": "NavTreeItemDto",
                 "defaultValue": "{\n    root: false,\n    label: \"ORDERS\",\n    columns: listOfValues(5, \"column_\"),\n    rows: [\n        { values : listOfValues(5, \"row_1_\") },\n        { values : listOfValues(5, \"row_2_\") },\n        { values : listOfValues(5, \"row_3_\") },\n        { values : listOfValues(5, \"row_4_\") },\n    ],\n    navItems : [\n        {\n            label: \"-- select table --\"\n        },\n        {\n            label: 'PRODUCTS'\n        },\n        {\n            label: 'CUSTOMERS'\n        },\n        {\n            label: 'ORDER_ITEMS'\n        },\n    ],\n    children: []\n\n}"
+            },
+            {
+                "name": "PagerComponentStory",
+                "ctype": "miscellaneous",
+                "subtype": "variable",
+                "file": "src/app/common/pager/pager.stories.ts",
+                "deprecated": false,
+                "deprecationMessage": "",
+                "type": "Story<PagerComponent>",
+                "defaultValue": "(args: PagerComponent) => ({\n    component: PagerComponent,\n    props: args,\n\n})"
             },
             {
                 "name": "ParameterCodecInstance",
@@ -24307,6 +24983,108 @@
         ],
         "enumerations": [],
         "groupedVariables": {
+            "src/app/common/pager/pager.stories.ts": [
+                {
+                    "name": "Case_1_10_1",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/common/pager/pager.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "PagerComponentStory.bind({})"
+                },
+                {
+                    "name": "Case_2_10_1",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/common/pager/pager.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "PagerComponentStory.bind({})"
+                },
+                {
+                    "name": "Case_40_10_1",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/common/pager/pager.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "PagerComponentStory.bind({})"
+                },
+                {
+                    "name": "Case_40_10_3",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/common/pager/pager.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "PagerComponentStory.bind({})"
+                },
+                {
+                    "name": "Case_55_10_1",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/common/pager/pager.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "PagerComponentStory.bind({})"
+                },
+                {
+                    "name": "Case_55_10_2",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/common/pager/pager.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "PagerComponentStory.bind({})"
+                },
+                {
+                    "name": "Case_55_10_3",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/common/pager/pager.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "PagerComponentStory.bind({})"
+                },
+                {
+                    "name": "Case_55_10_5",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/common/pager/pager.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "PagerComponentStory.bind({})"
+                },
+                {
+                    "name": "Case_55_10_6",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/common/pager/pager.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "",
+                    "defaultValue": "PagerComponentStory.bind({})"
+                },
+                {
+                    "name": "PagerComponentStory",
+                    "ctype": "miscellaneous",
+                    "subtype": "variable",
+                    "file": "src/app/common/pager/pager.stories.ts",
+                    "deprecated": false,
+                    "deprecationMessage": "",
+                    "type": "Story<PagerComponent>",
+                    "defaultValue": "(args: PagerComponent) => ({\n    component: PagerComponent,\n    props: args,\n\n})"
+                }
+            ],
             "src/app/console-page/console-panel/snippet-dialog/snippet-dialog.stories.ts": [
                 {
                     "name": "Case1",
@@ -25118,33 +25896,6 @@
                 "status": "low"
             },
             {
-                "filePath": "src/app/api/models/console-request-dto.ts",
-                "type": "interface",
-                "linktype": "interface",
-                "name": "ConsoleRequestDto",
-                "coveragePercent": 0,
-                "coverageCount": "0/5",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/api/models/console-response-description-dto.ts",
-                "type": "interface",
-                "linktype": "interface",
-                "name": "ConsoleResponseDescriptionDto",
-                "coveragePercent": 0,
-                "coverageCount": "0/5",
-                "status": "low"
-            },
-            {
-                "filePath": "src/app/api/models/console-response-item-dto.ts",
-                "type": "interface",
-                "linktype": "interface",
-                "name": "ConsoleResponseItemDto",
-                "coveragePercent": 0,
-                "coverageCount": "0/7",
-                "status": "low"
-            },
-            {
                 "filePath": "src/app/api/models/entity-dto.ts",
                 "type": "interface",
                 "linktype": "interface",
@@ -25271,10 +26022,46 @@
                 "status": "low"
             },
             {
+                "filePath": "src/app/api/models/paging-dto.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "PagingDto",
+                "coveragePercent": 0,
+                "coverageCount": "0/4",
+                "status": "low"
+            },
+            {
                 "filePath": "src/app/api/models/path.ts",
                 "type": "interface",
                 "linktype": "interface",
                 "name": "Path",
+                "coveragePercent": 0,
+                "coverageCount": "0/7",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/api/models/query-composite-dto.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "QueryCompositeDto",
+                "coveragePercent": 0,
+                "coverageCount": "0/5",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/api/models/query-dto.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "QueryDto",
+                "coveragePercent": 0,
+                "coverageCount": "0/6",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/api/models/result-dto.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "ResultDto",
                 "coveragePercent": 0,
                 "coverageCount": "0/7",
                 "status": "low"
@@ -25406,12 +26193,21 @@
                 "status": "low"
             },
             {
-                "filePath": "src/app/api/models/tabular-response.ts",
+                "filePath": "src/app/api/models/tabular-result-set-meta-data-dto.ts",
                 "type": "interface",
                 "linktype": "interface",
-                "name": "TabularResponse",
+                "name": "TabularResultSetMetaDataDto",
                 "coveragePercent": 0,
-                "coverageCount": "0/5",
+                "coverageCount": "0/2",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/api/models/tabular-result-set.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "TabularResultSet",
+                "coveragePercent": 0,
+                "coverageCount": "0/6",
                 "status": "low"
             },
             {
@@ -25732,6 +26528,115 @@
                 "name": "ModalComponent",
                 "coveragePercent": 0,
                 "coverageCount": "0/8",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/pager/pager.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "PagerComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/24",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/pager/pager.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Case_1_10_1",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/pager/pager.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Case_2_10_1",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/pager/pager.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Case_40_10_1",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/pager/pager.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Case_40_10_3",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/pager/pager.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Case_55_10_1",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/pager/pager.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Case_55_10_2",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/pager/pager.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Case_55_10_3",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/pager/pager.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Case_55_10_5",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/pager/pager.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "Case_55_10_6",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/common/pager/pager.stories.ts",
+                "type": "variable",
+                "linktype": "miscellaneous",
+                "linksubtype": "variable",
+                "name": "PagerComponentStory",
+                "coveragePercent": 0,
+                "coverageCount": "0/1",
                 "status": "low"
             },
             {
@@ -26197,7 +27102,7 @@
                 "linktype": "component",
                 "name": "ConsolePanelComponent",
                 "coveragePercent": 0,
-                "coverageCount": "0/46",
+                "coverageCount": "0/44",
                 "status": "low"
             },
             {
@@ -26216,6 +27121,15 @@
                 "name": "HistoryItem",
                 "coveragePercent": 0,
                 "coverageCount": "0/2",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/console-page/console-panel/output-panel/output-panel.component.ts",
+                "type": "component",
+                "linktype": "component",
+                "name": "OutputPanelComponent",
+                "coveragePercent": 0,
+                "coverageCount": "0/5",
                 "status": "low"
             },
             {
@@ -26309,7 +27223,25 @@
                 "linktype": "injectable",
                 "name": "ConsoleService",
                 "coveragePercent": 0,
-                "coverageCount": "0/9",
+                "coverageCount": "0/20",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/console-page/console.service.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "ConsoleState",
+                "coveragePercent": 0,
+                "coverageCount": "0/4",
+                "status": "low"
+            },
+            {
+                "filePath": "src/app/console-page/console.service.ts",
+                "type": "interface",
+                "linktype": "interface",
+                "name": "Output",
+                "coveragePercent": 0,
+                "coverageCount": "0/4",
                 "status": "low"
             },
             {

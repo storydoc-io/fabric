@@ -17,5 +17,6 @@ public class QueryDTO {
     private String environmentKey;
     private String systemComponentKey;
     private Map<String, String> attributes;
+    private PagingDTO paging;
     private NavItem navItem;
 }
