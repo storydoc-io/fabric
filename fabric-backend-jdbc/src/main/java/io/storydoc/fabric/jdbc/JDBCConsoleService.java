@@ -55,49 +55,52 @@ public class JDBCConsoleService extends JDBCServiceBase implements ConsoleHandle
     public ResultDTO runRequest(QueryDTO queryDTO, Map<String, String> settings) {
         JDBCConnectionDetails connectionDetails = toSettings(settings);
         DataSource dataSource = getDataSource(connectionDetails);
-        try(Connection connection = dataSource.getConnection();) {
+        try (Connection connection = dataSource.getConnection();) {
             String query = queryDTO.getAttributes().get(CONSOLE_FIELD_SQL_QUERY);
 
+            String pagedQuery = query;
+            String countQuery = null;
+            boolean isSelectQuery = query.trim().toLowerCase().startsWith("select");
 
-            String pagedQuery = null;
-
-            if (queryDTO.getPaging() != null) {
+            if (isSelectQuery && queryDTO.getPaging() != null) {
                 PagingDTO paging = queryDTO.getPaging();
-                pagedQuery = String.format("%s OFFSET %d ROWS FETCH NEXT %d ROWS ONLY", query, (paging.getPageNr()-1)*paging.getPageSize(), paging.getPageSize());
+                pagedQuery = String.format("%s OFFSET %d ROWS FETCH NEXT %d ROWS ONLY", query, (paging.getPageNr() - 1) * paging.getPageSize(), paging.getPageSize());
+                countQuery = String.format("select count(*) from (%s)", query);
+                log.info("paged query: " + pagedQuery);
+                log.info("count query: " + countQuery);
             }
 
-            String countQuery = String.format("select count(*) from (%s)", query);
+            try (Statement stmt = connection.createStatement()) {
+                long count = 0;
 
-            log.info("paged query: " + pagedQuery);
-            log.info("count query: " + countQuery);
+                if (countQuery != null) {
+                    ResultSet countResult = stmt.executeQuery(countQuery);
+                    countResult.next();
+                    count = countResult.getLong(1);
+                }
 
-            try (Statement pagedQueryStmt = connection.createStatement(); Statement countQueryStmt = connection.createStatement()) {
-
-                ResultSet countResult = countQueryStmt.executeQuery(countQuery);
-                countResult.next();
-                long count = countResult.getLong(1);
-
-                ResultSet pageResult = pagedQueryStmt.executeQuery(pagedQuery);
+                ResultSet resultSet = stmt.executeQuery(pagedQuery);
                 JDBCResultSet2TabularResponseMapper resultSetMapper = new JDBCResultSet2TabularResponseMapper();
                 ResultDTO resultDTO = ResultDTO.builder()
-                    .systemType(systemType())
-                    .resultType(ResultType.TABULAR)
-                    .tabular(resultSetMapper.tabularResponse(pageResult))
-                    .build();
+                        .systemType(systemType())
+                        .resultType(ResultType.TABULAR)
+                        .tabular(resultSetMapper.tabularResponse(resultSet))
+                        .build();
 
-                if (queryDTO.getPaging() != null) {
+                if (queryDTO.getPaging() != null && isSelectQuery) {
                     PagingDTO paging = queryDTO.getPaging();
                     resultDTO.getTabular().setPagingInfo(
-                        PagingDTO.builder()
-                            .pageNr(paging.getPageNr())
-                            .pageSize(paging.getPageSize())
-                            .nrOfResults(count)
-                            .build()
+                            PagingDTO.builder()
+                                    .pageNr(paging.getPageNr())
+                                    .pageSize(paging.getPageSize())
+                                    .nrOfResults(count)
+                                    .build()
                     );
                 }
-                return resultDTO;
-            }
 
+                return resultDTO;
+
+            }
         } catch (Exception e) {
             log.info("error executing query", e);
             return ResultDTO.builder()
@@ -107,7 +110,6 @@ public class JDBCConsoleService extends JDBCServiceBase implements ConsoleHandle
                     .build();
         }
     }
-
 
     @Override
     public List<NavItem> getNavigation(NavigationRequest navigationRequest) {
