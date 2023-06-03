@@ -1,11 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {PagingDto, QueryDto, Row, TabularResultSet} from "@fabric/models";
+import {DocumentsResultSet, PagingDto, QueryDto, Row, TabularResultSet} from "@fabric/models";
 import {QueryPanelSpec} from "../console-panel.component";
 
 export interface QueryOutput {
   jsonOutput?: string
   stackTraceOutput?: string
   tabularResponse?: TabularResultSet
+  documentsResponse?: DocumentsResultSet
 }
 
 export interface QueryPanelState {

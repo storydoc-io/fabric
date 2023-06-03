@@ -110,8 +110,14 @@ export class ConsoleServiceOld {
         let output: QueryOutput
         switch (result.resultType) {
             case 'JSON': {
-                output = {
-                    jsonOutput : JSON.parse(result.content)
+                if  (result.documentsResultSet) {
+                    output = {
+                        documentsResponse : result.documentsResultSet
+                    }
+                } else {
+                    output = {
+                        jsonOutput : JSON.parse(result.content)
+                    }
                 }
                 break
             }

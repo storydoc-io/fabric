@@ -1516,6 +1516,21 @@
           }
         }
       },
+      "DocumentsResultSet": {
+        "title": "DocumentsResultSet",
+        "type": "object",
+        "properties": {
+          "documents": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "pagingInfo": {
+            "$ref": "#/components/schemas/PagingDTO"
+          }
+        }
+      },
       "EntityDTO": {
         "title": "EntityDTO",
         "type": "object",
@@ -1805,6 +1820,9 @@
           },
           "description": {
             "$ref": "#/components/schemas/TabularResultSetMetaDataDTO"
+          },
+          "documentsResultSet": {
+            "$ref": "#/components/schemas/DocumentsResultSet"
           },
           "navItems": {
             "type": "array",

@@ -13,6 +13,10 @@
                 <app-table [tabular]="output.tabularResponse" (onRowSelect)="selectTableRow($event)"
                            (onPageSelect)="selectPage($event)"></app-table>
             </ng-container>
+            <ng-container *ngIf="output.documentsResponse">
+                <app-documents [documents]="output.documentsResponse" (onRowSelect)="selectTableRow($event)"
+                           (onPageSelect)="selectPage($event)"></app-documents>
+            </ng-container>
         </div>
     </ng-container>
 </ng-container>

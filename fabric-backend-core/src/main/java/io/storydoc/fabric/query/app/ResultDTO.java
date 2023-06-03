@@ -1,6 +1,7 @@
 package io.storydoc.fabric.query.app;
 
 import io.storydoc.fabric.console.app.navigation.NavItem;
+import io.storydoc.fabric.query.app.documents.DocumentsResultSet;
 import io.storydoc.fabric.query.app.tabular.TabularResultSet;
 import io.storydoc.fabric.query.app.tabular.TabularResultSetMetaDataDTO;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class ResultDTO {
     private ResultType resultType;
     private TabularResultSetMetaDataDTO description;
     private String content;
+    private DocumentsResultSet documentsResultSet;
     private TabularResultSet tabular;
     private List<NavItem> navItems;
 }

@@ -7,6 +7,7 @@ export { ConnectionTestRequestDto } from './models/connection-test-request-dto';
 export { ConnectionTestResponseDto } from './models/connection-test-response-dto';
 export { ConsoleDescriptorDto } from './models/console-descriptor-dto';
 export { ConsoleDescriptorItemDto } from './models/console-descriptor-item-dto';
+export { DocumentsResultSet } from './models/documents-result-set';
 export { EntityDto } from './models/entity-dto';
 export { EnvironmentDto } from './models/environment-dto';
 export { ExecutionDto } from './models/execution-dto';
