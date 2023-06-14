@@ -7,9 +7,11 @@
         <div class="table-section">
             <table class="table table-bordered table-hover">
                 <tbody>
-                <div *ngFor="let document of documents.documents" >
-                    {{document}}
-                </div>
+                    <tr *ngFor="let document of documents.documents">
+                        <td>
+                            <pre>{{prettyPrint(document)}}</pre>
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

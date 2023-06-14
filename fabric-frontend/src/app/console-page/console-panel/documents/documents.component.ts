@@ -2,35 +2,40 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {DocumentsResultSet, PagingDto, Row} from "@fabric/models";
 
 @Component({
-  selector: 'app-documents',
-  templateUrl: './documents.component.html',
-  styleUrls: ['./documents.component.scss']
+    selector: 'app-documents',
+    templateUrl: './documents.component.html',
+    styleUrls: ['./documents.component.scss']
 })
 export class DocumentsComponent {
 
-  constructor() { }
+    constructor() {
+    }
 
-  ngOnInit(): void {
-  }
+    ngOnInit(): void {
+    }
 
-  @Output()
-  onRowSelect: EventEmitter<Row> = new EventEmitter<Row>();
+    @Output()
+    onRowSelect: EventEmitter<Row> = new EventEmitter<Row>();
 
-  @Output()
-  onPageSelect: EventEmitter<PagingDto> = new EventEmitter<PagingDto>();
+    @Output()
+    onPageSelect: EventEmitter<PagingDto> = new EventEmitter<PagingDto>();
 
-  @Input()
-  documents: DocumentsResultSet
+    @Input()
+    documents: DocumentsResultSet
 
-  selected: Row
+    selected: Row
 
-  selectRow(row: Row) {
-    this.selected = row
-    this.onRowSelect.emit(row)
-  }
+    selectRow(row: Row) {
+        this.selected = row
+        this.onRowSelect.emit(row)
+    }
 
-  selectPage(pagingInfo: PagingDto) {
-    this.onPageSelect.emit(pagingInfo)
-  }
+    selectPage(pagingInfo: PagingDto) {
+        this.onPageSelect.emit(pagingInfo)
+    }
+
+    prettyPrint(jsonString: string): string {
+        return JSON.stringify(JSON.parse(jsonString), null, 2)
+    }
 
 }

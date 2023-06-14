@@ -1,36 +1,61 @@
-
-<nav aria-label="Page navigation example">
-    <ul class="pagination .pagination-sm">
-        <li class="page-item">
-            <a class="page-link" href="javascript:void(0);" (click)="selectPage(paging.pageNr-1)" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-            </a>
-        </li>
-        <ng-container *ngIf="pageCount() <= 5">
-            <li class="page-item" [class.active]="paging.pageNr==1"><a href="javascript:void(0);" class="page-link" (click)="selectPage(1)">1</a></li>
-            <li *ngIf="pageCount()>1" class="page-item" [class.active]="paging.pageNr==2"><a href="javascript:void(0);" class="page-link" (click)="selectPage(2)">2</a></li>
-            <li *ngIf="pageCount()>2" class="page-item" [class.active]="paging.pageNr==3"><a href="javascript:void(0);" class="page-link" (click)="selectPage(3)">3</a></li>
-            <li *ngIf="pageCount()>3" class="page-item" [class.active]="paging.pageNr==4"><a href="javascript:void(0);" class="page-link" (click)="selectPage(4)">4</a></li>
-            <li *ngIf="pageCount()>4" class="page-item" [class.active]="paging.pageNr==5"><a href="javascript:void(0);" class="page-link" (click)="selectPage(5)">5</a></li>
-        </ng-container>
-        <ng-container *ngIf="pageCount() > 5">
-            <li class="page-item" [class.active]="firstPage()"><a href="javascript:void(0);" class="page-link" (click)="selectPage(1)">1</a></li>
-            <li *ngIf="gapBetweenFirstAndLastPage()" class="page-item ">
-                <span class="page-link">..</span>
-            </li>
-            <li *ngIf="gapBeforeMiddlePage()" class="page-item ">
-                <span class="page-link">..</span>
-            </li>
-            <li *ngIf="middlePage() " class="page-item active"><a href="javascript:void(0);" class="page-link" (click)="selectPage(paging.pageNr)">{{paging.pageNr}}</a></li>
-            <li *ngIf="gapAfterMiddlePage()" class="page-item ">
-                <span class="page-link">..</span>
-            </li>
-            <li class="page-item" [class.active]="lastPage()" (click)="selectPage(pageCount())"><a href="javascript:void(0);" class="page-link" href="javascript:void(0);">{{pageCount()}}</a></li>
-        </ng-container>
-        <li class="page-item" >
-            <a class="page-link" href="javascript:void(0);" (click)="selectPage(paging.pageNr+1) "aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-            </a>
-        </li>
-    </ul>
-</nav>
+<div class="container-fluid">
+    <div class="row align-items-center">
+        <div class="col-sm-2">
+            <ul class="pagination .pagination-sm">
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0);" (click)="selectPage(paging.pageNr-1)"
+                       aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <ng-container *ngIf="pageCount() <= 5">
+                    <li class="page-item" [class.active]="paging.pageNr==1"><a href="javascript:void(0);"
+                                                                               class="page-link"
+                                                                               (click)="selectPage(1)">1</a></li>
+                    <li *ngIf="pageCount()>1" class="page-item" [class.active]="paging.pageNr==2"><a
+                            href="javascript:void(0);" class="page-link" (click)="selectPage(2)">2</a></li>
+                    <li *ngIf="pageCount()>2" class="page-item" [class.active]="paging.pageNr==3"><a
+                            href="javascript:void(0);" class="page-link" (click)="selectPage(3)">3</a></li>
+                    <li *ngIf="pageCount()>3" class="page-item" [class.active]="paging.pageNr==4"><a
+                            href="javascript:void(0);" class="page-link" (click)="selectPage(4)">4</a></li>
+                    <li *ngIf="pageCount()>4" class="page-item" [class.active]="paging.pageNr==5"><a
+                            href="javascript:void(0);" class="page-link" (click)="selectPage(5)">5</a></li>
+                </ng-container>
+                <ng-container *ngIf="pageCount() > 5">
+                    <li class="page-item" [class.active]="firstPage()"><a href="javascript:void(0);" class="page-link"
+                                                                          (click)="selectPage(1)">1</a></li>
+                    <li *ngIf="gapBetweenFirstAndLastPage()" class="page-item ">
+                        <span class="page-link">..</span>
+                    </li>
+                    <li *ngIf="gapBeforeMiddlePage()" class="page-item ">
+                        <span class="page-link">..</span>
+                    </li>
+                    <li *ngIf="middlePage() " class="page-item active"><a href="javascript:void(0);" class="page-link"
+                                                                          (click)="selectPage(paging.pageNr)">{{paging.pageNr}}</a>
+                    </li>
+                    <li *ngIf="gapAfterMiddlePage()" class="page-item ">
+                        <span class="page-link">..</span>
+                    </li>
+                    <li class="page-item" [class.active]="lastPage()" (click)="selectPage(pageCount())"><a
+                            href="javascript:void(0);" class="page-link">{{pageCount()}}</a>
+                    </li>
+                </ng-container>
+                <li class="page-item">
+                    <a class="page-link" href="javascript:void(0);" (click)="selectPage(paging.pageNr+1) "
+                       aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-6 ">
+            <span>showing {{from()}}-{{to()}} of {{paging.nrOfResults}} results </span>
+            <span [formGroup]="formGroup">
+                  <select style="background-color: white; border: 1px solid #f8f9fa; border-radius: 3px; width: 60px; " formControlName="pageSize" (change)="selectSize()">
+                      <option *ngFor="let size of sizes" [ngValue]="size">{{size}}</option>
+                  </select>
+            </span>
+            <span> results per page </span>
+        </div>
+    </div>
+</div>
