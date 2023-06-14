@@ -141,13 +141,7 @@ export class ConsolePanelComponent extends HasConfirmationDialogMixin implements
 
     // history
 
-    historyItems: HistoryItem[] = []
-
-    private addHistoryItem(attributes: {}) {
-        this.historyItems.push({
-            attributes
-        })
-    }
+    historyItems: HistoryItem[] = this.service.historyItems
 
     deleteHistoryItem(item: HistoryItem) {
         const index = this.historyItems.indexOf(item, 0);

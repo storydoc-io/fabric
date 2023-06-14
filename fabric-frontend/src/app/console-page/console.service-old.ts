@@ -5,6 +5,7 @@ import {BehaviorSubject} from "rxjs";
 import {distinctUntilChanged, map} from "rxjs/operators";
 import {logChangesToObservable} from "@fabric/common";
 import {QueryOutput, QueryPanelState} from "./console-panel/query-panel/query-panel.component";
+import {HistoryItem} from "./console-panel/history-panel/history-panel.component";
 
 
 interface ConsoleState {
@@ -146,7 +147,7 @@ export class ConsoleServiceOld {
         })
 
         if (result.resultType != 'STACKTRACE') {
-            // this.addHistoryItem(attributes)
+            this.addHistoryItem(request.attributes)
         }
 
 
@@ -194,5 +195,14 @@ export class ConsoleServiceOld {
         }}).toPromise()
     }
 
+    // history items
+
+    historyItems: HistoryItem[] = []
+
+    private addHistoryItem(attributes: {}) {
+        this.historyItems.push({
+            attributes
+        })
+    }
 
 }
