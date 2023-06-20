@@ -20,9 +20,9 @@
                                 </ng-container>
                             </ng-container>
                         </ng-container>
-                            <button type="button" class="btn btn-outline-secondary" (click)="doQuery()">
-                                <fa-icon [icon]="faPlay"></fa-icon>
-                            </button>
+                        <button type="button" class="btn btn-outline-secondary" (click)="doQuery()">
+                            <fa-icon [icon]="faPlay"></fa-icon>
+                        </button>
                         <button type="button" class="btn btn-outline-secondary" (click)="clear()">
                             <fa-icon [icon]="faTimes"></fa-icon>
                         </button>
@@ -45,9 +45,9 @@
                     </ng-container>
                     <ng-container *ngIf="tabState==='HISTORY'">
                         <app-history-panel [historyItems]="historyItems"
-                           (onConvert)="convertHistoryItemToSnippet($event)"
-                           (onSelect)="selectHistoryItem($event)"
-                           (onDelete)="deleteHistoryItem($event)"
+                                           (onConvert)="convertHistoryItemToSnippet($event)"
+                                           (onSelect)="selectHistoryItem($event)"
+                                           (onDelete)="deleteHistoryItem($event)"
                         >
                         </app-history-panel>
                     </ng-container>
@@ -55,20 +55,11 @@
             </app-panel>
         </div>
         <div class="col-md-9">
-            <app-panel>
-                <div style="min-height: 80vh; max-height: 80vh; overflow: auto">
-                    <ng-container *ngIf="jsonOutput">
-                        <pre>{{jsonOutput | json}}</pre>
-                    </ng-container>
-                    <ng-container *ngIf="stackTraceOutput" >
-                        <div class="bg-warning">
-                            {{stackTraceOutput}}
-                        </div>
-                    </ng-container>
-                    <ng-container *ngIf="tabularResponse">
-                        <app-table [tabular]="tabularResponse" (onRowSelect)="selectTableRow($event)"></app-table>
-                    </ng-container>
-                </div>
+            <app-panel *ngIf="output$ | async as queryPanelStates">
+                <ng-container *ngFor="let queryPanelId of getKeys(queryPanelStates)">
+                    <app-query-panel [spec]="getQueryPanelSpec(queryPanelStates[queryPanelId], queryPanelId)">
+                    </app-query-panel>
+                </ng-container>
             </app-panel>
         </div>
     </div>

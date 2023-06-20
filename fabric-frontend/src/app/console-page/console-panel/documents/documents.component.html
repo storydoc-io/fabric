@@ -1,0 +1,19 @@
+<ng-container *ngIf="documents">
+
+    <div class="table-container">
+        <div class="title-section">
+            <app-pager [paging]="documents.pagingInfo" (onPageSelected)="selectPage($event)"></app-pager>
+        </div>
+        <div class="table-section">
+            <table class="table table-bordered table-hover">
+                <tbody>
+                    <tr *ngFor="let document of documents.documents">
+                        <td>
+                            <pre>{{prettyPrint(document)}}</pre>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</ng-container>

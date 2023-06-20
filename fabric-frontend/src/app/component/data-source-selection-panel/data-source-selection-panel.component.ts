@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {SystemDescriptionService, SystemDescriptionWrapper} from "../../system-description-page/system-description.service";
+import {SystemDescriptionService, SystemDescriptionWrapper} from "../../settings/system-description.service";
 import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {faBolt, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {EnvironmentDto, SystemComponentDto, SystemDescriptionDto} from "@fabric/models";

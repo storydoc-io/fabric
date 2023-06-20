@@ -25,6 +25,8 @@ import {IntroComponent} from './styleguide/intro/intro.component';
 import {LoadingComponent} from './loading/loading.component';
 import {ToastComponent} from './toast/toast.component';
 import {InfoComponent} from './styleguide/info/info.component';
+import {PagerComponent} from './pager/pager.component';
+import {VarDirective} from "./ng-var.directive";
 
 @NgModule({
     declarations: [
@@ -49,6 +51,8 @@ import {InfoComponent} from './styleguide/info/info.component';
         LoadingComponent,
         ToastComponent,
         InfoComponent,
+        PagerComponent,
+        VarDirective
     ],
     providers: [
         {
@@ -79,6 +83,8 @@ import {InfoComponent} from './styleguide/info/info.component';
         IntroComponent,
         LoadingComponent,
         InfoComponent,
+        PagerComponent,
+        VarDirective
     ]
 })
 export class FabricCommonModule {

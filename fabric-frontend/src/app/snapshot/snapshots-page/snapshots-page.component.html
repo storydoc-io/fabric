@@ -1,0 +1,24 @@
+<app-layout-1col
+        [sidebar]="sidebar"
+        [title]="title"
+        [breadcrumb]="breadcrumb"
+        [middle]="middle"
+>
+</app-layout-1col>
+
+<ng-template #sidebar>
+    <app-side-bar [active]="'snapshots'"></app-side-bar>
+</ng-template>
+
+<ng-template #title>
+    <app-title text="Snapshots"></app-title>
+</ng-template>
+
+<ng-template #breadcrumb>
+    <app-breadcrumb [breadcrumbs]="breadcrumbs"></app-breadcrumb>
+</ng-template>
+
+<ng-template #middle>
+        <app-snapshot-overview-panel></app-snapshot-overview-panel>
+</ng-template>
+

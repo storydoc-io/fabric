@@ -8,6 +8,8 @@ import {HistoryPanelComponent} from './console-panel/history-panel/history-panel
 import {SnippetDialogComponent} from './console-panel/snippet-dialog/snippet-dialog.component';
 import {TableComponent} from './console-panel/table/table.component';
 import {ComponentModule} from "../component/component.module";
+import {QueryPanelComponent} from './console-panel/query-panel/query-panel.component';
+import { DocumentsComponent } from './console-panel/documents/documents.component';
 
 @NgModule({
     declarations: [
@@ -17,6 +19,8 @@ import {ComponentModule} from "../component/component.module";
         HistoryPanelComponent,
         SnippetDialogComponent,
         TableComponent,
+        QueryPanelComponent,
+        DocumentsComponent,
     ],
     imports: [
         CoreModule,

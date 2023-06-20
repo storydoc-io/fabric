@@ -3,25 +3,31 @@ import {FormArray, FormControl, FormGroup} from "@angular/forms";
 import {faPlay, faTimes} from '@fortawesome/free-solid-svg-icons';
 import {HasConfirmationDialogMixin, ModalService} from "@fabric/common";
 import {DataSourceSelection} from "@fabric/component";
-import {ConsoleDescriptorDto, NavItem, Row, SnippetDto, TabularResponse} from "@fabric/models";
-import {ConsoleService} from "../console.service";
+import {ConsoleDescriptorDto, NavItem, PagingDto, QueryDto, SnippetDto} from "@fabric/models";
+import {ConsoleServiceOld} from "../console.service-old";
 import {HistoryItem} from "./history-panel/history-panel.component";
 import {SnippetDialogData, SnippetDialogSpec} from "./snippet-dialog/snippet-dialog.component";
+import {QueryPanelState} from "./query-panel/query-panel.component";
 
 type TabState = 'HISTORY' | 'SNIPPETS'
+
+export interface QueryPanelSpec {
+    state: QueryPanelState
+    selectPage: (page: PagingDto) => void
+}
 
 @Component({
     selector: 'app-console-panel',
     templateUrl: './console-panel.component.html',
     styleUrls: ['./console-panel.component.scss'],
-    providers: [ConsoleService]
+    providers: [ConsoleServiceOld]
 })
 export class ConsolePanelComponent extends HasConfirmationDialogMixin implements OnChanges {
 
     faPlay = faPlay
     faTimes = faTimes
 
-    constructor(protected modalService: ModalService, private service: ConsoleService) {
+    constructor(protected modalService: ModalService, private service: ConsoleServiceOld) {
         super(modalService)
     }
 
@@ -64,36 +70,19 @@ export class ConsolePanelComponent extends HasConfirmationDialogMixin implements
         this.fieldsControl.value.forEach((fieldValue, i) => {
             attributes[this.descriptor.items[i].name] = fieldValue
         })
-        this.service.runRequest(
-            this.dataSource.environment.key,
-            this.dataSource.systemComponent.key,
+        let paging: PagingDto = {
+            pageNr: 1,
+            pageSize: 5
+        }
+        let query: QueryDto = <QueryDto>{
+            environmentKey: this.dataSource.environment.key,
+            systemComponentKey: this.dataSource.systemComponent.key,
             attributes,
-            this.currentNavItem
-        ).then((response) => {
-            this.clearOutput();
-            switch (response.consoleOutputType) {
-                case 'JSON': {
-                    this.jsonOutput = JSON.parse(response.content)
-                    break
-                }
-                case 'STACKTRACE': {
-                    this.stackTraceOutput = response.content
-                    break
-                }
-                case 'TABULAR' : {
-                    this.tabularResponse = response.tabular
-                }
-            }
-            if (response.consoleOutputType != 'STACKTRACE') {
-                this.addHistoryItem(attributes)
-            }
-        })
-    }
+            navItem: this.currentNavItem,
+            paging
+        }
 
-    private clearOutput() {
-        this.jsonOutput = null
-        this.stackTraceOutput = null
-        this.tabularResponse = null
+        this.service.runQuery(query)
     }
 
     clear() {
@@ -101,8 +90,26 @@ export class ConsolePanelComponent extends HasConfirmationDialogMixin implements
                 this.fieldControl(index).setValue(null)
             }
         )
-        this.clearOutput()
+        this.service.clearOutput()
     }
+
+    // output panel
+
+    // output
+    output$ = this.service.output$
+
+    getKeys(map): string[]{
+        if (map) return Object.keys(map)
+        return []
+    }
+
+    getQueryPanelSpec(queryPanelState: QueryPanelState, queryPanelId: string): QueryPanelSpec {
+        return {
+            state: queryPanelState,
+            selectPage: (page: PagingDto) => this.service.selectPage(queryPanelId, page)
+        }
+    }
+
 
     // tabs history/snippet
 
@@ -134,13 +141,7 @@ export class ConsolePanelComponent extends HasConfirmationDialogMixin implements
 
     // history
 
-    historyItems: HistoryItem[] = []
-
-    private addHistoryItem(attributes: {}) {
-        this.historyItems.push({
-            attributes
-        })
-    }
+    historyItems: HistoryItem[] = this.service.historyItems
 
     deleteHistoryItem(item: HistoryItem) {
         const index = this.historyItems.indexOf(item, 0);
@@ -279,18 +280,5 @@ export class ConsolePanelComponent extends HasConfirmationDialogMixin implements
     }
 
     confirmationDialogSpec: any;
-
-
-
-    // output
-
-    jsonOutput: string
-    stackTraceOutput: string
-    tabularResponse: TabularResponse
-
-    selectTableRow(row: Row) {
-        console.log('selected: ', row)
-    }
-
 
 }

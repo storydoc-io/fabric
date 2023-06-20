@@ -241,7 +241,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ConsoleRequestDTO"
+                "$ref": "#/components/schemas/QueryDTO"
               }
             }
           }
@@ -252,7 +252,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ConsoleResponseItemDTO"
+                  "$ref": "#/components/schemas/ResultDTO"
                 }
               }
             }
@@ -1516,81 +1516,18 @@
           }
         }
       },
-      "ConsoleRequestDTO": {
-        "title": "ConsoleRequestDTO",
+      "DocumentsResultSet": {
+        "title": "DocumentsResultSet",
         "type": "object",
         "properties": {
-          "attributes": {
-            "type": "object",
-            "additionalProperties": {
+          "documents": {
+            "type": "array",
+            "items": {
               "type": "string"
             }
           },
-          "environmentKey": {
-            "type": "string"
-          },
-          "navItem": {
-            "$ref": "#/components/schemas/NavItem"
-          },
-          "systemComponentKey": {
-            "type": "string"
-          }
-        }
-      },
-      "ConsoleResponseDescriptionDTO": {
-        "title": "ConsoleResponseDescriptionDTO",
-        "type": "object",
-        "properties": {
-          "attributes": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            }
-          },
-          "children": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ConsoleResponseDescriptionDTO"
-            }
-          },
-          "responseDescriptionType": {
-            "type": "string"
-          },
-          "systemType": {
-            "type": "string"
-          }
-        }
-      },
-      "ConsoleResponseItemDTO": {
-        "title": "ConsoleResponseItemDTO",
-        "type": "object",
-        "properties": {
-          "consoleOutputType": {
-            "type": "string",
-            "enum": [
-              "JSON",
-              "MESSAGE",
-              "STACKTRACE",
-              "TABULAR"
-            ]
-          },
-          "content": {
-            "type": "string"
-          },
-          "description": {
-            "$ref": "#/components/schemas/ConsoleResponseDescriptionDTO"
-          },
-          "navItems": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/NavItem"
-            }
-          },
-          "systemType": {
-            "type": "string"
-          },
-          "tabular": {
-            "$ref": "#/components/schemas/TabularResponse"
+          "pagingInfo": {
+            "$ref": "#/components/schemas/PagingDTO"
           }
         }
       },
@@ -1807,6 +1744,24 @@
           }
         }
       },
+      "PagingDTO": {
+        "title": "PagingDTO",
+        "type": "object",
+        "properties": {
+          "nrOfResults": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "pageNr": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "Path": {
         "title": "Path",
         "type": "object",
@@ -1829,6 +1784,66 @@
           },
           "root": {
             "$ref": "#/components/schemas/Path"
+          }
+        }
+      },
+      "QueryDTO": {
+        "title": "QueryDTO",
+        "type": "object",
+        "properties": {
+          "attributes": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "environmentKey": {
+            "type": "string"
+          },
+          "navItem": {
+            "$ref": "#/components/schemas/NavItem"
+          },
+          "paging": {
+            "$ref": "#/components/schemas/PagingDTO"
+          },
+          "systemComponentKey": {
+            "type": "string"
+          }
+        }
+      },
+      "ResultDTO": {
+        "title": "ResultDTO",
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string"
+          },
+          "description": {
+            "$ref": "#/components/schemas/TabularResultSetMetaDataDTO"
+          },
+          "documentsResultSet": {
+            "$ref": "#/components/schemas/DocumentsResultSet"
+          },
+          "navItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NavItem"
+            }
+          },
+          "resultType": {
+            "type": "string",
+            "enum": [
+              "JSON",
+              "MESSAGE",
+              "STACKTRACE",
+              "TABULAR"
+            ]
+          },
+          "systemType": {
+            "type": "string"
+          },
+          "tabular": {
+            "$ref": "#/components/schemas/TabularResultSet"
           }
         }
       },
@@ -2072,8 +2087,8 @@
           }
         }
       },
-      "TabularResponse": {
-        "title": "TabularResponse",
+      "TabularResultSet": {
+        "title": "TabularResultSet",
         "type": "object",
         "properties": {
           "columns": {
@@ -2081,6 +2096,9 @@
             "items": {
               "$ref": "#/components/schemas/Column"
             }
+          },
+          "pagingInfo": {
+            "$ref": "#/components/schemas/PagingDTO"
           },
           "pkColumns": {
             "type": "array",
@@ -2095,6 +2113,15 @@
             }
           },
           "tableName": {
+            "type": "string"
+          }
+        }
+      },
+      "TabularResultSetMetaDataDTO": {
+        "title": "TabularResultSetMetaDataDTO",
+        "type": "object",
+        "properties": {
+          "systemType": {
             "type": "string"
           }
         }

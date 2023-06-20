@@ -3,9 +3,9 @@ package io.storydoc.fabric.console.app;
 import io.storydoc.fabric.console.app.describe.ConsoleDescriptorDTO;
 import io.storydoc.fabric.console.app.navigation.NavItem;
 import io.storydoc.fabric.console.app.navigation.NavigationRequest;
-import io.storydoc.fabric.console.app.query.ConsoleRequestDTO;
-import io.storydoc.fabric.console.app.query.ConsoleResponseItemDTO;
 import io.storydoc.fabric.console.app.snippet.SnippetDTO;
+import io.storydoc.fabric.query.app.QueryDTO;
+import io.storydoc.fabric.query.app.ResultDTO;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +27,8 @@ public class ConsoleController {
     }
 
     @PostMapping(value="/run", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ConsoleResponseItemDTO runRequest(@RequestBody ConsoleRequestDTO consoleRequestDTO) {
-        return consoleService.runRequest(consoleRequestDTO);
+    public ResultDTO runRequest(@RequestBody QueryDTO queryDTO) {
+        return consoleService.runRequest(queryDTO);
     }
 
     @PostMapping(value = "/snippet", produces = MediaType.APPLICATION_JSON_VALUE)

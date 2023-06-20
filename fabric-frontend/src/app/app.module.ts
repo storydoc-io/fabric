@@ -5,11 +5,12 @@ import {AppComponent} from './app.component';
 import {CoreModule} from './core.module';
 import {FabricCommonModule} from './common/common.module';
 
-import {SystemDescriptionModule} from './system-description-page/system-description.module';
+import {SystemDescriptionModule} from './settings/system-description.module';
 import {ConsolePageModule} from './console-page/console-page.module';
-import {DashboardModule} from "./dashboard-page/dashboard.module";
+import {SnapshotModule} from "./snapshot/snapshot.module";
 import {NavigationModule} from "./navigation-page/navigation.module"
 import {ComponentModule} from "./component/component.module";
+import {QueryModule} from "./query/query.module";
 
 @NgModule({
   declarations: [
@@ -21,8 +22,9 @@ import {ComponentModule} from "./component/component.module";
     FabricCommonModule,
     ComponentModule,
     SystemDescriptionModule,
+    QueryModule,
     ConsolePageModule,
-    DashboardModule,
+    SnapshotModule,
     NavigationModule
   ],
   providers: [],
